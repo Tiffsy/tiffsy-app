@@ -8,18 +8,12 @@ import 'package:tiffsy_app/screens/ProfileScreen/screen/profile_screen.dart';
 import 'package:tiffsy_app/screens/splash_screen.dart';
 import 'package:flutter/services.dart';
 
-
-
 Future<void> main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
-  );
-  
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-  .then((value) => runApp(const MyApp()));
-  
+      .then((value) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -30,16 +24,13 @@ class MyApp extends StatelessWidget {
     var _mediaQuery = MediaQuery.of(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
+      home: const ProfileScreen(),
       title: 'Tiffsy',
       theme: ThemeData(
-        buttonTheme: ButtonThemeData(
-          buttonColor: const Color(0xffFFBE1D)
-        ),
+        buttonTheme: ButtonThemeData(buttonColor: const Color(0xffFFBE1D)),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xffFFBE1D)
-          ),
+              backgroundColor: const Color(0xffFFBE1D)),
         ),
         cardColor: const Color(0xffffffff),
         focusColor: const Color(0xffFFE5A3),
@@ -50,7 +41,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-
-

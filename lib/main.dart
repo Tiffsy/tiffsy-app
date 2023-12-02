@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
     var _mediaQuery = MediaQuery.of(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const ProfileScreen(),
+      home: const SplashScreen(),
       title: 'Tiffsy',
       theme: ThemeData(
         buttonTheme: ButtonThemeData(buttonColor: const Color(0xffFFBE1D)),

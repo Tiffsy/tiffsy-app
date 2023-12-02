@@ -1,0 +1,58 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "tiffsy_app",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "tiffsy_app (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "tiffsy_app (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "pixel 6",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "emulator-5554"
+        },
+        {
+            "name": "iphone",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "F899321E-E46A-4FF2-AAC9-48C507030FF1"
+        },
+        {
+            "name": "moto g52",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "ZD2226BR5H"
+        },
+        {
+            "name": "Oneplus",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "bd6d6fba"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "All Device",
+            "configurations": [
+                "iphone",
+                "pixel 6"
+            ]
+        }
+    ]
+}

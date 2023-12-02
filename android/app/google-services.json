@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "663990303984",
+    "project_id": "tiffsy-805bb",
+    "storage_bucket": "tiffsy-805bb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:663990303984:android:4cdddf7712d23d6bdb9635",
+        "android_client_info": {
+          "package_name": "com.example.tiffsy_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9DhjhCSsH1ZSHyHiIgPPJfWkoYep-0XY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

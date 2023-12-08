@@ -10,23 +10,39 @@ class AddressBookScreen extends StatefulWidget {
 
 class _AddressBookScreenState extends State<AddressBookScreen> {
   // test data ;)
-  List<Map<String, dynamic>> listOfAddress = [
-    {
-      "isWork": true,
-      "address":
-          "House no. 108, Keshav Nagar, in front of Grand Arc Apartments, Pune"
-    },
-    {
-      "isWork": false,
-      "address":
-          "House no. 108, Keshav Nagar, in front of Grand Arc Apartments, Pune"
-    },
-    {
-      "isWork": false,
-      "address":
-          "House no. 108, Keshav Nagar, in front of Grand Arc Apartments, Pune"
-    },
-  ];
+  List<Map<String, String>> listOfAddress() {
+    // This function should get the addresses and return them in the format:
+    // [
+    //   {
+    //     "adressType": "Work",
+    //     "address":
+    //         "House no. 108, Keshav Nagar, in front of Grand Arc Apartments, Pune"
+    //   },
+    //   {
+    //     "addressType": "Home",
+    //     "address":
+    //         "House no. 108, Keshav Nagar, in front of Grand Arc Apartments, Pune"
+    //   },
+    // ];
+
+    return [
+      {
+        "addressType": "Work",
+        "address":
+            "House no. 108, Keshav Nagar, in front of Grand Arc Apartments, Pune"
+      },
+      {
+        "addressType": "Home",
+        "address":
+            "House no. 108, Keshav Nagar, in front of Grand Arc Apartments, Pune"
+      },
+      {
+        "addressType": "Other",
+        "address":
+            "House no. 108, Keshav Nagar, in front of Grand Arc Apartments, Pune"
+      },
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +74,7 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
       body: Column(
         children: [
           addAddressButton(() {}),
-          listOfAddressCards(listOfAddress),
+          listOfAddressCards(listOfAddress()),
         ],
       ),
     );
@@ -118,7 +134,7 @@ Widget listOfAddressCards(List<Map<String, dynamic>> listOfAddress) {
   List<Widget> listOfAddressCardsFromAddresses = [];
   for (int i = 0; i < listOfAddress.length; i++) {
     listOfAddressCardsFromAddresses.add(
-      addressCard(listOfAddress[i]["isWork"], listOfAddress[i]["address"]),
+      addressCard(listOfAddress[i]["addressType"], listOfAddress[i]["address"]),
     );
   }
   return Flexible(
@@ -129,21 +145,28 @@ Widget listOfAddressCards(List<Map<String, dynamic>> listOfAddress) {
   );
 }
 
-Widget addressCard(bool isWork, String address) {
+Widget addressCard(String addressType, String address) {
   // Returns a card arranging the provided information in the format specified,
   // automatically deciding what icon (home or work) to apply based on the isWork value.
 
-  Widget addressType = Row(
+  IconData addressTypeIcon = Icons.home;
+  if (addressType == "Work") {
+    addressTypeIcon = Icons.work;
+  } else if (addressType == "Home") {
+    addressTypeIcon = Icons.home;
+  }
+
+  Widget addressTypeData = Row(
     mainAxisAlignment: MainAxisAlignment.start,
     children: [
       Icon(
-        isWork ? Icons.home : Icons.work,
+        addressTypeIcon,
         size: 24,
         color: const Color(0xffffbe1d),
       ),
       const SizedBox(width: 12),
       Text(
-        isWork ? "Home" : "Work",
+        addressType,
         style: const TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 16,
@@ -208,7 +231,7 @@ Widget addressCard(bool isWork, String address) {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            addressType,
+            addressTypeData,
             const SizedBox(height: 8),
             addressText,
             const SizedBox(height: 8),

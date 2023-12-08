@@ -5,7 +5,9 @@ import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/LoginScreen/screen/login_screen.dart';
 import 'package:tiffsy_app/screens/OtpScreen/screen/opt_screen.dart';
 import 'package:tiffsy_app/screens/ProfileScreen/screen/profile_screen.dart';
+import 'package:tiffsy_app/screens/FrequentlyAskedQuestionsScreen/screen/frequently_asked_questions_screen.dart';
 import 'package:tiffsy_app/screens/splash_screen.dart';
+import 'package:tiffsy_app/screens/AddressBookScreen/screen/address_book_screen.dart';
 import 'package:flutter/services.dart';
 
 Future<void> main() async {
@@ -24,17 +26,18 @@ class MyApp extends StatelessWidget {
     var _mediaQuery = MediaQuery.of(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
+      home: const AddressBookScreen(),
       title: 'Tiffsy',
       theme: ThemeData(
-        buttonTheme: ButtonThemeData(buttonColor: const Color(0xffFFBE1D)),
+        buttonTheme: const ButtonThemeData(buttonColor: Color(0xffFFBE1D)),
+        iconTheme: const IconThemeData(color: Color(0xff323232)),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xffFFBE1D)),
         ),
         cardColor: const Color(0xffffffff),
         focusColor: const Color(0xffFFE5A3),
-        primaryColor: Color(0xFFFFFCEF),
+        primaryColor: const Color(0xFFFFFCEF),
         scaffoldBackgroundColor: const Color(0xFFFFFCEF),
         useMaterial3: true,
       ),

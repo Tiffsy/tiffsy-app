@@ -7,7 +7,6 @@ import 'package:tiffsy_app/screens/OtpScreen/screen/opt_screen.dart';
 import 'package:tiffsy_app/screens/ProfileScreen/screen/profile_screen.dart';
 import 'package:tiffsy_app/screens/FrequentlyAskedQuestionsScreen/screen/frequently_asked_questions_screen.dart';
 import 'package:tiffsy_app/screens/splash_screen.dart';
-import 'package:tiffsy_app/screens/AddressBookScreen/screen/address_book_screen.dart';
 import 'package:flutter/services.dart';
 
 Future<void> main() async {
@@ -26,7 +25,7 @@ class MyApp extends StatelessWidget {
     var _mediaQuery = MediaQuery.of(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const AddressBookScreen(),
+      home: const SplashScreen(),
       title: 'Tiffsy',
       theme: ThemeData(
         buttonTheme: const ButtonThemeData(buttonColor: Color(0xffFFBE1D)),

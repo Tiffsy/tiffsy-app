@@ -9,14 +9,37 @@ class PaymentCheckoutScreen extends StatefulWidget {
 }
 
 class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
-  void googlePayUpi() {}
-  void paytmUpi() {}
-  void upiId() {}
-  void creditOrDebitCard() {}
-  void paytmWallet() {}
-  void phonePeWallet() {}
-  void mobiKwikWallet() {}
-  void netBanking() {}
+  void googlePayUpi() {
+    print("1");
+  }
+
+  void paytmUpi() {
+    print("2");
+  }
+
+  void upiId() {
+    print("3");
+  }
+
+  void creditOrDebitCard() {
+    print("4");
+  }
+
+  void paytmWallet() {
+    print("5");
+  }
+
+  void phonePeWallet() {
+    print("6");
+  }
+
+  void mobiKwikWallet() {
+    print("7");
+  }
+
+  void netBanking() {
+    print("8");
+  }
 
   void callPaymentMethod(String paymentMethod) {
     switch (paymentMethod) {
@@ -85,7 +108,7 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
 
   List otherPayments = [
     {
-      "title": "Netbaning",
+      "title": "Netbanking",
       "image": "assets/images/vectors/payment_checkout_screen/net_banking.svg"
     }
   ];
@@ -120,12 +143,21 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            totalBillCard(200.78),
-            paymentsOptionButton(upiBasedPayements, callPaymentMethod),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              totalBillCard(200.78),
+              paymentTypetext("UPI"),
+              paymentsOptionButton(upiBasedPayements, callPaymentMethod),
+              paymentTypetext("Cards"),
+              paymentsOptionButton(cardBasedPayements, callPaymentMethod),
+              paymentTypetext("Wallets"),
+              paymentsOptionButton(walletBasedPayments, callPaymentMethod),
+              paymentTypetext("Others"),
+              paymentsOptionButton(otherPayments, callPaymentMethod)
+            ],
+          ),
         ),
       ),
     );
@@ -159,27 +191,33 @@ Widget paymentsOptionButton(
   if (paymentOptions.length == 1) {
     listOfPaymentOptions.add(
       Expanded(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(width: 12),
-            sizedLogoInContainer(paymentOptions[0]["image"]),
-            const SizedBox(width: 14),
-            Text(
-              paymentOptions[0]["title"],
-              style: const TextStyle(
-                  color: Color(0xff121212),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  height: 20 / 14),
-            ),
-            const Spacer(),
-            const Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 20,
-            ),
-            const SizedBox(width: 14)
-          ],
+        child: InkWell(
+          onTap: () {
+            paymentOptionOnTap(paymentOptions[0]["title"]);
+          },
+          borderRadius: BorderRadius.circular(8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(width: 12),
+              sizedLogoInContainer(paymentOptions[0]["image"]),
+              const SizedBox(width: 14),
+              Text(
+                paymentOptions[0]["title"],
+                style: const TextStyle(
+                    color: Color(0xff121212),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    height: 20 / 14),
+              ),
+              const Spacer(),
+              const Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 20,
+              ),
+              const SizedBox(width: 14)
+            ],
+          ),
         ),
       ),
     );
@@ -192,6 +230,8 @@ Widget paymentsOptionButton(
               onTap: () {
                 paymentOptionOnTap(paymentOptions[0]["title"]);
               },
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(8), topRight: Radius.circular(8)),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -230,6 +270,12 @@ Widget paymentsOptionButton(
         listOfPaymentOptions.add(
           Expanded(
             child: InkWell(
+              onTap: () {
+                paymentOptionOnTap(paymentOptions[i]["title"]);
+              },
+              borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(8),
+                  bottomRight: Radius.circular(8)),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -258,27 +304,32 @@ Widget paymentsOptionButton(
       } else {
         listOfPaymentOptions.add(
           Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(width: 12),
-                sizedLogoInContainer(paymentOptions[i]["image"]),
-                const SizedBox(width: 14),
-                Text(
-                  paymentOptions[i]["title"],
-                  style: const TextStyle(
-                      color: Color(0xff121212),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      height: 20 / 14),
-                ),
-                const Spacer(),
-                const Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 20,
-                ),
-                const SizedBox(width: 14)
-              ],
+            child: InkWell(
+              onTap: () {
+                paymentOptionOnTap(paymentOptions[i]["title"]);
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(width: 12),
+                  sizedLogoInContainer(paymentOptions[i]["image"]),
+                  const SizedBox(width: 14),
+                  Text(
+                    paymentOptions[i]["title"],
+                    style: const TextStyle(
+                        color: Color(0xff121212),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        height: 20 / 14),
+                  ),
+                  const Spacer(),
+                  const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 14)
+                ],
+              ),
             ),
           ),
         );
@@ -295,7 +346,6 @@ Widget paymentsOptionButton(
     }
   }
 
-  //listOfPaymentOptions.removeAt(0);
   return Container(
     decoration: BoxDecoration(
         border: Border.all(width: 1, color: const Color(0x33121212)),
@@ -314,12 +364,28 @@ Widget sizedLogoInContainer(String filePath) {
     decoration: BoxDecoration(
         border: Border.all(width: 0.5, color: const Color(0x33121212)),
         borderRadius: const BorderRadius.all(Radius.circular(4))),
-    child: Padding(
-      padding: const EdgeInsets.all(2),
-      child: SvgPicture.asset(
-        filePath,
-        theme: const SvgTheme(currentColor: Colors.black),
+    child: Center(
+      child: Padding(
+        padding: const EdgeInsets.all(2),
+        child: SvgPicture.asset(
+          filePath,
+          theme: const SvgTheme(currentColor: Colors.black),
+        ),
       ),
+    ),
+  );
+}
+
+Widget paymentTypetext(String paymentType) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 20),
+    child: Text(
+      paymentType,
+      style: const TextStyle(
+          color: Color(0xff121212),
+          fontSize: 16,
+          height: 20 / 16,
+          fontWeight: FontWeight.w500),
     ),
   );
 }

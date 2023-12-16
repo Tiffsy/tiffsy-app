@@ -9,37 +9,21 @@ class PaymentCheckoutScreen extends StatefulWidget {
 }
 
 class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
-  void googlePayUpi() {
-    print("1");
-  }
+  void googlePayUpi() {}
 
-  void paytmUpi() {
-    print("2");
-  }
+  void paytmUpi() {}
 
-  void upiId() {
-    print("3");
-  }
+  void upiId() {}
 
-  void creditOrDebitCard() {
-    print("4");
-  }
+  void creditOrDebitCard() {}
 
-  void paytmWallet() {
-    print("5");
-  }
+  void paytmWallet() {}
 
-  void phonePeWallet() {
-    print("6");
-  }
+  void phonePeWallet() {}
 
-  void mobiKwikWallet() {
-    print("7");
-  }
+  void mobiKwikWallet() {}
 
-  void netBanking() {
-    print("8");
-  }
+  void netBanking() {}
 
   void callPaymentMethod(String paymentMethod) {
     switch (paymentMethod) {

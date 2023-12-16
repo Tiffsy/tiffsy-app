@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class PaymentCheckoutScreen extends StatefulWidget {
   const PaymentCheckoutScreen({super.key});
@@ -8,6 +9,87 @@ class PaymentCheckoutScreen extends StatefulWidget {
 }
 
 class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
+  void googlePayUpi() {}
+  void paytmUpi() {}
+  void upiId() {}
+  void creditOrDebitCard() {}
+  void paytmWallet() {}
+  void phonePeWallet() {}
+  void mobiKwikWallet() {}
+  void netBanking() {}
+
+  void callPaymentMethod(String paymentMethod) {
+    switch (paymentMethod) {
+      case "Google Pay":
+        googlePayUpi();
+      case "Paytm UPI":
+        paytmUpi();
+      case "UPI ID":
+        upiId();
+      case "Add Credit / Debit card":
+        creditOrDebitCard();
+      case "Paytm":
+        paytmWallet();
+      case "PhonePe":
+        phonePeWallet();
+      case "Mobikwik":
+        mobiKwikWallet();
+      case "Netbanking":
+        netBanking();
+        break;
+      default:
+    }
+  }
+
+  List upiBasedPayements = [
+    {
+      "title": "Google Pay",
+      "image":
+          "assets/images/vectors/payment_checkout_screen/google_pay_logo.svg"
+    },
+    {
+      "title": "Paytm UPI",
+      "image": "assets/images/vectors/payment_checkout_screen/paytm_wallet.svg"
+    },
+    {
+      "title": "UPI ID",
+      "image":
+          "assets/images/vectors/payment_checkout_screen/mobikwik_wallet.svg"
+    }
+  ];
+
+  List cardBasedPayements = [
+    {
+      "title": "Add Credit / Debit card",
+      "image":
+          "assets/images/vectors/payment_checkout_screen/credit_or_debit_card.svg"
+    }
+  ];
+
+  List walletBasedPayments = [
+    {
+      "title": "Paytm",
+      "image": "assets/images/vectors/payment_checkout_screen/paytm_wallet.svg"
+    },
+    {
+      "title": "PhonePe",
+      "image":
+          "assets/images/vectors/payment_checkout_screen/phonepe_wallet.svg"
+    },
+    {
+      "title": "Mobikwik",
+      "image":
+          "assets/images/vectors/payment_checkout_screen/mobikwik_wallet.svg"
+    }
+  ];
+
+  List otherPayments = [
+    {
+      "title": "Netbaning",
+      "image": "assets/images/vectors/payment_checkout_screen/net_banking.svg"
+    }
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +122,10 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [totalBillCard(200.78)],
+          children: [
+            totalBillCard(200.78),
+            paymentsOptionButton(upiBasedPayements, callPaymentMethod),
+          ],
         ),
       ),
     );
@@ -67,6 +152,174 @@ Widget totalBillCard(double billAmount) {
   );
 }
 
-//Widget setOfPaymentOptions(List<Map<String, dynamic>> listOfPaymentMethods){
+Widget paymentsOptionButton(
+    List paymentOptions, Function(String) paymentOptionOnTap) {
+  List<Widget> listOfPaymentOptions = [];
 
-//}
+  if (paymentOptions.length == 1) {
+    listOfPaymentOptions.add(
+      Expanded(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(width: 12),
+            sizedLogoInContainer(paymentOptions[0]["image"]),
+            const SizedBox(width: 14),
+            Text(
+              paymentOptions[0]["title"],
+              style: const TextStyle(
+                  color: Color(0xff121212),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  height: 20 / 14),
+            ),
+            const Spacer(),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 20,
+            ),
+            const SizedBox(width: 14)
+          ],
+        ),
+      ),
+    );
+  } else {
+    for (int i = 0; i < paymentOptions.length; i++) {
+      if (i == 0) {
+        listOfPaymentOptions.add(
+          Expanded(
+            child: InkWell(
+              onTap: () {
+                paymentOptionOnTap(paymentOptions[0]["title"]);
+              },
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(width: 12),
+                  sizedLogoInContainer(paymentOptions[0]["image"]),
+                  const SizedBox(width: 14),
+                  Text(
+                    paymentOptions[0]["title"],
+                    style: const TextStyle(
+                        color: Color(0xff121212),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        height: 20 / 14),
+                  ),
+                  const Spacer(),
+                  const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 14)
+                ],
+              ),
+            ),
+          ),
+        );
+        listOfPaymentOptions.add(
+          const Divider(
+            thickness: 1,
+            height: 1,
+            indent: 12,
+            endIndent: 12,
+            color: Color(0x33121212),
+          ),
+        );
+      } else if (i == paymentOptions.length - 1) {
+        listOfPaymentOptions.add(
+          Expanded(
+            child: InkWell(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(width: 12),
+                  sizedLogoInContainer(paymentOptions[i]["image"]),
+                  const SizedBox(width: 14),
+                  Text(
+                    paymentOptions[i]["title"],
+                    style: const TextStyle(
+                        color: Color(0xff121212),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        height: 20 / 14),
+                  ),
+                  const Spacer(),
+                  const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 14)
+                ],
+              ),
+            ),
+          ),
+        );
+      } else {
+        listOfPaymentOptions.add(
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(width: 12),
+                sizedLogoInContainer(paymentOptions[i]["image"]),
+                const SizedBox(width: 14),
+                Text(
+                  paymentOptions[i]["title"],
+                  style: const TextStyle(
+                      color: Color(0xff121212),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      height: 20 / 14),
+                ),
+                const Spacer(),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 20,
+                ),
+                const SizedBox(width: 14)
+              ],
+            ),
+          ),
+        );
+        listOfPaymentOptions.add(
+          const Divider(
+            thickness: 1,
+            height: 1,
+            indent: 12,
+            endIndent: 12,
+            color: Color(0x33121212),
+          ),
+        );
+      }
+    }
+  }
+
+  //listOfPaymentOptions.removeAt(0);
+  return Container(
+    decoration: BoxDecoration(
+        border: Border.all(width: 1, color: const Color(0x33121212)),
+        borderRadius: const BorderRadius.all(Radius.circular(8))),
+    height: paymentOptions.length * 44,
+    child: Column(
+      children: listOfPaymentOptions,
+    ),
+  );
+}
+
+Widget sizedLogoInContainer(String filePath) {
+  return Container(
+    height: 20,
+    width: 28,
+    decoration: BoxDecoration(
+        border: Border.all(width: 0.5, color: const Color(0x33121212)),
+        borderRadius: const BorderRadius.all(Radius.circular(4))),
+    child: Padding(
+      padding: const EdgeInsets.all(2),
+      child: SvgPicture.asset(
+        filePath,
+        theme: const SvgTheme(currentColor: Colors.black),
+      ),
+    ),
+  );
+}

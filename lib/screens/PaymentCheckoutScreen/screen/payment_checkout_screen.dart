@@ -60,8 +60,7 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
     },
     {
       "title": "UPI ID",
-      "image":
-          "assets/images/vectors/payment_checkout_screen/mobikwik_wallet.svg"
+      "image": "assets/images/vectors/payment_checkout_screen/upi_logo.svg"
     }
   ];
 

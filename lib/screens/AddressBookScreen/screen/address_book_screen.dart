@@ -9,22 +9,7 @@ class AddressBookScreen extends StatefulWidget {
 }
 
 class _AddressBookScreenState extends State<AddressBookScreen> {
-  // test data ;)
   List<Map<String, String>> listOfAddress() {
-    // This function should get the addresses and return them in the format:
-    // [
-    //   {
-    //     "adressType": "Work",
-    //     "address":
-    //         "House no. 108, Keshav Nagar, in front of Grand Arc Apartments, Pune"
-    //   },
-    //   {
-    //     "addressType": "Home",
-    //     "address":
-    //         "House no. 108, Keshav Nagar, in front of Grand Arc Apartments, Pune"
-    //   },
-    // ];
-
     return [
       {
         "addressType": "Work",

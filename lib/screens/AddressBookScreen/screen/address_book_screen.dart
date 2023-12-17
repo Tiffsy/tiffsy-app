@@ -154,6 +154,8 @@ Widget addressCard(String addressType, String address) {
     addressTypeIcon = Icons.work;
   } else if (addressType == "Home") {
     addressTypeIcon = Icons.home;
+  } else {
+    addressTypeIcon = Icons.language_rounded;
   }
 
   Widget addressTypeData = Row(

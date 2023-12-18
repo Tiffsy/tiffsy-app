@@ -4,6 +4,8 @@ import 'package:tiffsy_app/firebase_options.dart';
 import 'package:tiffsy_app/screens/AddAddressScreen/screen/add_address_screen.dart';
 import 'package:tiffsy_app/screens/AddressBookScreen/screen/address_book_screen.dart';
 import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
+import 'package:tiffsy_app/screens/HowItWorksScreen/bloc/how_it_works_bloc.dart';
+import 'package:tiffsy_app/screens/HowItWorksScreen/screen/how_it_works_screen.dart';
 import 'package:tiffsy_app/screens/LoginScreen/screen/login_screen.dart';
 import 'package:tiffsy_app/screens/OtpScreen/screen/opt_screen.dart';
 import 'package:tiffsy_app/screens/ProfileScreen/screen/profile_screen.dart';
@@ -27,7 +29,7 @@ class MyApp extends StatelessWidget {
     var _mediaQuery = MediaQuery.of(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const AddAddressScreen(),
+      home: SplashScreen(),
       title: 'Tiffsy',
       theme: ThemeData(
         textSelectionTheme: const TextSelectionThemeData(

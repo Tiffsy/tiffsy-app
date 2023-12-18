@@ -110,13 +110,13 @@ Widget singleStepcard(
 ) {
   List<Widget> listOfInstructionData = [
     headingText(heading),
-    const SizedBox(height: 10)
   ];
   if (options != null) {
-    listOfInstructionData.add(optionsText(options));
     listOfInstructionData.add(const SizedBox(height: 10));
+    listOfInstructionData.add(optionsText(options));
   }
   if (warning != null) {
+    listOfInstructionData.add(const SizedBox(height: 10));
     listOfInstructionData.add(warningtext(warning));
   }
 
@@ -181,11 +181,11 @@ Widget headingText(String heading) {
         child: Text(
           heading,
           style: const TextStyle(
-            color: Color(0xff121212),
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            height: 20 / 14,
-          ),
+              color: Color(0xff121212),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              height: 20 / 14,
+              letterSpacing: 0.1),
         ),
       ),
     ],
@@ -202,7 +202,7 @@ Widget optionsText(String options) {
             color: Color(0xff121212),
             fontSize: 12,
             fontWeight: FontWeight.w400,
-            height: 16 / 14,
+            height: 16 / 12,
           ),
         ),
       ),

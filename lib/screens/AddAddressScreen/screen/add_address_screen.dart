@@ -73,53 +73,57 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: SingleChildScrollView(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
             children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 10),
-                child: Icon(Icons.home, size: 32),
-              ),
-              const SizedBox(width: 16),
-              Flexible(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 10),
-                    entryBox(houseNumberController, "House Number",
-                        AutofillHints.streetAddressLine1),
-                    const SizedBox(height: 24),
-                    entryBox(streetController, "Street / Block",
-                        AutofillHints.streetAddressLine2),
-                    const SizedBox(height: 24),
-                    dropDownMenu("State", stateEntries, stateController),
-                    const SizedBox(height: 24),
-                    Row(
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child: Icon(Icons.home, size: 32),
+                  ),
+                  const SizedBox(width: 16),
+                  Flexible(
+                    child: Column(
                       children: [
-                        Flexible(
-                          child: entryBox(
-                            pincodeController,
-                            "Pincode",
-                            AutofillHints.postalCode,
-                          ),
+                        const SizedBox(height: 10),
+                        entryBox(houseNumberController, "House Number",
+                            AutofillHints.streetAddressLine1),
+                        const SizedBox(height: 24),
+                        entryBox(streetController, "Street / Block",
+                            AutofillHints.streetAddressLine2),
+                        const SizedBox(height: 24),
+                        dropDownMenu("State", stateEntries, stateController),
+                        const SizedBox(height: 24),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: entryBox(
+                                pincodeController,
+                                "Pincode",
+                                AutofillHints.postalCode,
+                              ),
+                            ),
+                            const SizedBox(width: 24),
+                            Flexible(
+                              child: dropDownMenu(
+                                "City",
+                                citesOfChoosenState,
+                                cityController,
+                              ),
+                            )
+                          ],
                         ),
-                        const SizedBox(width: 24),
-                        Flexible(
-                          child: dropDownMenu(
-                            "City",
-                            citesOfChoosenState,
-                            cityController,
-                          ),
-                        )
+                        const SizedBox(height: 24),
+                        dropDownMenu("Address Type", addressTypes,
+                            addressTypeController),
+                        const SizedBox(height: 32),
                       ],
                     ),
-                    const SizedBox(height: 24),
-                    dropDownMenu(
-                        "Address Type", addressTypes, addressTypeController),
-                    const SizedBox(height: 32),
-                    saveAddressButton(saveAddress)
-                  ],
-                ),
+                  ),
+                ],
               ),
+              saveAddressButton(saveAddress),
             ],
           ),
         ),

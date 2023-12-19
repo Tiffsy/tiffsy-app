@@ -191,7 +191,9 @@ Widget saveAddressButton(Function onPress) {
 // which is called when the button is pressed.
   return InkWell(
     borderRadius: BorderRadius.circular(8),
-    onTap: onPress(),
+    onTap: () {
+      onPress();
+    },
     child: Container(
       constraints: const BoxConstraints(maxHeight: 40),
       decoration: BoxDecoration(

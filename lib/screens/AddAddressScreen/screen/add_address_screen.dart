@@ -9,10 +9,11 @@ class AddAddressScreen extends StatefulWidget {
 
 class _AddAddressScreenState extends State<AddAddressScreen> {
   Map<String, List> statesAndCities = {
-    "Maharashtra": ["d", "d"],
-    "Goa": ["d", "d", "d"],
+    "Maharashtra": ["Pune", "Mumbai"],
+    "Goa": ["Vasco", "Margao", "Panjim"],
   };
 
+  // populate this list based on the state selected
   List<DropdownMenuEntry> citesOfChoosenState = [];
 
   List<DropdownMenuEntry> addressTypes = [
@@ -34,10 +35,14 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     statesAndCities.forEach((key, value) {
-      stateEntries.add(DropdownMenuEntry(value: key, label: key));
+      stateEntries.add(
+        DropdownMenuEntry(
+          value: key,
+          label: key,
+        ),
+      );
     });
   }
 
@@ -146,6 +151,12 @@ Widget entryBox(
     ),
     decoration: InputDecoration(
       labelText: label,
+      labelStyle: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        color: Color(0x66121212),
+        height: 24 / 16,
+      ),
     ),
   );
 }
@@ -163,16 +174,24 @@ Widget dropDownMenu(
     controller: controller,
     requestFocusOnTap: true,
     label: Text(label),
+    inputDecorationTheme: const InputDecorationTheme(
+      labelStyle: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        color: Color(0x66121212),
+        height: 24 / 16,
+      ),
+    ),
     expandedInsets: EdgeInsets.zero,
   );
 }
 
-Widget saveAddressButton(Function onpress) {
+Widget saveAddressButton(Function onPress) {
 // Returns the saveAddress button on top of the page, takes in an onPress function
 // which is called when the button is pressed.
   return InkWell(
     borderRadius: BorderRadius.circular(8),
-    onTap: onpress(),
+    onTap: onPress(),
     child: Container(
       constraints: const BoxConstraints(maxHeight: 40),
       decoration: BoxDecoration(

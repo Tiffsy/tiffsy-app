@@ -34,7 +34,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return RepositoryProvider(
       create: (context) => UserRepository(),
       child: BlocProvider(
-        create: (context) => LoginBloc(userRepository: RepositoryProvider.of(context)),
+        create: (context) =>
+            LoginBloc(userRepository: RepositoryProvider.of(context)),
         child: Scaffold(
           backgroundColor: const Color(0xffF2B620),
           body: content(),
@@ -51,7 +52,6 @@ class content extends StatefulWidget {
 }
 
 class _contentState extends State<content> {
-
   final GlobalKey _tooltipKey = GlobalKey();
   TextEditingController countryCode = TextEditingController();
   TextEditingController phoneController = TextEditingController();
@@ -80,18 +80,21 @@ class _contentState extends State<content> {
     var _mediaQuery = MediaQuery.of(context);
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {
-
-        if(state is Authenticated){
-          Navigator.push<Type>(context,
-          MaterialPageRoute(builder: (_) => const HomeScreen())
-          );
+        if (state is Authenticated) {
+          Navigator.push<Type>(
+              context, MaterialPageRoute(builder: (_) => const HomeScreen()));
         }
-        if(state is AuthCodeSentSate){
-          Navigator.push<Type>(context, MaterialPageRoute(builder: (_) => OtpScreen(phoneNumber: state.phoneNumber, verificationId: state.verificationId)));  
+        if (state is AuthCodeSentSate) {
+          Navigator.push<Type>(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => OtpScreen(
+                      phoneNumber: state.phoneNumber,
+                      verificationId: state.verificationId)));
         }
       },
       builder: (context, state) {
-        if(state is AuthLoggedInState){
+        if (state is AuthLoggedInState) {
           return Center(
             child: CircularProgressIndicator(),
           );
@@ -227,11 +230,10 @@ class _contentState extends State<content> {
                         height: _mediaQuery.size.height * 0.045,
                         width: _mediaQuery.size.width * 0.9,
                         child: OutlinedButton(
-                          onPressed: (){
-
+                          onPressed: () {
                             String phoneNumber = "+91${phoneController.text}";
-                            BlocProvider.of<LoginBloc>(context).add(SendOtp(phoneNumber: phoneNumber));
-
+                            BlocProvider.of<LoginBloc>(context)
+                                .add(SendOtp(phoneNumber: phoneNumber));
                           },
                           style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: Color(0xffFAFAFA)),
@@ -285,7 +287,9 @@ class _contentState extends State<content> {
                         child: OutlinedButton(
                           onPressed: () => {
                             // BlocListener.of<LoginBloc>(context).add(GoogleSignInRequested()),
-                            context.read<LoginBloc>().add(GoogleSignInRequested())
+                            context
+                                .read<LoginBloc>()
+                                .add(GoogleSignInRequested())
                             // loginBloc.add(GoogleSignInRequested())
                             // loginBloc.add(LoginContinueWithGoogleClickedEvent())
                             // On press action

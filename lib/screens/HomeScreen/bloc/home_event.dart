@@ -1,4 +1,7 @@
 part of 'home_bloc.dart';
 
 @immutable
-sealed class HomeEvent {}
+abstract class HomeEvent {}
+
+
+final class HomeInitialFetchEvent extends HomeEvent{}

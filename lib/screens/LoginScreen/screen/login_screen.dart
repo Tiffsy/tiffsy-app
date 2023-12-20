@@ -77,7 +77,9 @@ class _contentState extends State<content> {
 
   @override
   Widget build(BuildContext context) {
+
     var _mediaQuery = MediaQuery.of(context);
+    
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is Authenticated) {

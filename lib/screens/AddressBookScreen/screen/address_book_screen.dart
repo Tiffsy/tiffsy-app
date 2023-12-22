@@ -35,8 +35,6 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
       backgroundColor: const Color(0xffffffff),
       appBar: AppBar(
         titleSpacing: 0,
-        backgroundColor: const Color(0xffffffff),
-        surfaceTintColor: const Color(0xffffffff),
         leadingWidth: 64,
         leading: IconButton(
           icon: const Icon(

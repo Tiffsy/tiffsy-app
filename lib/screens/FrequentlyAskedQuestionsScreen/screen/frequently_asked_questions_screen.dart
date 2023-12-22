@@ -30,8 +30,6 @@ class _FrequentlyAskedQuestionsScreenState
       appBar: AppBar(
         leadingWidth: 64,
         titleSpacing: 0,
-        backgroundColor: const Color(0xffffffff),
-        surfaceTintColor: const Color(0xffffffff),
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_rounded,

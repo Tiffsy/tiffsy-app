@@ -4,15 +4,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tiffsy_app/firebase_options.dart';
 import 'package:tiffsy_app/screens/AddAddressScreen/screen/add_address_screen.dart';
 import 'package:tiffsy_app/screens/AddressBookScreen/screen/address_book_screen.dart';
+import 'package:tiffsy_app/screens/BillingSumaryScreen/screen/billing_summary_screen.dart';
 import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/HowItWorksScreen/bloc/how_it_works_bloc.dart';
 import 'package:tiffsy_app/screens/HowItWorksScreen/screen/how_it_works_screen.dart';
 import 'package:tiffsy_app/screens/LoginScreen/repository/user_repo.dart';
 import 'package:tiffsy_app/screens/LoginScreen/screen/login_screen.dart';
+import 'package:tiffsy_app/screens/OrderHistoryScreen/bloc/order_history_bloc.dart';
+import 'package:tiffsy_app/screens/OrderHistoryScreen/screen/order_history_screen.dart';
 import 'package:tiffsy_app/screens/OtpScreen/screen/opt_screen.dart';
 import 'package:tiffsy_app/screens/PersonalDetailsScreen/screen/personalDetails_screen.dart';
 import 'package:tiffsy_app/screens/ProfileScreen/screen/profile_screen.dart';
 import 'package:tiffsy_app/screens/PaymentCheckoutScreen/screen/payment_checkout_screen.dart';
+import 'package:tiffsy_app/screens/RefundPolicyScreen/screen/refund_policy_screen.dart';
 import 'package:tiffsy_app/screens/splash_screen.dart';
 import 'package:flutter/services.dart';
 
@@ -22,23 +26,29 @@ Future<void> main() async {
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((value) => runApp(RepositoryProvider(
-            create: (context) =>  UserRepo(),
+            create: (context) => UserRepo(),
             child: MyApp(),
           )));
 }
 
-
 class MyApp extends StatelessWidget {
-  
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     var _mediaQuery = MediaQuery.of(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AddressBookScreen(),
+      home: HomeScreen(),
       title: 'Tiffsy',
       theme: ThemeData(
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xffffffff),
+          surfaceTintColor: Color(0xffffffff),
+        ),
+        navigationBarTheme: const NavigationBarThemeData(
+          backgroundColor: Color(0xfffffcef),
+          indicatorColor: Color(0xffffe5a3),
+        ),
         textSelectionTheme: const TextSelectionThemeData(
           cursorColor: Color(0xcc121212),
           selectionHandleColor: Color(0xffffe5a3),
@@ -47,7 +57,7 @@ class MyApp extends StatelessWidget {
         dropdownMenuTheme: DropdownMenuThemeData(
           menuStyle: MenuStyle(
             backgroundColor: MaterialStateColor.resolveWith(
-              (states) => const Color(0xfffffcef),
+              (states) => const Color(0xfffffddd),
             ),
           ),
           inputDecorationTheme: InputDecorationTheme(

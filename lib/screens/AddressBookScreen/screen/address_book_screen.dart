@@ -20,7 +20,8 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AddressBookBloc()..add(AddressBookInitialFetchEvent()),
+      create: (context) =>
+          AddressBookBloc()..add(AddressBookInitialFetchEvent()),
       child: Scaffold(
         backgroundColor: const Color(0xffffffff),
         appBar: AppBar(
@@ -36,7 +37,7 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
             ),
             onPressed: () {
               Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AddAddressScreen()));
+                  MaterialPageRoute(builder: (context) => AddAddressScreen()));
               // go back functionality, most likely using Navigator.pop()
             },
           ),
@@ -56,8 +57,7 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
               );
             } else if (state is AddAddressButtonClickedState) {
               Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AddAddressScreen()));
-        
+                  MaterialPageRoute(builder: (context) => AddAddressScreen()));
             }
           },
           builder: (context, state) {
@@ -66,16 +66,15 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
               return Column(
                 children: [
                   addAddressButton(() {
-                    BlocProvider.of<AddressBookBloc>(context).add(AddressBookAddAdresssButtonClickedEvent());
+                    BlocProvider.of<AddressBookBloc>(context)
+                        .add(AddressBookAddAdresssButtonClickedEvent());
                   }),
                   listOfAddressCards(addressListState.addressList),
                 ],
               );
-            } 
-            else if (state is AddressBookLoadingState){
+            } else if (state is AddressBookLoadingState) {
               return Center(child: CircularProgressIndicator());
-            }
-            else {
+            } else {
               return Center(child: Text("Error While loading page"));
             }
           },

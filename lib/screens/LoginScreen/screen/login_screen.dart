@@ -5,7 +5,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:tiffsy_app/repositories/user_repository.dart';
 import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/LoginScreen/bloc/login_bloc.dart';
+import 'package:tiffsy_app/screens/LoginScreen/repository/user_repo.dart';
 import 'package:tiffsy_app/screens/OtpScreen/screen/opt_screen.dart';
+
+import '../../PersonalDetailsScreen/screen/personalDetails_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -31,16 +34,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => UserRepository(),
-      child: BlocProvider(
-        create: (context) =>
-            LoginBloc(userRepository: RepositoryProvider.of(context)),
-        child: Scaffold(
-          backgroundColor: const Color(0xffF2B620),
-          body: content(),
-        ),
-      ),
+    return Scaffold(
+      backgroundColor: const Color(0xffF2B620),
+      body: content(),
     );
   }
 }
@@ -52,9 +48,11 @@ class content extends StatefulWidget {
 }
 
 class _contentState extends State<content> {
+
   final GlobalKey _tooltipKey = GlobalKey();
   TextEditingController countryCode = TextEditingController();
   TextEditingController phoneController = TextEditingController();
+  LoginBloc loginBloc = LoginBloc(LoginScreenInitialState());
 
   @override
   void initState() {
@@ -66,6 +64,7 @@ class _contentState extends State<content> {
   @override
   void dispose() {
     countryCode.dispose();
+    phoneController.dispose();
     // TODO: implement dispose
     super.dispose();
   }
@@ -77,31 +76,36 @@ class _contentState extends State<content> {
 
   @override
   Widget build(BuildContext context) {
-
     var _mediaQuery = MediaQuery.of(context);
-    
+
     return BlocConsumer<LoginBloc, LoginState>(
+      bloc: loginBloc,
       listener: (context, state) {
-        if (state is Authenticated) {
-          Navigator.push<Type>(
-              context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+        if (state is AuthErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.error)),
+          );
         }
-        if (state is AuthCodeSentSate) {
-          Navigator.push<Type>(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => OtpScreen(
-                      phoneNumber: state.phoneNumber,
-                      verificationId: state.verificationId)));
+        else if(state is LoginScreenLoadedState){
+          Navigator.popUntil(context, (route) => route.isFirst);
+          Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (_) => const PersonalDetailsScreen()));
+        }
+        else if(state is PhoneAuthCodeSentSuccess){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> OtpScreen(verificationId: state.verificationId, phoneNumber: phoneController.text,)));
+        }
+        else if(state is LoadHomeScreenState){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> HomeScreen()));
         }
       },
       builder: (context, state) {
-        if (state is AuthLoggedInState) {
-          return Center(
+        if (state is AuthLoadingState) {
+          return const Center(
             child: CircularProgressIndicator(),
           );
         }
-        return SingleChildScrollView(
+        else{
+          return SingleChildScrollView(
           child: Column(
             children: [
               Container(
@@ -234,8 +238,7 @@ class _contentState extends State<content> {
                         child: OutlinedButton(
                           onPressed: () {
                             String phoneNumber = "+91${phoneController.text}";
-                            BlocProvider.of<LoginBloc>(context)
-                                .add(SendOtp(phoneNumber: phoneNumber));
+                            loginBloc.add(SendOtpToPhoneEvent(phoneNumber: phoneNumber));
                           },
                           style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: Color(0xffFAFAFA)),
@@ -288,13 +291,7 @@ class _contentState extends State<content> {
                         width: _mediaQuery.size.width * 0.9,
                         child: OutlinedButton(
                           onPressed: () => {
-                            // BlocListener.of<LoginBloc>(context).add(GoogleSignInRequested()),
-                            context
-                                .read<LoginBloc>()
-                                .add(GoogleSignInRequested())
-                            // loginBloc.add(GoogleSignInRequested())
-                            // loginBloc.add(LoginContinueWithGoogleClickedEvent())
-                            // On press action
+                            loginBloc.add(SignInWithGooglePressedEvent())
                           },
                           style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: Colors.black),
@@ -332,7 +329,7 @@ class _contentState extends State<content> {
             ],
           ),
         );
-      },
+        }},
     );
   }
 }

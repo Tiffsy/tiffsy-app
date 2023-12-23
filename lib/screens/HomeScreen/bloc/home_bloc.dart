@@ -16,7 +16,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   FutureOr<void> homeInitialFetch(HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
     emit(HomeLoadingState());
-    
     List<MenuDataModel> menu = await HomeRepo.fetchMenu();
     emit(HomeFetchSuccessfulState(menu: menu));
   }

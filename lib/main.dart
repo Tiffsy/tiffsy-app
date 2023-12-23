@@ -1,13 +1,16 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tiffsy_app/firebase_options.dart';
 import 'package:tiffsy_app/screens/AddAddressScreen/screen/add_address_screen.dart';
 import 'package:tiffsy_app/screens/AddressBookScreen/screen/address_book_screen.dart';
 import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/HowItWorksScreen/bloc/how_it_works_bloc.dart';
 import 'package:tiffsy_app/screens/HowItWorksScreen/screen/how_it_works_screen.dart';
+import 'package:tiffsy_app/screens/LoginScreen/repository/user_repo.dart';
 import 'package:tiffsy_app/screens/LoginScreen/screen/login_screen.dart';
 import 'package:tiffsy_app/screens/OtpScreen/screen/opt_screen.dart';
+import 'package:tiffsy_app/screens/PersonalDetailsScreen/screen/personalDetails_screen.dart';
 import 'package:tiffsy_app/screens/ProfileScreen/screen/profile_screen.dart';
 import 'package:tiffsy_app/screens/PaymentCheckoutScreen/screen/payment_checkout_screen.dart';
 import 'package:tiffsy_app/screens/splash_screen.dart';
@@ -18,18 +21,22 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((value) => runApp(const MyApp()));
+      .then((value) => runApp(RepositoryProvider(
+            create: (context) =>  UserRepo(),
+            child: MyApp(),
+          )));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
 
+class MyApp extends StatelessWidget {
+  
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     var _mediaQuery = MediaQuery.of(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: AddressBookScreen(),
       title: 'Tiffsy',
       theme: ThemeData(
         textSelectionTheme: const TextSelectionThemeData(

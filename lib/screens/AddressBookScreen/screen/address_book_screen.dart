@@ -1,5 +1,13 @@
+import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_svg/svg.dart";
+import "package:tiffsy_app/screens/AddAddressScreen/screen/add_address_screen.dart";
+import "package:tiffsy_app/screens/AddressBookScreen/bloc/address_book_bloc.dart";
+import "package:tiffsy_app/screens/AddressBookScreen/model/address_data_model.dart";
+import "package:tiffsy_app/screens/HomeScreen/bloc/home_bloc.dart";
+import "package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart";
+import "package:tiffsy_app/screens/ProfileScreen/screen/profile_screen.dart";
 
 class AddressBookScreen extends StatefulWidget {
   const AddressBookScreen({super.key});
@@ -9,67 +17,77 @@ class AddressBookScreen extends StatefulWidget {
 }
 
 class _AddressBookScreenState extends State<AddressBookScreen> {
-  List<Map<String, String>> listOfAddress() {
-    return [
-      {
-        "addressType": "Work",
-        "address":
-            "House no. 108, Keshav Nagar, in front of Grand Arc Apartments, Pune"
-      },
-      {
-        "addressType": "Home",
-        "address":
-            "House no. 108, Keshav Nagar, in front of Grand Arc Apartments, Pune"
-      },
-      {
-        "addressType": "Other",
-        "address":
-            "House no. 108, Keshav Nagar, in front of Grand Arc Apartments, Pune"
-      },
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xffffffff),
-      appBar: AppBar(
-        titleSpacing: 0,
+    return BlocProvider(
+      create: (context) => AddressBookBloc()..add(AddressBookInitialFetchEvent()),
+      child: Scaffold(
         backgroundColor: const Color(0xffffffff),
-        surfaceTintColor: const Color(0xffffffff),
-        leadingWidth: 64,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_rounded,
-            color: Color(0xff323232),
-            size: 24,
+        appBar: AppBar(
+          titleSpacing: 0,
+          backgroundColor: const Color(0xffffffff),
+          surfaceTintColor: const Color(0xffffffff),
+          leadingWidth: 64,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_rounded,
+              color: Color(0xff323232),
+              size: 24,
+            ),
+            onPressed: () {
+              Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AddAddressScreen()));
+              // go back functionality, most likely using Navigator.pop()
+            },
           ),
-          onPressed: () {
-            // go back functionality, most likely using Navigator.pop()
+          title: const Text(
+            "Address Book",
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w400,
+                color: Color(0xff121212)),
+          ),
+        ),
+        body: BlocConsumer<AddressBookBloc, AddressBookState>(
+          listener: (context, state) {
+            if (state is AddressBookErrorState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.error)),
+              );
+            } else if (state is AddAddressButtonClickedState) {
+              Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AddAddressScreen()));
+        
+            }
+          },
+          builder: (context, state) {
+            if (state is AddressListFetchSuccessState) {
+              final addressListState = state;
+              return Column(
+                children: [
+                  addAddressButton(() {
+                    BlocProvider.of<AddressBookBloc>(context).add(AddressBookAddAdresssButtonClickedEvent());
+                  }),
+                  listOfAddressCards(addressListState.addressList),
+                ],
+              );
+            } 
+            else if (state is AddressBookLoadingState){
+              return Center(child: CircularProgressIndicator());
+            }
+            else {
+              return Center(child: Text("Error While loading page"));
+            }
           },
         ),
-        title: const Text(
-          "Address Book",
-          style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w400,
-              color: Color(0xff121212)),
-        ),
-      ),
-      body: Column(
-        children: [
-          addAddressButton(() {}),
-          listOfAddressCards(listOfAddress()),
-        ],
       ),
     );
   }
 }
 
-Widget addAddressButton(Function onpress) {
+Widget addAddressButton(VoidCallback onpress) {
 // Returns the addAddress button on top of the page, takes in an onPress function
 // which is called when the button is pressed.
-
   Widget buttonText = const Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
@@ -92,11 +110,8 @@ Widget addAddressButton(Function onpress) {
   );
   return Padding(
     padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-    child: InkWell(
-      borderRadius: BorderRadius.circular(8),
-      onTap: () {
-        onpress;
-      },
+    child: ElevatedButton(
+      onPressed: onpress,
       child: Container(
         constraints: const BoxConstraints(maxHeight: 40),
         decoration: BoxDecoration(
@@ -112,14 +127,13 @@ Widget addAddressButton(Function onpress) {
   );
 }
 
-Widget listOfAddressCards(List<Map<String, dynamic>> listOfAddress) {
+Widget listOfAddressCards(List<AddressDataModel> listOfAddress) {
 // Returns a list of addressCards arranged in a column and a scrollView to be
-// placed directly into the body of addressBookScreen.
-
+// placed directly into the body of addressBookScreen
   List<Widget> listOfAddressCardsFromAddresses = [];
   for (int i = 0; i < listOfAddress.length; i++) {
     listOfAddressCardsFromAddresses.add(
-      addressCard(listOfAddress[i]["addressType"], listOfAddress[i]["address"]),
+      addressCard(listOfAddress[i].addrType, listOfAddress[i].addLine1),
     );
   }
   return Flexible(
@@ -131,9 +145,6 @@ Widget listOfAddressCards(List<Map<String, dynamic>> listOfAddress) {
 }
 
 Widget addressCard(String addressType, String address) {
-  // Returns a card arranging the provided information in the format specified,
-  // automatically deciding what icon (home or work) to apply based on the isWork value.
-
   IconData addressTypeIcon = Icons.home;
   if (addressType == "Work") {
     addressTypeIcon = Icons.work;
@@ -142,7 +153,6 @@ Widget addressCard(String addressType, String address) {
   } else {
     addressTypeIcon = Icons.language_rounded;
   }
-
   Widget addressTypeData = Row(
     mainAxisAlignment: MainAxisAlignment.start,
     children: [

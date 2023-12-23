@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +8,8 @@ import 'package:pinput/pinput.dart';
 import 'package:tiffsy_app/repositories/user_repository.dart';
 import 'package:tiffsy_app/screens/LoginScreen/bloc/login_bloc.dart';
 import 'package:tiffsy_app/screens/PersonalDetailsScreen/screen/personalDetails_screen.dart';
+
+import '../../HomeScreen/screen/home_screen.dart';
 
 
 class OtpScreen extends StatefulWidget {
@@ -37,28 +40,22 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     
-    return RepositoryProvider(
-      create: (context) => UserRepository(),
-      child: BlocProvider(
-        create: (context) => LoginBloc(userRepository: RepositoryProvider.of(context)),
-        child: Scaffold(
-            appBar: AppBar(
-              title: Text(
-                "OTP Verification",
-                textAlign: Platform.isIOS ? TextAlign.left : TextAlign.center,
-                style: const TextStyle(
-                  color: Color(0xFF121212),
-                  fontSize: 25,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              backgroundColor: Color(0xffFAFAFA),
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "OTP Verification",
+            textAlign: Platform.isIOS ? TextAlign.left : TextAlign.center,
+            style: const TextStyle(
+              color: Color(0xFF121212),
+              fontSize: 25,
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w500,
             ),
-            backgroundColor: Color(0xffFAFAFA),
-            body: content(verificationId: widget.verificationId, phoneNumber: widget.phoneNumber,)),
-      ),
-    );
+          ),
+          backgroundColor: Color(0xffFAFAFA),
+        ),
+        backgroundColor: Color(0xffFAFAFA),
+        body: content(verificationId: widget.verificationId, phoneNumber: widget.phoneNumber,));
   }
 }
 
@@ -77,7 +74,7 @@ class _contentState extends State<content> {
   bool enableResend = false;
   late Timer timer;
   TextEditingController otpController = TextEditingController();
-
+  LoginBloc loginBloc = LoginBloc(OTPScreenInitialState());
   @override
   void initState() {
     // TODO: implement initState
@@ -141,11 +138,12 @@ class _contentState extends State<content> {
 
   @override
   Widget build(BuildContext context) {
-
+    
     var _mediaQuery = MediaQuery.of(context);
     return BlocConsumer<LoginBloc, LoginState>(
+      bloc: loginBloc,
       listener: (context, state) {
-        if(state is AuthLoggedInState){
+        if(state is LoginScreenLoadedState){
           Navigator.popUntil(context, (route) => route.isFirst);
           Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (_) => const PersonalDetailsScreen()));
@@ -159,16 +157,18 @@ class _contentState extends State<content> {
               )
           );
         }
+        else if(state is LoadHomeScreenState){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> HomeScreen()));
+        }
       },
       builder: (context, state) {
-
-         if(state is AuthLoadingState){
+        if(state is AuthLoadingState){
             return const Center(
             child: CircularProgressIndicator(),
           );
-        }
-
-        return SingleChildScrollView(
+        } 
+        else if(state is OTPScreenInitialState) {
+          return SingleChildScrollView(
           child: Container(
             margin: EdgeInsets.only(left: 10, right: 10),
             height: _mediaQuery.size.height * 1.0,
@@ -208,7 +208,7 @@ class _contentState extends State<content> {
                   pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
                   showCursor: true,
                   onCompleted: (pin) {
-                    BlocProvider.of<LoginBloc>(context).add(VerifyOtp(otp: pin.toString(), verificationId: widget.verificationId));
+                    loginBloc.add(VerifySentOtp(optCode: pin.toString(), verificationId: widget.verificationId));
                   },
                   controller: otpController,
                 ),
@@ -261,6 +261,12 @@ class _contentState extends State<content> {
             ),
           ),
         );
+        }
+        else{
+          return SizedBox(
+            child: Text("Code phat gya bhai"),
+          );
+        }
       },
     );
   }

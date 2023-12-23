@@ -1,111 +1,160 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
-import 'package:pinput/pinput.dart';
-import 'package:tiffsy_app/repositories/user_repository.dart';
+import 'package:tiffsy_app/screens/LoginScreen/repository/user_repo.dart';
 part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
+  
+  String loginResult = "";
+  UserRepo userRepo = UserRepo();
+  UserCredential? userCredential;
+  late final GoogleSignIn _googleSignIn;
 
-  LoginBloc({required this.userRepository}) : super(UnAuthenticated()){
-    on<GoogleSignInRequested>(_onGoogleSignInPressed);
-    on<GoogleSignOutRequested>(_onGoogleSignOutPressed);
-    on<SendOtp>(_sendOtpPressed);
-    on<VerifyOtp>(_verifyOtp);
-    on<SignInWithPhone>(_signInWithOtp);
-  }
-
-  final UserRepository userRepository;
-  String? _verificationId;
-
-  FutureOr<void> _onGoogleSignInPressed(GoogleSignInRequested event, Emitter<LoginState> emit) async{
-    final response = await userRepository.signInWithGoogle();
-    if(response != null){
-      emit(Authenticated());
-    }
-  }
-
-  FutureOr<void> _onGoogleSignOutPressed(GoogleSignOutRequested event, Emitter<LoginState> emit) {
-    userRepository.handleSignOut();
-    emit(UnAuthenticated());
-  }
-
-
-  FutureOr<void> _sendOtpPressed(SendOtp event, Emitter<LoginState> emit) async {
-
-    emit(AuthLoadingState());
-    final phoneNumber = event.phoneNumber;
-    Completer<void> completer = Completer<void>(); // Create a Completer
-
-    await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      verificationCompleted: (phoneAuthCredential) async {
-        print('\x1B[33mVerification completed verf\x1B[0m' );
-        add(SignInWithPhone(credential: phoneAuthCredential));
-        completer.complete();
-      }, 
-      verificationFailed: (error){
-        emit(AuthErrorState(error.message.toString()));
-      }, 
-      codeSent: (verificationId, forceResendingToken) {
-        this._verificationId = verificationId;
-        print('\x1B[33m${_verificationId}\x1B[0m');
-        print('\x1B[33mVerification completfasfdaed\x1B[0m');
-        emit(AuthCodeSentSate(verificationId: verificationId, phoneNumber: phoneNumber));
-      }, 
-      codeAutoRetrievalTimeout: (verificationId){
-        _verificationId = verificationId;
-      }
-    );
-
-    await completer.future; // Await the completion of the Future
-    print('\x1B[33mThis is yellow text\x1B[0m');
-    // emit(AuthCodeSentSate());
-  }
-
-  FutureOr<void> _verifyOtp(VerifyOtp event, Emitter<LoginState> emit) async {
-    
-    Completer<void> completer = Completer<void>();
-    try{
-      final otp = event.otp;
-      this._verificationId = event.verificationId;
-      
-      print("response otp: " + otp);
+  LoginBloc(super.initialState) {
+    on<SendOtpToPhoneEvent>((event, emit) async {
       emit(AuthLoadingState());
-      print('\x1B[33m${_verificationId}\x1B[0m');
-      PhoneAuthCredential credential = await PhoneAuthProvider.credential(verificationId: _verificationId!, smsCode: otp);
-      add(SignInWithPhone(credential: credential));
-    } catch (error){
-      emit(AuthErrorState(error.toString()));
-    }
-    print('\x1B[33m_verify otp fadsfdas\x1B[0m');
-    completer.complete();
-    await completer.future; 
-    print('\x1B[33m_verify otp\x1B[0m');
-
-  }
-
-  FutureOr<void> _signInWithOtp(SignInWithPhone event, Emitter<LoginState> emit) async {
-    
-    final credential = event.credential;
-
-    try{
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-      if(userCredential.user != null){
-        print('\x1B[33mUser credential\x1B[0m');
-
-        emit(AuthLoggedInState(userCredential.user!));
+      try {
+        await userRepo.signInWithPhoneNumber(
+            phoneNumber: event.phoneNumber,
+            verificationCompleted: (PhoneAuthCredential credential) {
+              add(OnPhoneAuthVerificationCompletedEvent(
+                  credential: credential));
+            },
+            verificationFailed: (FirebaseAuthException e) {
+              add(OnPhoneAuthErrorEvent(error: e.toString()));
+            },
+            codeSent: (String verificationId, int? refreshToken) {
+              add(OnPhoneOtpSend(
+                  verificationId: verificationId, token: refreshToken));
+            },
+            codeAutoRetrievalTimeout: (String verificationId) {});
+      } catch (err) {
+        emit(AuthErrorState(err.toString()));
       }
-    } on FirebaseAuthException catch (ex){
-        emit(AuthErrorState(ex.message.toString()));
-    }
+    });
 
+    on<OnPhoneOtpSend>((event, emit) {
+      emit(PhoneAuthCodeSentSuccess(verificationId: event.verificationId));
+    });
+
+    on<VerifySentOtp>(((event, emit) {
+      try {
+        PhoneAuthCredential credential = PhoneAuthProvider.credential(
+            verificationId: event.verificationId, smsCode: event.optCode);
+        add(OnPhoneAuthVerificationCompletedEvent(credential: credential));
+      } catch (err) {
+        emit(AuthErrorState(err.toString()));
+      }
+    }));
+
+    on<OnPhoneAuthErrorEvent>((event, emit) {
+      emit(AuthErrorState(event.error.toString()));
+    });
+
+    on<OnPhoneAuthVerificationCompletedEvent>((event, emit) async {
+      try {
+        await userRepo.firebaseAuth
+            .signInWithCredential(event.credential)
+            .then((value) {
+              final user = FirebaseAuth.instance.currentUser!;
+              add(CheckPreviousPhoneEvent(phoneNumber: user.phoneNumber.toString()));
+          // emit(LoginScreenLoadedState());
+        });
+      } catch (err) {
+        emit(AuthErrorState(err.toString()));
+      }
+    });
+
+    on<SignInWithGooglePressedEvent>(((event, emit) async {
+      try {
+        final GoogleSignInAccount? googleUser = await userRepo.googleSignIn.signIn();
+        if(googleUser == null){
+          emit(AuthErrorState("Google User id null"));
+        }
+        final GoogleSignInAuthentication? googleAuth =
+            await googleUser?.authentication;
+
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth?.accessToken,
+          idToken: googleAuth?.idToken,
+        );
+        try {
+          await FirebaseAuth.instance
+              .signInWithCredential(credential)
+              .then((value){
+                final user = FirebaseAuth.instance.currentUser!;
+              add(CheckPreviousEmailEvent(mailId: user.email.toString()));
+          });
+        } catch (e) {
+          emit(AuthErrorState(e.toString()));
+        }
+
+      } catch (err) {
+        emit(AuthErrorState(err.toString()));
+      }
+    }));
+
+    on<CheckPreviousPhoneEvent>((event, emit) async {
+      try{
+        bool isPresent = await userRepo.checkPhoneNumber(phoneNumber: event.phoneNumber);
+        if(!isPresent){
+          try{
+            await userRepo.storePhoneNumber(phoneNumber: event.phoneNumber);
+            emit(LoginScreenLoadedState());
+          }
+          catch(err){
+            emit(AuthErrorState(err.toString()));
+          }
+        }
+        else{
+          emit(LoadHomeScreenState());
+        }
+      }
+      catch(err){
+        emit(AuthErrorState(err.toString()));
+      }
+    });
+
+    on<CheckPreviousEmailEvent>((event, emit) async {
+      try{
+        bool isPresent = await userRepo.checkEmail(mailId: event.mailId);
+        if(!isPresent){
+          try{
+            await userRepo.storeEmail(mailId: event.mailId);
+            emit(LoginScreenLoadedState());
+          }
+          catch(err){
+            emit(AuthErrorState(err.toString()));
+          }
+        }
+        else{
+          emit(LoadHomeScreenState());
+        }
+      }
+      catch(err){
+        emit(AuthErrorState(err.toString()));
+      }
+    });
   }
 
+  // FutureOr<void> _onGoogleSignInPressed(
+  //     GoogleSignInRequested event, Emitter<LoginState> emit) async {
+  //   // final response = await userRepository.signInWithGoogle();
+  //   // if(response != null){
+  //   //   emit(Authenticated());
+  //   // }
+  // }
+
+  // FutureOr<void> _onGoogleSignOutPressed(
+  //     GoogleSignOutRequested event, Emitter<LoginState> emit) {
+  //   // userRepository.handleSignOut();
+  //   // emit(UnAuthenticated());
+  // }
 }

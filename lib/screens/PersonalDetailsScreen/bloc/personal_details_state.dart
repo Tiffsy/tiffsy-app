@@ -8,3 +8,14 @@ sealed class PersonalDetailsState extends Equatable {
 }
 
 final class PersonalDetailsInitial extends PersonalDetailsState {}
+final class ScreenLoadingScreen extends PersonalDetailsState{}
+final class ScreenErrorState extends PersonalDetailsState{
+  final String error;
+  ScreenErrorState({required this.error});
+}
+final class ContinueButtonClickedSuccessState extends PersonalDetailsState{}
+
+
+
+
+

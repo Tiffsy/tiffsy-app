@@ -8,10 +8,12 @@ import 'package:tiffsy_app/screens/BillingSumaryScreen/screen/billing_summary_sc
 import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/HowItWorksScreen/bloc/how_it_works_bloc.dart';
 import 'package:tiffsy_app/screens/HowItWorksScreen/screen/how_it_works_screen.dart';
+import 'package:tiffsy_app/screens/LoginScreen/repository/user_repo.dart';
 import 'package:tiffsy_app/screens/LoginScreen/screen/login_screen.dart';
 import 'package:tiffsy_app/screens/OrderHistoryScreen/bloc/order_history_bloc.dart';
 import 'package:tiffsy_app/screens/OrderHistoryScreen/screen/order_history_screen.dart';
 import 'package:tiffsy_app/screens/OtpScreen/screen/opt_screen.dart';
+import 'package:tiffsy_app/screens/PersonalDetailsScreen/screen/personalDetails_screen.dart';
 import 'package:tiffsy_app/screens/ProfileScreen/screen/profile_screen.dart';
 import 'package:tiffsy_app/screens/PaymentCheckoutScreen/screen/payment_checkout_screen.dart';
 import 'package:tiffsy_app/screens/RefundPolicyScreen/screen/refund_policy_screen.dart';
@@ -23,12 +25,14 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((value) => runApp(const MyApp()));
+      .then((value) => runApp(RepositoryProvider(
+            create: (context) => UserRepo(),
+            child: MyApp(),
+          )));
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     var _mediaQuery = MediaQuery.of(context);

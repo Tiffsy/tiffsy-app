@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -19,6 +20,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser!;
     var _mediaQuery = MediaQuery.of(context);
     final ThemeData theme = Theme.of(context);
     return Scaffold(
@@ -47,14 +49,15 @@ class _ProfileState extends State<Profile> {
                     IconButton(
                         onPressed: () => {},
                         icon: ClipOval(
-                            child: Image.asset(
-                          'assets/images/logo/tiffsy.png',
-                          width: 64,
-                          height: 64,
-                          fit: BoxFit.cover,
-                        ), 
-                        ) // TODO: Bio Pic
-                        ),
+                          child: (user.photoURL != null)
+                      ? Image.network('${user.photoURL}', fit: BoxFit.cover, height: 64, width: 64,)
+                      : Container(
+                        height: 64,
+                        width: 64,
+                        child: Center(child: Text("R")),
+                        color: Colors.teal[100],
+                      ))
+                    ),
                     SizedBox(
                       width: 10,
                     ),
@@ -84,7 +87,9 @@ class _ProfileState extends State<Profile> {
                         color: Colors.white,
                         size: 35,
                       ),
-                      onPress: () => {}),
+                      onPress: () => {
+                        
+                      }),
                   customButton(
                       text: 'Payments',
                       icon: Icon(

@@ -16,14 +16,51 @@ class GoogleSignInRequested extends LoginEvent {
 }
 class GoogleSignOutRequested extends LoginEvent{
 }
-class SendOtp extends LoginEvent {
+class SignInWithGooglePressedEvent extends LoginEvent{
 
+}
+class SendOtpToPhoneEvent extends LoginEvent{
+  final String phoneNumber;
+  SendOtpToPhoneEvent({required this.phoneNumber});
+}
+
+class OnPhoneOtpSend extends LoginEvent{
+
+  final String verificationId;
+  final int? token;
+
+  OnPhoneOtpSend({required this.verificationId, required this.token});
+  
+}
+
+class VerifySentOtp extends LoginEvent{
+  final String optCode;
+  final String verificationId;
+
+  VerifySentOtp({required this.optCode, required this.verificationId});
+  
+}
+
+class OnPhoneAuthVerificationCompletedEvent extends LoginEvent{
+  final AuthCredential credential;
+  OnPhoneAuthVerificationCompletedEvent({required this.credential});
+}
+
+class OnPhoneAuthErrorEvent extends LoginEvent{
+  final String error;
+  OnPhoneAuthErrorEvent({required this.error});
+}
+
+
+class SendOtp extends LoginEvent {
   final String phoneNumber;
   const SendOtp({required this.phoneNumber});
 
   @override
   List<Object> get props => [phoneNumber];
 }
+
+
 class VerifyOtp extends LoginEvent{
   
   final String otp;
@@ -42,26 +79,14 @@ class SignInWithPhone extends LoginEvent{
   List<Object> get props => [credential];
 }
 
+class CheckPreviousPhoneEvent extends LoginEvent{
+  final String phoneNumber;
+  CheckPreviousPhoneEvent({required this.phoneNumber});
+}
 
-// BlocConsumer<LoginBloc, LoginState>(
-//                     listener: (context, state) {
-
-//                       if(state is AuthLoggedInState){
-//                         Navigator.popUntil(context, (route) => route.isFirst);
-//                         Navigator.pushReplacement(context,
-//                             MaterialPageRoute(builder: (_) => const PersonalDetailsScreen()));
-//                       }
-//                       else if (state is AuthErrorState){
-//                         ScaffoldMessenger.of(context).showSnackBar(
-//                           SnackBar(
-//                               content: Text(state.error),
-//                               backgroundColor: Colors.red,
-//                               duration: const Duration(microseconds: 2000),
-//                             )
-//                         );
-//                       }
-
-//                     },
-//                     builder: (context, state) {
+class CheckPreviousEmailEvent extends LoginEvent {
+  final String mailId;
+  CheckPreviousEmailEvent({required this.mailId});
+}
                       
                      

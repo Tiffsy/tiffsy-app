@@ -1,9 +1,9 @@
+import 'dart:ffi';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:pinput/pinput.dart';
-import 'package:tiffsy_app/repositories/user_repository.dart';
 import 'package:tiffsy_app/screens/HomeScreen/bloc/home_bloc.dart';
 import 'package:tiffsy_app/screens/HomeScreen/model/home_model.dart';
 import 'package:tiffsy_app/screens/LoginScreen/bloc/login_bloc.dart';
@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Home();
+    return const Home();
   }
 }
 
@@ -51,41 +51,28 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         title: Row(
-          children: [
-            customAddress(
-                context, theme, () {
-                  _showTopSheet(context);
-                }, "Home", "Community Center Road")
-          ],
+          children: [],
         ),
         actions: [
           IconButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ProfileScreen()));
-              },
-              icon: ClipOval(
-                  child: (user.photoURL != null)
-                      ? Image.network('${user.photoURL}', fit: BoxFit.cover)
-                      : Container(
-                          height: 50,
-                          width: 50,
-                          child: Center(child: Text("R")),
-                          color: Colors.teal[100],
-                        ))),
+            onPressed: () => {},
+            icon: ClipOval(
+              child: Image.asset(
+                'assets/images/logo/tiffsy.png',
+                fit: BoxFit.cover,
+              ),
+            ), // TODO: Bio Pic
+          ),
         ],
       ),
       bottomNavigationBar: NavigationBar(
-        backgroundColor: theme.primaryColor,
         onDestinationSelected: (int index) {
           setState(() {
             currentPageIndex = index;
           });
         },
-        shadowColor: theme.focusColor,
-        indicatorColor: theme.focusColor,
         selectedIndex: currentPageIndex,
-        destinations: <Widget>[
+        destinations: const <Widget>[
           NavigationDestination(
             selectedIcon: Icon(Icons.restaurant_menu),
             icon: Icon(Icons.restaurant_menu_outlined),
@@ -103,276 +90,298 @@ class _HomeState extends State<Home> {
           )
         ],
       ),
-      body: <Widget>[
-        Card(
-            color: theme.scaffoldBackgroundColor,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+        ),
+        child: <Widget>[
+          menuPage(theme, homeBloc),
+          Card(
             shadowColor: Colors.transparent,
             margin: const EdgeInsets.all(8.0),
-            child: menu(theme, context, homeBloc)),
-        Card(
-          shadowColor: Colors.transparent,
-          margin: const EdgeInsets.all(8.0),
-          child: SizedBox.expand(
-            child: Center(
-              child: Text(
-                'Payments',
-                style: theme.textTheme.titleLarge,
+            child: SizedBox.expand(
+              child: Center(
+                child: Text(
+                  'Payments',
+                  style: theme.textTheme.titleLarge,
+                ),
               ),
             ),
           ),
-        ),
-        Card(
-          shadowColor: Colors.transparent,
-          margin: const EdgeInsets.all(8.0),
-          child: SizedBox.expand(
-            child: Center(
-              child: Text(
-                'Subscription',
-                style: theme.textTheme.titleLarge,
+          Card(
+            shadowColor: Colors.transparent,
+            margin: const EdgeInsets.all(8.0),
+            child: SizedBox.expand(
+              child: Center(
+                child: Text(
+                  'Subscription',
+                  style: theme.textTheme.titleLarge,
+                ),
               ),
             ),
           ),
-        ),
-      ][currentPageIndex],
+        ][currentPageIndex],
+      ),
     );
   }
 }
 
-
-
-void _showTopSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    // isScrollControlled: true,  // Allows the sheet to go beyond the screen height
-    builder: (BuildContext context) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          // Add some top padding to visually differentiate the sheet from the app bar
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-            child: ElevatedButton(
-              onPressed: (){},
-              child: Text("Add Address"),
-            )
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: 50,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  title: Text('Item $index'),
-                );
-              },
+Widget menuPage(ThemeData theme, HomeBloc homeBloc) {
+  return Builder(builder: (context) {
+    var mediaQuery = MediaQuery.of(context);
+    return BlocConsumer<HomeBloc, HomeState>(
+      bloc: homeBloc,
+      listener: (context, state) {},
+      builder: (context, state) {
+        if (state is HomeLoadingState) {
+          return const CircularProgressIndicator();
+        } else if (state is HomeFetchSuccessfulState) {
+          final menuState = state;
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                upgradeToDeluxCard(() {}),
+                const SizedBox(height: 24),
+                const Text(
+                  "Today's Menu",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    height: 24 / 16,
+                    letterSpacing: 0.15,
+                    color: Color(0xff121212),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Column(
+                  children: listOfMenuCards(menuState.menu, context, homeBloc),
+                )
+              ],
             ),
-          ),
-        ],
-      );
-    },
-  );
+          );
+        }
+        if (state is HomeErrorState) {
+          return const SnackBar(
+            content: Text("Error"),
+          );
+        }
+        return const SizedBox();
+      },
+    );
+  });
 }
 
-Widget customAddress(BuildContext context, ThemeData theme,
-    VoidCallback onPressed, String addType, String add) {
-  return Container(
-      child: Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      Icon(Icons.location_on, size: 36, color: Color(0xffFFBE1D)),
-      TextButton(
-          onPressed: onPressed,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    addType,
-                    style: const TextStyle(
-                      color: Color(0xFF121212),
-                      fontSize: 16,
-                      fontFamily: 'Roboto',
-                      fontWeight: FontWeight.w500,
-                      height: 0.09,
-                      letterSpacing: 0.15,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Icon(Icons.expand_more)
-                ],
-              ),
-              Text(
-                add,
-                style: TextStyle(
-                  color: Color(0xFF121212),
-                  fontSize: 12,
-                  fontFamily: 'Roboto',
-                  fontWeight: FontWeight.w400,
-                ),
-              )
-            ],
-          ))
-    ],
-  ));
-}
-
-Widget menu(ThemeData theme, BuildContext context, HomeBloc homeBloc) {
-  var _mediaQuery = MediaQuery.of(context);
-  return BlocConsumer<HomeBloc, HomeState>(
-    bloc: homeBloc,
-    listener: (context, state) {},
-    builder: (context, state) {
-      if (state is HomeLoadingState) {
-        return CircularProgressIndicator();
-      }
-      if (state is HomeFetchSuccessfulState) {
-        final menuState = state as HomeFetchSuccessfulState;
-
-        return SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                height: _mediaQuery.size.height * 0.2,
-                child: Container(
-                  alignment: Alignment.center,
-                  child: SvgPicture.asset(
-                    'assets/images/vectors/home_banner.svg',
-                    semanticsLabel: 'vector image',
-                  ),
-                ),
-              ),
-              const Text("Today´s Menu"),
-              SizedBox(
-                height: 2000,
-                child: ListView.builder(
-                  itemCount: menuState.menu.length,
-                  itemBuilder: (context, index) {
-                    return customCard(theme, context, menuState.menu[index]);
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      }
-      if (state is HomeErrorState) {
-        return const SnackBar(
-          content: Text("Error"),
-        );
-      }
-      return SizedBox();
-    },
-  );
-}
-
-Widget customCard(ThemeData theme, BuildContext context, MenuDataModel menu) {
-  return Card(
-    child: Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+Widget upgradeToDeluxCard(Function upgradeCardOnTap) {
+  return Builder(builder: (context) {
+    return GestureDetector(
+      onTap: () {
+        upgradeCardOnTap();
+      },
+      child: SizedBox(
+        width: (MediaQuery.sizeOf(context).width - 40),
+        height: (MediaQuery.sizeOf(context).width - 40) * (154 / 372),
+        child: Stack(
           children: [
-            Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Card(
-                    color: theme.focusColor,
-                    child: Text(menu.type),
-                  ),
-                  Text(menu.title),
-                  Text(menu.description),
-                  Text(menu.price.toString())
-                ],
+            SvgPicture.asset(
+              'assets/images/vectors/home_banner.svg',
+              semanticsLabel: 'vector image',
+            ),
+            SizedBox(
+              width: MediaQuery.sizeOf(context).width,
+              child: Image.asset(
+                'assets/images/vectors/thali1 1.png',
+                fit: BoxFit.contain,
+                alignment: Alignment.bottomRight,
               ),
             ),
-            Container(
-                decoration: BoxDecoration(
-                    color: Colors.blue,
-                    border: Border.all(
-                      color: Colors.red, // Border color
-                      width: 2.0, // Border width
-                    )),
-                child: Image.asset(
-                  'assets/images/vectors/thali1 1.png',
-                  height: 100,
-                  width: 100,
-                )),
           ],
         ),
-        SvgPicture.asset(
-          'assets/images/vectors/Line 5.svg',
+      ),
+    );
+  });
+}
+
+List<Widget> listOfMenuCards(
+    List<MenuDataModel> menu, BuildContext context, HomeBloc homeBloc) {
+  List<Widget> listOfMenuCards = [];
+  for (var element in menu) {
+    listOfMenuCards.addAll([
+      customMenuCard(context, element, homeBloc),
+      const SizedBox(height: 18),
+      dashedDivider(context),
+      const SizedBox(height: 16)
+    ]);
+  }
+  return listOfMenuCards;
+}
+
+Widget customMenuCard(
+    BuildContext context, MenuDataModel menuPage, HomeBloc homeBloc) {
+  return SizedBox(
+    width: MediaQuery.sizeOf(context).width - 20,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            mealTypeTag(menuPage.type),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: (MediaQuery.sizeOf(context).width * 0.45) - 20,
+              child: Row(
+                children: [
+                  Flexible(
+                    child: mealCardBoldText(menuPage.title),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              "₹${menuPage.price.toString()}",
+              style: const TextStyle(
+                color: Color(0xff121212),
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                height: 16 / 12,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 9),
+            SizedBox(
+              width: (MediaQuery.sizeOf(context).width * 0.45) - 20,
+              child: Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      menuPage.description,
+                      style: const TextStyle(
+                        color: Color(0xff121212),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        height: 16 / 12,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        menuImage(homeBloc, menuPage, context)
+      ],
+    ),
+  );
+}
+
+Widget menuImage(
+    HomeBloc homeBloc, MenuDataModel menuPage, BuildContext context) {
+  return SizedBox(
+    width: MediaQuery.sizeOf(context).width * 0.35,
+    child: Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        Align(
+          alignment: Alignment.topRight,
+          child: Image.asset(
+            'assets/images/vectors/thali_full.png',
+            height: 110,
+            width: 110,
+          ),
+        ),
+        InkWell(
+          onTap: () {},
+          borderRadius: BorderRadius.circular(6),
+          child: Container(
+            height: (MediaQuery.sizeOf(context).width * 0.25) * 0.4,
+            width: MediaQuery.sizeOf(context).width * 0.25,
+            decoration: BoxDecoration(
+              color: const Color(0xffcbffb3),
+              border: Border.all(width: 1, color: const Color(0xff6aa64f)),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: const Center(
+              child: Text(
+                "Add",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  height: 24 / 16,
+                  letterSpacing: 0.15,
+                ),
+              ),
+            ),
+          ),
         )
       ],
     ),
   );
 }
 
-// class HomeScreen extends StatefulWidget {
-//   const HomeScreen({super.key});
-//   @override
-//   State<HomeScreen> createState() => __HomeScreenStateState();
-// }
+Text mealCardBoldText(String text) {
+  // Returns the string as a Text widget with the bold formatting mentioned in the
+  // design.
+  return Text(
+    text,
+    style: const TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      height: 20 / 14,
+      letterSpacing: 0.1,
+    ),
+  );
+}
 
-// class __HomeScreenStateState extends State<HomeScreen> {
-  
-//   // final user = FirebaseAuth.instance.currentUser!;
-//   @override
-//   Widget build(BuildContext context) {
-//     return RepositoryProvider(
-//         create: (context) => UserRepository(),
-//         child: BlocProvider(
-//             create: (context) =>
-//                 LoginBloc(userRepository: RepositoryProvider.of(context)),
-//             child: content()));
-//   }
+Widget mealTypeTag(String mealType) {
+  // Returns the meal type string placed in the tag like container as mentioned in the
+  // design.
+  return Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(6),
+      color: const Color(0xffffbe1d),
+    ),
+    width: 76,
+    height: 23,
+    child: Center(
+      child: Text(
+        mealType,
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          height: 16 / 11,
+          letterSpacing: 0.5,
+        ),
+      ),
+    ),
+  );
+}
 
-//   Widget content() {
-
-//     return BlocConsumer<LoginBloc, LoginState>(
-//       listener: (context, state) {
-//         if(state is UnAuthenticated){
-//           Navigator.of(context).pushAndRemoveUntil<Type>(
-//             MaterialPageRoute(builder: (context) => const LoginScreen()),
-//             (route) => false,
-//           );
-//         }
-//       },
-//       builder: (context, state) {
-//         return Scaffold(
-//           appBar: AppBar(
-//             title: const Text(
-//               'Tiffsy',
-//               textAlign: TextAlign.left,
-//             ),
-//           ),
-//           body: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               // const Center(
-//               //   child: Text("Welcome to tiffsy"),
-//               // ),
-//               // Text('${user.displayName}'),
-//               // if(user.photoURL !=null)
-//               //   Image.network('${user.photoURL}')
-//               // else
-//               //   Container(),
-              
-//               // ElevatedButton(onPressed: (){
-//               //   context.read<LoginBloc>().add(GoogleSignOutRequested());
-//               // }, child: const Text("Sign Out")),
-//             ],
-//           )
-//         );
-//       },
-//     );
-//   }
-// }
+Widget dashedDivider(BuildContext context) {
+  double width = MediaQuery.of(context).size.width;
+  int count = (width / 16).floor();
+  List<Widget> listOfDivider = [];
+  for (count; count > 0; count--) {
+    listOfDivider.add(
+      const SizedBox(
+        width: 8,
+        child: Divider(
+          color: Color(0x33121212),
+          endIndent: 0,
+          indent: 0,
+          height: 1,
+          thickness: 1,
+        ),
+      ),
+    );
+  }
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: listOfDivider,
+  );
+}

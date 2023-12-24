@@ -9,23 +9,20 @@ part 'address_book_state.dart';
 
 class AddressBookBloc extends Bloc<AddressBookEvent, AddressBookState> {
   AddressBookBloc() : super(AddressBookInitial()) {
-    
     on<AddressBookInitialFetchEvent>((event, emit) async {
       emit(AddressBookLoadingState());
-      Result<List<AddressDataModel>> result = await AddressBookRepo.fetchAddressList();
-      if(result.isSuccess){
+      Result<List<AddressDataModel>> result =
+          await AddressBookRepo.fetchAddressList();
+      if (result.isSuccess) {
         List<AddressDataModel> addressList = result.data!;
-        emit(AddressListFetchSuccessState(addressList: addressList));  
-      }
-      else{
+        emit(AddressListFetchSuccessState(addressList: addressList));
+      } else {
         emit(AddressBookErrorState(error: result.error.toString()));
       }
     });
 
     on<AddressBookAddAdresssButtonClickedEvent>((event, emit) {
-        print("Raj");
-        emit(AddAddressButtonClickedState());
+      emit(AddAddressButtonClickedState());
     });
   }
-  
 }

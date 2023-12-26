@@ -142,9 +142,12 @@ Widget menuPage(ThemeData theme, HomeBloc homeBloc) {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                upgradeToDeluxCard(() {}),
+                upgradeToDeluxCard(() {
+                  // onTap for the upgrade to deluxe button.
+                }),
                 const SizedBox(height: 24),
                 const Text(
+                  // Today's Menu
                   "Today's Menu",
                   style: TextStyle(
                     fontSize: 16,
@@ -156,8 +159,9 @@ Widget menuPage(ThemeData theme, HomeBloc homeBloc) {
                 ),
                 const SizedBox(height: 12),
                 Column(
+                  // list of menu cards
                   children: listOfMenuCards(menuState.menu, context, homeBloc),
-                )
+                ),
               ],
             ),
           );
@@ -282,25 +286,23 @@ Widget customMenuCard(
 
 Widget menuImage(
     HomeBloc homeBloc, MenuDataModel menuPage, BuildContext context) {
+  double width = MediaQuery.sizeOf(context).width;
   return SizedBox(
-    width: MediaQuery.sizeOf(context).width * 0.35,
+    width: width * 0.35,
     child: Stack(
       alignment: Alignment.bottomCenter,
       children: [
-        Align(
-          alignment: Alignment.topRight,
-          child: Image.asset(
-            'assets/images/vectors/thali_full.png',
-            height: 110,
-            width: 110,
-          ),
+        Image.asset(
+          'assets/images/vectors/thali_full.png',
+          fit: BoxFit.contain,
+          width: width * 0.3,
         ),
         InkWell(
           onTap: () {},
           borderRadius: BorderRadius.circular(6),
           child: Container(
-            height: (MediaQuery.sizeOf(context).width * 0.25) * 0.4,
-            width: MediaQuery.sizeOf(context).width * 0.25,
+            height: (MediaQuery.sizeOf(context).width * 0.2) * 0.4,
+            width: MediaQuery.sizeOf(context).width * 0.2,
             decoration: BoxDecoration(
               color: const Color(0xffcbffb3),
               border: Border.all(width: 1, color: const Color(0xff6aa64f)),
@@ -383,5 +385,28 @@ Widget dashedDivider(BuildContext context) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: listOfDivider,
+  );
+}
+
+Widget subscriptionCard(String subscriptionType) {
+  return Container(
+    decoration: BoxDecoration(
+        color: const Color(0xffffffff),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x1EFFBE1D),
+            blurRadius: 16,
+            offset: Offset(0, 4),
+            spreadRadius: 0,
+          )
+        ]),
+    height: 180,
+    width: 142,
+    child: const Column(
+      children: [
+        SizedBox(height: 47),
+      ],
+    ),
   );
 }

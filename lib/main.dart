@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AddressBookScreen(),
+      home: HomeScreen(),
       title: 'Tiffsy',
       theme: ThemeData(
         textSelectionTheme: const TextSelectionThemeData(
@@ -44,6 +44,9 @@ class MyApp extends StatelessWidget {
           selectionHandleColor: Color(0xffffe5a3),
           selectionColor: Color(0x33ffbe1d),
         ),
+        navigationBarTheme: const NavigationBarThemeData(
+            backgroundColor: Color(0xfffffcef),
+            surfaceTintColor: Color(0xfffffcef)),
         dropdownMenuTheme: DropdownMenuThemeData(
           menuStyle: MenuStyle(
             backgroundColor: MaterialStateColor.resolveWith(

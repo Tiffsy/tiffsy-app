@@ -45,8 +45,12 @@ class MyApp extends StatelessWidget {
           selectionColor: Color(0x33ffbe1d),
         ),
         navigationBarTheme: const NavigationBarThemeData(
-            backgroundColor: Color(0xfffffcef),
-            surfaceTintColor: Color(0xfffffcef)),
+          backgroundColor: Color(0xfffffcef),
+          surfaceTintColor: Color(0xfffffcef),
+          indicatorColor: Color(0xffffe5a3),
+          iconTheme:
+              MaterialStatePropertyAll(IconThemeData(color: Color(0xff323232))),
+        ),
         dropdownMenuTheme: DropdownMenuThemeData(
           menuStyle: MenuStyle(
             backgroundColor: MaterialStateColor.resolveWith(

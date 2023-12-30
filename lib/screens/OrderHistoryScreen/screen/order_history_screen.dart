@@ -38,6 +38,7 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
             ),
             onPressed: () {
               // go back functionality, most likely using Navigator.pop()
+              Navigator.pop(context);
             },
           ),
           title: const Text(

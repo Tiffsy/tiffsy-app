@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
@@ -9,38 +10,49 @@ class SplashScreen extends StatefulWidget {
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
-     Future.delayed(const Duration(milliseconds: 2325), () {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const LoginScreen()));
+    Future.delayed(const Duration(milliseconds: 2325), () {
+      User? user = FirebaseAuth.instance.currentUser;
+
+      if (user == null) {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const LoginScreen()));
+      } else {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const HomeScreen()));
+      }
     });
   }
+
   @override
   void dispose() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);   
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
       body: content(),
     );
   }
-  
-  Widget content(){
+
+  Widget content() {
     return Column(
       children: [
         Expanded(
           child: Lottie.asset('assets/splashScreen.json',
-          width: (MediaQuery.of(context).size.width),
-          height:(MediaQuery.of(context).size.height),
-          fit: BoxFit.fill
-          ),
+              width: (MediaQuery.of(context).size.width),
+              height: (MediaQuery.of(context).size.height),
+              fit: BoxFit.fill),
         ),
       ],
     );

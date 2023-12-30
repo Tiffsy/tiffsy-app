@@ -1,5 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tiffsy_app/Helpers/page_router.dart';
+import 'package:tiffsy_app/screens/AddressBookScreen/screen/address_book_screen.dart';
+import 'package:tiffsy_app/screens/OrderHistoryScreen/screen/order_history_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -53,10 +56,24 @@ class _ProfileState extends State<Profile> {
         Icons.history,
         () {
           print("Order History");
+          Navigator.push(
+              context, SlideTransitionRouter.toNextPage(OrderHistoryScreen()));
         }
       ],
-      "Address Book": [Icons.home, () {}],
-      "Contact Us": [Icons.phone_enabled, () {}],
+      "Address Book": [
+        Icons.home,
+        () {
+          print("Address Book");
+          Navigator.push(
+              context, SlideTransitionRouter.toNextPage(AddressBookScreen()));
+        }
+      ],
+      "Contact Us": [
+        Icons.phone_enabled,
+        () {
+          // TODO: Contact Us action
+        }
+      ],
       "About Us": [Icons.people, () {}],
       "Feedback": [Icons.forum, () {}],
     };

@@ -36,69 +36,76 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: ProfileScreen(),
       title: 'Tiffsy',
-      theme: ThemeData(
-        textSelectionTheme: const TextSelectionThemeData(
-          cursorColor: Color(0xcc121212),
-          selectionHandleColor: Color(0xffffe5a3),
-          selectionColor: Color(0x33ffbe1d),
-        ),
-        navigationBarTheme: const NavigationBarThemeData(
-          backgroundColor: Color(0xfffffcef),
-          surfaceTintColor: Color(0xfffffcef),
-          indicatorColor: Color(0xffffe5a3),
-          iconTheme:
-              MaterialStatePropertyAll(IconThemeData(color: Color(0xff323232))),
-        ),
-        dropdownMenuTheme: DropdownMenuThemeData(
-          menuStyle: MenuStyle(
-            backgroundColor: MaterialStateColor.resolveWith(
-              (states) => const Color(0xfffffcef),
-            ),
-          ),
-          inputDecorationTheme: InputDecorationTheme(
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(4),
-              borderSide: const BorderSide(
-                width: 1,
-                color: Color(0xffffbe1d),
-              ),
-            ),
-          ),
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          labelStyle: const TextStyle(
-            color: Color(0x66121212),
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            letterSpacing: 0.5,
-            height: 24 / 16,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(4),
-            borderSide: const BorderSide(
-              width: 1,
-              color: Color(0xffffbe1d),
-            ),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(4),
-            borderSide: const BorderSide(width: 1),
-          ),
-        ),
-        buttonTheme: const ButtonThemeData(buttonColor: Color(0xffFFBE1D)),
-        iconTheme: const IconThemeData(color: Color(0xff323232)),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xffFFBE1D)),
-        ),
-        cardColor: const Color(0xffffffff),
-        focusColor: const Color(0xffFFE5A3),
-        primaryColor: const Color(0xFFFFFCEF),
-        scaffoldBackgroundColor: const Color(0xFFFFFCEF),
-        useMaterial3: true,
-      ),
+      theme: getTheme(),
     );
   }
+}
+
+ThemeData getTheme() {
+  return ThemeData(
+    appBarTheme: const AppBarTheme(
+      titleSpacing: 0,
+      backgroundColor: Color(0xffffffff),
+    ),
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: Color(0xcc121212),
+      selectionHandleColor: Color(0xffffe5a3),
+      selectionColor: Color(0x33ffbe1d),
+    ),
+    navigationBarTheme: const NavigationBarThemeData(
+      backgroundColor: Color(0xfffffcef),
+      surfaceTintColor: Color(0xfffffcef),
+      indicatorColor: Color(0xffffe5a3),
+      iconTheme:
+          MaterialStatePropertyAll(IconThemeData(color: Color(0xff323232))),
+    ),
+    dropdownMenuTheme: DropdownMenuThemeData(
+      menuStyle: MenuStyle(
+        backgroundColor: MaterialStateColor.resolveWith(
+          (states) => const Color(0xfffffcef),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(4),
+          borderSide: const BorderSide(
+            width: 1,
+            color: Color(0xffffbe1d),
+          ),
+        ),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      labelStyle: const TextStyle(
+        color: Color(0x66121212),
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.5,
+        height: 24 / 16,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(4),
+        borderSide: const BorderSide(
+          width: 1,
+          color: Color(0xffffbe1d),
+        ),
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(4),
+        borderSide: const BorderSide(width: 1),
+      ),
+    ),
+    buttonTheme: const ButtonThemeData(buttonColor: Color(0xffFFBE1D)),
+    iconTheme: const IconThemeData(color: Color(0xff323232)),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xffFFBE1D)),
+    ),
+    cardColor: const Color(0xffffffff),
+    focusColor: const Color(0xffFFE5A3),
+    primaryColor: const Color(0xFFFFFCEF),
+    scaffoldBackgroundColor: const Color(0xFFFFFCEF),
+    useMaterial3: true,
+  );
 }

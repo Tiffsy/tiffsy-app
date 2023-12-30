@@ -6,3 +6,11 @@ sealed class PaymentCheckoutEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class PaymentCheckoutInitialEvent extends PaymentCheckoutEvent {}
+
+class GooglePayUPIEvent extends PaymentCheckoutEvent {
+  final String orderID;
+  final double amount;
+  const GooglePayUPIEvent({required this.orderID, required this.amount});
+}

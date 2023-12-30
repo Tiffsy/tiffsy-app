@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:tiffsy_app/screens/PaymentCheckoutScreen/bloc/payment_checkout_bloc.dart';
 
 class PaymentCheckoutScreen extends StatefulWidget {
-  const PaymentCheckoutScreen({super.key});
+  const PaymentCheckoutScreen({super.key, required this.amount});
+  final double amount;
 
   @override
   State<PaymentCheckoutScreen> createState() => _PaymentCheckoutScreenState();
 }
 
 class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
-  void googlePayUpi() {}
+  PaymentCheckoutBloc paymentCheckoutBloc = PaymentCheckoutBloc();
+
+  void googlePayUpi(String orderID, double amount) {
+    print("okayy");
+    paymentCheckoutBloc
+        .add(GooglePayUPIEvent(orderID: orderID, amount: amount));
+  }
 
   void paytmUpi() {}
 
@@ -28,7 +36,7 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
   void callPaymentMethod(String paymentMethod) {
     switch (paymentMethod) {
       case "Google Pay":
-        googlePayUpi();
+        googlePayUpi("sufgvuldsv", widget.amount);
       case "Paytm UPI":
         paytmUpi();
       case "UPI ID":
@@ -130,7 +138,7 @@ class _PaymentCheckoutScreenState extends State<PaymentCheckoutScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              totalBillCard(200.78),
+              totalBillCard(widget.amount),
               paymentTypetext("UPI"),
               paymentsOptionButton(upiBasedPayements, callPaymentMethod),
               paymentTypetext("Cards"),

@@ -12,11 +12,17 @@ part 'home_state.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeInitial()) {
     on<HomeInitialFetchEvent>(homeInitialFetch);
+    on<SubscriptionInitialFetchEvent>(subscriptionInitialFetchEvent);
   }
-
   FutureOr<void> homeInitialFetch(HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
     emit(HomeLoadingState());
     List<MenuDataModel> menu = await HomeRepo.fetchMenu();
     emit(HomeFetchSuccessfulState(menu: menu));
+  }
+
+
+  FutureOr<void> subscriptionInitialFetchEvent(SubscriptionInitialFetchEvent event, Emitter<HomeState> emit) {
+    emit(SubscriptionLoadingState());
+    
   }
 }

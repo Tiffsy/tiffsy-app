@@ -1,4 +1,74 @@
-import 'dart:ffi';
+
+// void _showTopSheet(BuildContext context) {
+//   showModalBottomSheet(
+//     context: context,
+//     // isScrollControlled: true,  // Allows the sheet to go beyond the screen height
+//     builder: (BuildContext context) {
+//       return Column(
+//         mainAxisAlignment: MainAxisAlignment.start,
+//         mainAxisSize: MainAxisSize.min,
+//         children: <Widget>[
+//           // Add some top padding to visually differentiate the sheet from the app bar
+//           Padding(
+//               padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+//               child: ElevatedButton(
+//                 onPressed: () {},
+//                 child: Text("Add Address"),
+//               )),
+//           Expanded(
+//             child: ListView.builder(
+//               itemCount: 50,
+//               itemBuilder: (BuildContext context, int index) {
+//                 return ListTile(
+//                   title: Text('Item $index'),
+//                 );
+//               },
+//             ),
+//           );
+//         }
+//         if (state is HomeErrorState) {
+//           return const SnackBar(
+//             content: Text("Error"),
+//           );
+//         }
+//         return const SizedBox();
+//       },
+//     );
+//   });
+// }
+
+// Widget subscription(ThemeData theme, BuildContext context) {
+
+//   DateTime currentDate = DateTime.now();
+//   DateTime firstDate = DateTime(currentDate.year, currentDate.month - 1, currentDate.day);
+//   DateTime lastDate = DateTime(currentDate.year, currentDate.month + 1, currentDate.day);
+
+//   return BlocConsumer<HomeBloc, HomeState>(
+//     listener: (context, state) {
+//       if (state is SubscriptionLoadingState) {
+//         Center(child: CircularProgressIndicator());
+//       }
+//     },
+//     builder: (context, state) {
+//       return Center(
+//           child: TableCalendar(
+//               focusedDay: currentDate, 
+//               firstDay: firstDate, 
+//               lastDay: lastDate,
+//               calendarBuilders: CalendarBuilders(
+//                 defaultBuilder: (context, day, focusedDay) {
+                  
+//                 },
+//               ),
+//       ));
+//     },
+//   );
+// }
+// class HomeScreen extends StatefulWidget {
+//   const HomeScreen({super.key});
+//   @override
+//   State<HomeScreen> createState() => __HomeScreenStateState();
+// }
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

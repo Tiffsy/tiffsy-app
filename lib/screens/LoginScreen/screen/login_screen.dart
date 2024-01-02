@@ -103,8 +103,11 @@ class _contentState extends State<content> {
                         phoneNumber: phoneController.text,
                       )));
         } else if (state is LoadHomeScreenState) {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => HomeScreen()));
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+            (route) => route.isFirst,
+          );
         }
       },
       builder: (context, state) {

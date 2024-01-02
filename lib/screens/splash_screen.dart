@@ -17,9 +17,9 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: ));
     Future.delayed(const Duration(milliseconds: 2325), () {
       User? user = FirebaseAuth.instance.currentUser;
-
       if (user == null) {
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (_) => const LoginScreen()));
@@ -39,22 +39,17 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: content(),
-    );
-  }
-
-  Widget content() {
-    return Column(
-      children: [
-        Expanded(
-          child: Lottie.asset('assets/splashScreen.json',
-              width: (MediaQuery.of(context).size.width),
-              height: (MediaQuery.of(context).size.height),
-              fit: BoxFit.fill),
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SizedBox(
+          height: double.infinity,
+          child: Expanded(
+            child: Lottie.asset('assets/splashScreen.json', fit: BoxFit.fill),
+          ),
         ),
-      ],
+      ),
     );
   }
 }

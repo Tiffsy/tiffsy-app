@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:tiffsy_app/Helpers/page_router.dart';
 import 'package:tiffsy_app/screens/HomeScreen/bloc/home_bloc.dart';
 import 'package:tiffsy_app/screens/HomeScreen/model/home_model.dart';
 import 'package:tiffsy_app/screens/LoginScreen/bloc/login_bloc.dart';
@@ -17,6 +19,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+// Home bloc consumer
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -25,19 +28,19 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final HomeBloc homeBloc = HomeBloc();
   final user = FirebaseAuth.instance.currentUser!;
 
   @override
   void initState() {
-    homeBloc.add(HomeInitialFetchEvent());
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        systemNavigationBarColor: Color(0xfffffcef)));
     super.initState();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
-    homeBloc.close();
+    //homeBloc.close();
     super.dispose();
   }
 
@@ -46,80 +49,184 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    return Scaffold(
-      backgroundColor: const Color(0xffffffff),
-      appBar: AppBar(
-        title: Row(
-          children: [],
-        ),
-        actions: [
-          IconButton(
-            onPressed: () => {},
-            icon: ClipOval(
-              child: Image.asset(
-                'assets/images/logo/tiffsy.png',
-                fit: BoxFit.cover,
-              ),
-            ), // TODO: Bio Pic
-          ),
-        ],
-      ),
-      bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
+    HomeBloc homeBloc = HomeBloc();
+    homeBloc.add(HomeInitialFetchEvent());
+    return BlocProvider(
+      create: (context) => homeBloc,
+      child: BlocConsumer<HomeBloc, HomeState>(
+        listener: (context, state) {
+          if (state is HomeProfileButtonOnTapState) {
+            print("object ok");
+            Navigator.push(context,
+                SlideTransitionRouter.toNextPage(const ProfileScreen()));
+            homeBloc.add(HomeInitialFetchEvent());
+          }
         },
-        selectedIndex: currentPageIndex,
-        destinations: const <Widget>[
-          NavigationDestination(
-            selectedIcon: Icon(Icons.restaurant_menu),
-            icon: Icon(Icons.restaurant_menu_outlined),
-            label: 'Menu',
-          ),
-          NavigationDestination(
-            selectedIcon: Icon(Icons.credit_card),
-            icon: Icon(Icons.credit_card_outlined),
-            label: 'Payments',
-          ),
-          NavigationDestination(
-            selectedIcon: Icon(Icons.food_bank),
-            icon: Icon(Icons.food_bank_outlined),
-            label: 'Subscription',
-          )
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-        ),
-        child: <Widget>[
-          menuPage(theme, homeBloc),
-          Card(
-            shadowColor: Colors.transparent,
-            margin: const EdgeInsets.all(8.0),
-            child: SizedBox.expand(
-              child: Center(
-                child: Text(
-                  'Payments',
-                  style: theme.textTheme.titleLarge,
+        builder: (context, state) {
+          if (state is HomePageChangeState) {
+            return Scaffold(
+              backgroundColor: const Color(0xffffffff),
+              appBar: AppBar(
+                title: Row(
+                  children: [],
                 ),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 17),
+                    child: IconButton(
+                      onPressed: () {
+                        homeBloc.add(HomeProfileButtonOnTapEvent());
+                      },
+                      icon: ClipOval(
+                        child: Image.asset(
+                          'assets/images/logo/tiffsy.png',
+                          fit: BoxFit.contain,
+                        ),
+                      ), // TODO: Bio Pic
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ),
-          Card(
-            shadowColor: Colors.transparent,
-            margin: const EdgeInsets.all(8.0),
-            child: SizedBox.expand(
-              child: Center(
-                child: Text(
-                  'Subscription',
-                  style: theme.textTheme.titleLarge,
+              bottomNavigationBar: NavigationBar(
+                onDestinationSelected: (int index) {
+                  homeBloc.add(HomePageChangeEvent(newIndex: index));
+                  currentPageIndex = index;
+                },
+                selectedIndex: state.newIndex,
+                destinations: const <Widget>[
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.restaurant_menu),
+                    icon: Icon(Icons.restaurant_menu_outlined),
+                    label: 'Menu',
+                  ),
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.credit_card),
+                    icon: Icon(Icons.credit_card_outlined),
+                    label: 'Payments',
+                  ),
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.food_bank),
+                    icon: Icon(Icons.food_bank_outlined),
+                    label: 'Subscription',
+                  )
+                ],
+              ),
+              body: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
                 ),
+                child: <Widget>[
+                  menuPage(theme, homeBloc),
+                  Card(
+                    shadowColor: Colors.transparent,
+                    margin: const EdgeInsets.all(8.0),
+                    child: SizedBox.expand(
+                      child: Center(
+                        child: Text(
+                          'Payments',
+                          style: theme.textTheme.titleLarge,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Card(
+                    shadowColor: Colors.transparent,
+                    margin: const EdgeInsets.all(8.0),
+                    child: SizedBox.expand(
+                      child: Center(
+                        child: Text(
+                          'Subscription',
+                          style: theme.textTheme.titleLarge,
+                        ),
+                      ),
+                    ),
+                  ),
+                ][state.newIndex],
               ),
-            ),
-          ),
-        ][currentPageIndex],
+            );
+          } else {
+            return Scaffold(
+              backgroundColor: const Color(0xffffffff),
+              appBar: AppBar(
+                title: Row(
+                  children: [],
+                ),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 17),
+                    child: IconButton(
+                      onPressed: () {
+                        homeBloc.add(HomeProfileButtonOnTapEvent());
+                      },
+                      icon: ClipOval(
+                        child: Image.asset(
+                          'assets/images/logo/tiffsy.png',
+                          fit: BoxFit.contain,
+                        ),
+                      ), // TODO: Bio Pic
+                    ),
+                  ),
+                ],
+              ),
+              bottomNavigationBar: NavigationBar(
+                onDestinationSelected: (int index) {
+                  homeBloc.add(HomePageChangeEvent(newIndex: index));
+                  currentPageIndex = index;
+                },
+                selectedIndex: currentPageIndex,
+                destinations: const <Widget>[
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.restaurant_menu),
+                    icon: Icon(Icons.restaurant_menu_outlined),
+                    label: 'Menu',
+                  ),
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.credit_card),
+                    icon: Icon(Icons.credit_card_outlined),
+                    label: 'Payments',
+                  ),
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.food_bank),
+                    icon: Icon(Icons.food_bank_outlined),
+                    label: 'Subscription',
+                  )
+                ],
+              ),
+              body: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                ),
+                child: <Widget>[
+                  menuPage(theme, homeBloc),
+                  Card(
+                    shadowColor: Colors.transparent,
+                    margin: const EdgeInsets.all(8.0),
+                    child: SizedBox.expand(
+                      child: Center(
+                        child: Text(
+                          'Payments',
+                          style: theme.textTheme.titleLarge,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Card(
+                    shadowColor: Colors.transparent,
+                    margin: const EdgeInsets.all(8.0),
+                    child: SizedBox.expand(
+                      child: Center(
+                        child: Text(
+                          'Subscription',
+                          style: theme.textTheme.titleLarge,
+                        ),
+                      ),
+                    ),
+                  ),
+                ][currentPageIndex],
+              ),
+            );
+          }
+        },
       ),
     );
   }

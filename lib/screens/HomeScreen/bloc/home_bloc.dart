@@ -12,9 +12,21 @@ part 'home_state.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeInitial()) {
     on<HomeInitialFetchEvent>(homeInitialFetch);
+    on<HomeProfileButtonOnTapEvent>(
+      (event, emit) {
+        print("""object""");
+        emit(HomeProfileButtonOnTapState());
+      },
+    );
+    on<HomePageChangeEvent>(
+      (event, emit) {
+        emit(HomePageChangeState(newIndex: event.newIndex));
+      },
+    );
   }
 
-  FutureOr<void> homeInitialFetch(HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
+  FutureOr<void> homeInitialFetch(
+      HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
     emit(HomeLoadingState());
     List<MenuDataModel> menu = await HomeRepo.fetchMenu();
     emit(HomeFetchSuccessfulState(menu: menu));

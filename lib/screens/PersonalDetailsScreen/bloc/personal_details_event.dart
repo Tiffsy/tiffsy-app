@@ -6,9 +6,14 @@ sealed class PersonalDetailsEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class ContinueButtonClickedEvent extends PersonalDetailsEvent{
+class ContinueButtonClickedForEmailEvent extends PersonalDetailsEvent {
   final String name;
   final String mailId;
-  ContinueButtonClickedEvent({required this.name, required this.mailId});
+  const ContinueButtonClickedForEmailEvent({required this.name, required this.mailId});
 }
 
+class ContinueButtonClickedForPhoneEvent extends PersonalDetailsEvent {
+  final String name;
+  final String number;
+  const ContinueButtonClickedForPhoneEvent({required this.name, required this.number});
+}

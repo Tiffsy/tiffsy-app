@@ -11,12 +11,10 @@ import 'package:tiffsy_app/screens/PersonalDetailsScreen/screen/personalDetails_
 
 import '../../HomeScreen/screen/home_screen.dart';
 
-
 class OtpScreen extends StatefulWidget {
-
   final String verificationId;
   final String phoneNumber;
-  const OtpScreen({Key? key, required this.verificationId, required this.phoneNumber}): super(key: key);
+  const OtpScreen({Key? key, required this.verificationId, required this.phoneNumber}) : super(key: key);
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -32,14 +30,12 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   void dispose() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-    overlays: SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -55,15 +51,17 @@ class _OtpScreenState extends State<OtpScreen> {
           backgroundColor: Color(0xffFAFAFA),
         ),
         backgroundColor: Color(0xffFAFAFA),
-        body: content(verificationId: widget.verificationId, phoneNumber: widget.phoneNumber,));
+        body: content(
+          verificationId: widget.verificationId,
+          phoneNumber: widget.phoneNumber,
+        ));
   }
 }
 
 class content extends StatefulWidget {
-
   final String verificationId;
   final String phoneNumber;
-  const content({Key? key, required this.verificationId, required this.phoneNumber}): super(key: key);
+  const content({Key? key, required this.verificationId, required this.phoneNumber}) : super(key: key);
 
   @override
   State<content> createState() => _contentState();
@@ -105,18 +103,14 @@ class _contentState extends State<content> {
   void dispose() {
     // TODO: implement dispose
     timer.cancel();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
     super.dispose();
   }
 
   final defaultPinTheme = PinTheme(
     width: 48,
     height: 48,
-    textStyle: const TextStyle(
-        fontSize: 20,
-        color: Color.fromRGBO(30, 60, 87, 1),
-        fontWeight: FontWeight.w600),
+    textStyle: const TextStyle(fontSize: 20, color: Color.fromRGBO(30, 60, 87, 1), fontWeight: FontWeight.w600),
     decoration: BoxDecoration(
       border: Border.all(color: Color(0xFFCDCDCD)),
       borderRadius: BorderRadius.circular(8),
@@ -138,131 +132,124 @@ class _contentState extends State<content> {
 
   @override
   Widget build(BuildContext context) {
-    
     var _mediaQuery = MediaQuery.of(context);
     return BlocConsumer<LoginBloc, LoginState>(
       bloc: loginBloc,
       listener: (context, state) {
-        if(state is LoginScreenLoadedState){
+        if (state is LoginScreenLoadedState) {
           Navigator.popUntil(context, (route) => route.isFirst);
-          Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (_) => const PersonalDetailsScreen()));
-        }
-        else if (state is AuthErrorState){
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(state.error),
-                backgroundColor: Colors.red,
-                duration: Duration(seconds: 10),
-              )
-          );
-        }
-        else if(state is LoadHomeScreenState){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=> HomeScreen()));
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => const PersonalDetailsScreen(isPhoneAuth: true)));
+        } else if (state is AuthErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(state.error),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 10),
+          ));
+        } else if (state is LoadHomeScreenState) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
         }
       },
       builder: (context, state) {
-        if(state is AuthLoadingState){
-            return const Center(
+        if (state is AuthLoadingState) {
+          return const Center(
             child: CircularProgressIndicator(),
           );
-        } 
-        else if(state is OTPScreenInitialState) {
+        } else if (state is OTPScreenInitialState) {
           return SingleChildScrollView(
-          child: Container(
-            margin: EdgeInsets.only(left: 10, right: 10),
-            height: _mediaQuery.size.height * 1.0,
-            width: _mediaQuery.size.width * 1.0,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(width: double.infinity, height: 196),
-                const Text(
-                  "We have sent a verification code to",
-                  style: TextStyle(
-                    color: Color(0xFF121212),
-                    fontSize: 21,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w400,
-                    height: 0,
-                  ),
-                ),
-                const SizedBox(width: double.infinity, height: 20),
-                Text(
-                  '+91-${widget.phoneNumber}',
-                  style: const TextStyle(
-                    color: Color(0xFF121212),
-                    fontSize: 21,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w700,
-                    height: 0,
-                  ),
-                ),
-                const SizedBox(width: double.infinity, height: 20),
-                Pinput(
-                  defaultPinTheme: defaultPinTheme,
-                  focusedPinTheme: focusedPinTheme,
-                  submittedPinTheme: submittedPinTheme,
-                  length: 6,
-                  pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
-                  showCursor: true,
-                  onCompleted: (pin) {
-                    loginBloc.add(VerifySentOtp(optCode: pin.toString(), verificationId: widget.verificationId));
-                  },
-                  controller: otpController,
-                ),
-                const SizedBox(width: double.infinity, height: 20),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Didn't get the OTP?",
-                      style: TextStyle(
-                        color: Color(0xFF121212),
-                        fontSize: 21,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w400,
-                        height: 0,
-                      ),
+            child: Container(
+              margin: EdgeInsets.only(left: 10, right: 10),
+              height: _mediaQuery.size.height * 1.0,
+              width: _mediaQuery.size.width * 1.0,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(width: double.infinity, height: 196),
+                  const Text(
+                    "We have sent a verification code to",
+                    style: TextStyle(
+                      color: Color(0xFF121212),
+                      fontSize: 21,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w400,
+                      height: 0,
                     ),
-                    const SizedBox(
-                      width: 4,
+                  ),
+                  const SizedBox(width: double.infinity, height: 20),
+                  Text(
+                    '+91-${widget.phoneNumber}',
+                    style: const TextStyle(
+                      color: Color(0xFF121212),
+                      fontSize: 21,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w700,
+                      height: 0,
                     ),
-                    Visibility(
-                        visible: enableResend,
-                        child: TextButton(
-                            onPressed: () => {_resendCode()},
-                            child: const Text(
-                              "Resend",
-                              style: TextStyle(
-                                  color: Color(0xFF121212),
-                                  fontSize: 18,
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w400,
-                                  height: 0),
-                            ))),
-                    Visibility(
-                      visible: !enableResend,
-                      child: Text(
-                        'Resend SMS in $secondsRemaining',
-                        style: const TextStyle(
-                            color: Color(0xFF121212),
-                            fontSize: 18,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w400,
-                            height: 0),
+                  ),
+                  const SizedBox(width: double.infinity, height: 20),
+                  Pinput(
+                    defaultPinTheme: defaultPinTheme,
+                    focusedPinTheme: focusedPinTheme,
+                    submittedPinTheme: submittedPinTheme,
+                    length: 6,
+                    pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
+                    showCursor: true,
+                    onCompleted: (pin) {
+                      loginBloc.add(VerifySentOtp(optCode: pin.toString(), verificationId: widget.verificationId));
+                    },
+                    controller: otpController,
+                  ),
+                  const SizedBox(width: double.infinity, height: 20),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Didn't get the OTP?",
+                        style: TextStyle(
+                          color: Color(0xFF121212),
+                          fontSize: 21,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w400,
+                          height: 0,
+                        ),
                       ),
-                    )
-                  ],
-                )
-              ],
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      Visibility(
+                          visible: enableResend,
+                          child: TextButton(
+                              onPressed: () => {_resendCode()},
+                              child: const Text(
+                                "Resend",
+                                style: TextStyle(
+                                    color: Color(0xFF121212),
+                                    fontSize: 18,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0),
+                              ))),
+                      Visibility(
+                        visible: !enableResend,
+                        child: Text(
+                          'Resend SMS in $secondsRemaining',
+                          style: const TextStyle(
+                              color: Color(0xFF121212),
+                              fontSize: 18,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w400,
+                              height: 0),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
-          ),
-        );
-        }
-        else{
+          );
+        } else {
           return SizedBox(
             child: Text("Code phat gya bhai"),
           );

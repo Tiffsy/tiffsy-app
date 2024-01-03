@@ -33,8 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
     super.dispose();
   }
 
@@ -92,8 +91,8 @@ class _contentState extends State<content> {
           );
         } else if (state is LoginScreenLoadedState) {
           Navigator.popUntil(context, (route) => route.isFirst);
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (_) => const PersonalDetailsScreen()));
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => const PersonalDetailsScreen(isPhoneAuth: false)));
         } else if (state is PhoneAuthCodeSentSuccess) {
           Navigator.push(
               context,
@@ -133,211 +132,184 @@ class _contentState extends State<content> {
                   ),
                 ),
                 Container(
-                    height: _mediaQuery.size.height * 0.550,
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(24.0),
-                          topRight: Radius.circular(24.0)),
-                      color: Color(0xffFAFAFA),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SizedBox(height: _mediaQuery.size.height * 0.04),
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                                child: Divider(
-                                    thickness: 1,
-                                    color: Color.fromARGB(255, 194, 194, 194),
-                                    indent: 20,
-                                    endIndent: 22)),
-                            Text(
-                              'Log in or sign up',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w500),
-                            ),
-                            Expanded(
-                                child: Divider(
-                              thickness: 1,
-                              color: Color.fromARGB(255, 194, 194, 194),
-                              indent: 22,
-                              endIndent: 20,
-                            ))
-                          ],
-                        ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.01),
-                        Container(
-                          margin: const EdgeInsets.all(20.0),
-                          height: _mediaQuery.size.height * 0.060,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.grey,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(8.0),
+                  height: _mediaQuery.size.height * 0.550,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(24.0), topRight: Radius.circular(24.0)),
+                    color: Color(0xffFAFAFA),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: _mediaQuery.size.height * 0.04),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: Divider(
+                                  thickness: 1, color: Color.fromARGB(255, 194, 194, 194), indent: 20, endIndent: 22)),
+                          Text(
+                            'Log in or sign up',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                           ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              const SizedBox(width: 10),
-                              const Text(
-                                "IND",
-                                style: TextStyle(
-                                  color: Color(0xFF0F1728),
-                                  fontSize: 20,
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w400,
-                                ),
+                          Expanded(
+                              child: Divider(
+                            thickness: 1,
+                            color: Color.fromARGB(255, 194, 194, 194),
+                            indent: 22,
+                            endIndent: 20,
+                          ))
+                        ],
+                      ),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                      Container(
+                        margin: const EdgeInsets.all(20.0),
+                        height: _mediaQuery.size.height * 0.060,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.grey,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const SizedBox(width: 10),
+                            const Text(
+                              "IND",
+                              style: TextStyle(
+                                color: Color(0xFF0F1728),
+                                fontSize: 20,
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.w400,
                               ),
-                              const SizedBox(width: 10),
-                              Flexible(
-                                  flex: 1,
-                                  child: TextField(
-                                    textAlignVertical: TextAlignVertical.center,
-                                    keyboardType: TextInputType.phone,
-                                    controller: countryCode,
-                                    decoration: const InputDecoration(
-                                        border: InputBorder.none),
-                                    style: const TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w400,
-                                        fontFamily: 'Roboto'),
-                                  )),
-                              const SizedBox(width: 0.1),
-                              Flexible(
-                                flex: 5,
+                            ),
+                            const SizedBox(width: 10),
+                            Flexible(
+                                flex: 1,
                                 child: TextField(
-                                  controller: phoneController,
+                                  textAlignVertical: TextAlignVertical.center,
                                   keyboardType: TextInputType.phone,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: 'Enter Phone Number',
-                                    hintStyle: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w400,
-                                        fontFamily: 'Roboto'),
-                                  ),
-                                  style: TextStyle(
+                                  controller: countryCode,
+                                  decoration: const InputDecoration(border: InputBorder.none),
+                                  style: const TextStyle(
+                                      color: Colors.grey,
                                       fontSize: 18,
                                       fontWeight: FontWeight.w400,
                                       fontFamily: 'Roboto'),
+                                )),
+                            const SizedBox(width: 0.1),
+                            Flexible(
+                              flex: 5,
+                              child: TextField(
+                                controller: phoneController,
+                                keyboardType: TextInputType.phone,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Enter Phone Number',
+                                  hintStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
                                 ),
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
                               ),
-                              Tooltip(
-                                key: _tooltipKey,
-                                message: 'Enter your 10 digit phone number',
-                                child: IconButton(
-                                  icon: const Icon(Icons.help_outline_sharp),
-                                  onPressed: () => {showTooltip()},
-                                ),
-                              )
+                            ),
+                            Tooltip(
+                              key: _tooltipKey,
+                              message: 'Enter your 10 digit phone number',
+                              child: IconButton(
+                                icon: const Icon(Icons.help_outline_sharp),
+                                onPressed: () => {showTooltip()},
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                      SizedBox(
+                        height: _mediaQuery.size.height * 0.045,
+                        width: _mediaQuery.size.width * 0.9,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            String phoneNumber = "+91${phoneController.text}";
+                            loginBloc.add(SendOtpToPhoneEvent(phoneNumber: phoneNumber));
+                          },
+                          style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Color(0xffFAFAFA)),
+                              backgroundColor: const Color(0xffF2B620),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              )),
+                          child: const Text(
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 0.10,
+                                  height: 0.08,
+                                  color: Colors.black),
+                              'Continue'),
+                        ),
+                      ),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: Divider(
+                                  thickness: 1, color: Color.fromARGB(255, 194, 194, 194), indent: 20, endIndent: 20)),
+                          Text(
+                            'or',
+                            style: TextStyle(color: Color(0xFF121212), fontSize: 16, fontWeight: FontWeight.w500),
+                          ),
+                          Expanded(
+                              child: Divider(
+                            thickness: 1,
+                            color: Color.fromARGB(255, 194, 194, 194),
+                            indent: 20,
+                            endIndent: 20,
+                          ))
+                        ],
+                      ),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                      Container(
+                        height: _mediaQuery.size.height * 0.045,
+                        width: _mediaQuery.size.width * 0.9,
+                        child: OutlinedButton(
+                          onPressed: () => {loginBloc.add(SignInWithGooglePressedEvent())},
+                          style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Colors.black),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              )),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/images/vectors/Google_icon.svg',
+                                semanticsLabel: 'vector image',
+                                width: MediaQuery.of(context).size.width * 0.038,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: MediaQuery.of(context).size.width * 0.038,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 0.10,
+                                    height: 0.10),
+                                'Continue with Google Account',
+                              ),
                             ],
                           ),
                         ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.01),
-                        Container(
-                          height: _mediaQuery.size.height * 0.045,
-                          width: _mediaQuery.size.width * 0.9,
-                          child: OutlinedButton(
-                            onPressed: () {
-                              String phoneNumber = "+91${phoneController.text}";
-                              loginBloc.add(SendOtpToPhoneEvent(
-                                  phoneNumber: phoneNumber));
-                            },
-                            style: OutlinedButton.styleFrom(
-                                side:
-                                    const BorderSide(color: Color(0xffFAFAFA)),
-                                backgroundColor: const Color(0xffF2B620),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                )),
-                            child: const Text(
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    letterSpacing: 0.10,
-                                    height: 0.08,
-                                    color: Colors.black),
-                                'Continue'),
-                          ),
-                        ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.04),
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                                child: Divider(
-                                    thickness: 1,
-                                    color: Color.fromARGB(255, 194, 194, 194),
-                                    indent: 20,
-                                    endIndent: 20)),
-                            Text(
-                              'or',
-                              style: TextStyle(
-                                  color: Color(0xFF121212),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            Expanded(
-                                child: Divider(
-                              thickness: 1,
-                              color: Color.fromARGB(255, 194, 194, 194),
-                              indent: 20,
-                              endIndent: 20,
-                            ))
-                          ],
-                        ),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.04),
-                        Container(
-                          height: _mediaQuery.size.height * 0.045,
-                          width: _mediaQuery.size.width * 0.9,
-                          child: OutlinedButton(
-                            onPressed: () =>
-                                {loginBloc.add(SignInWithGooglePressedEvent())},
-                            style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Colors.black),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                )),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/images/vectors/Google_icon.svg',
-                                  semanticsLabel: 'vector image',
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.038,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.038,
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 0.10,
-                                        height: 0.10),
-                                    'Continue with Google Account'),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ))
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           );

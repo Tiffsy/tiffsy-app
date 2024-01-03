@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tiffsy_app/firebase_options.dart';
 import 'package:tiffsy_app/screens/AddAddressScreen/screen/add_address_screen.dart';
 import 'package:tiffsy_app/screens/AddressBookScreen/screen/address_book_screen.dart';
-import 'package:tiffsy_app/screens/HomeScreen/bloc/home_bloc.dart';
 import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/HowItWorksScreen/bloc/how_it_works_bloc.dart';
 import 'package:tiffsy_app/screens/HowItWorksScreen/screen/how_it_works_screen.dart';
@@ -42,7 +41,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
+      home: LoginScreen(),
       title: 'Tiffsy',
       theme: getTheme(),
     );

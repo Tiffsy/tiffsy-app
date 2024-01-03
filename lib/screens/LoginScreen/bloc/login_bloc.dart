@@ -11,7 +11,6 @@ part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  
   String loginResult = "";
   UserRepo userRepo = UserRepo();
   UserCredential? userCredential;
@@ -63,8 +62,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         await userRepo.firebaseAuth
             .signInWithCredential(event.credential)
             .then((value) {
-              final user = FirebaseAuth.instance.currentUser!;
-              add(CheckPreviousPhoneEvent(phoneNumber: user.phoneNumber.toString()));
+          final user = FirebaseAuth.instance.currentUser!;
+          add(CheckPreviousPhoneEvent(
+              phoneNumber: user.phoneNumber.toString()));
           // emit(LoginScreenLoadedState());
         });
       } catch (err) {
@@ -74,8 +74,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
     on<SignInWithGooglePressedEvent>(((event, emit) async {
       try {
-        final GoogleSignInAccount? googleUser = await userRepo.googleSignIn.signIn();
-        if(googleUser == null){
+        final GoogleSignInAccount? googleUser =
+            await userRepo.googleSignIn.signIn();
+        if (googleUser == null) {
           emit(AuthErrorState("Google User id null"));
         }
         final GoogleSignInAuthentication? googleAuth =
@@ -88,57 +89,55 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         try {
           await FirebaseAuth.instance
               .signInWithCredential(credential)
-              .then((value){
-                final user = FirebaseAuth.instance.currentUser!;
-              add(CheckPreviousEmailEvent(mailId: user.email.toString()));
+              .then((value) {
+            final user = FirebaseAuth.instance.currentUser!;
+            add(CheckPreviousEmailEvent(mailId: user.email.toString()));
           });
         } catch (e) {
+          print("Okayyyyyyyy");
+          print(e.toString());
           emit(AuthErrorState(e.toString()));
         }
-
       } catch (err) {
+        print("Okayyyyyyyy");
+        print(err.toString());
         emit(AuthErrorState(err.toString()));
       }
     }));
 
     on<CheckPreviousPhoneEvent>((event, emit) async {
-      try{
-        bool isPresent = await userRepo.checkPhoneNumber(phoneNumber: event.phoneNumber);
-        if(!isPresent){
-          try{
+      try {
+        bool isPresent =
+            await userRepo.checkPhoneNumber(phoneNumber: event.phoneNumber);
+        if (!isPresent) {
+          try {
             await userRepo.storePhoneNumber(phoneNumber: event.phoneNumber);
             emit(LoginScreenLoadedState());
-          }
-          catch(err){
+          } catch (err) {
             emit(AuthErrorState(err.toString()));
           }
-        }
-        else{
+        } else {
           emit(LoadHomeScreenState());
         }
-      }
-      catch(err){
+      } catch (err) {
         emit(AuthErrorState(err.toString()));
       }
     });
 
     on<CheckPreviousEmailEvent>((event, emit) async {
-      try{
+      try {
         bool isPresent = await userRepo.checkEmail(mailId: event.mailId);
-        if(!isPresent){
-          try{
+        if (!isPresent) {
+          try {
             await userRepo.storeEmail(mailId: event.mailId);
             emit(LoginScreenLoadedState());
-          }
-          catch(err){
+          } catch (err) {
             emit(AuthErrorState(err.toString()));
           }
-        }
-        else{
+        } else {
           emit(LoadHomeScreenState());
         }
-      }
-      catch(err){
+      } catch (err) {
         emit(AuthErrorState(err.toString()));
       }
     });

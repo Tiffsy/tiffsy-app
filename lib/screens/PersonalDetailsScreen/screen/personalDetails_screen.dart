@@ -1,18 +1,24 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/PersonalDetailsScreen/bloc/personal_details_bloc.dart';
 
 class PersonalDetailsScreen extends StatefulWidget {
-  const PersonalDetailsScreen({super.key});
+  final bool perviousScreen;
+  final String phoneNumber;
+  const PersonalDetailsScreen({Key? key, required this.perviousScreen, required this.phoneNumber}): super(key: key);
 
   @override
   State<PersonalDetailsScreen> createState() => _PersonalDetailsScreenState();
 }
 
 class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
+  
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
+  TextEditingController phoneNo = TextEditingController();
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -46,16 +52,30 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    TextField(
-                      decoration: InputDecoration(hintText: "Name"),
-                      controller: name,
+                    Visibility(
+                      visible: widget.perviousScreen,
+                      child: TextField(
+                        decoration: InputDecoration(hintText: "Name"),
+                        controller: name,
+                      ),
                     ),
-                    TextField(
-                      decoration: InputDecoration(hintText: "Mail"),
-                      controller: email,
+                    Visibility(
+                      visible: widget.perviousScreen,
+                      child: TextField(
+                        decoration: InputDecoration(hintText: "Mail"),
+                        controller: email,
+                      ),
+                    ),
+                    Visibility(
+                      visible: !widget.perviousScreen,
+                      child: TextField(
+                        decoration: InputDecoration(hintText: "Phone"),
+                        controller: phoneNo,
+                      ),
                     ),
                     ElevatedButton(onPressed: () {
-                      BlocProvider.of<PersonalDetailsBloc>(context).add(ContinueButtonClickedEvent(name: name.text, mailId: email.text));
+                      BlocProvider.of<PersonalDetailsBloc>(context).add(ContinueButtonClickedEvent(name: widget.perviousScreen? name.text : user.displayName! , mailId: widget.perviousScreen? email.text : user.email!, phoneNumber: widget.perviousScreen ? widget.phoneNumber: phoneNo.text));
+
                     }, child: Text("Continue"))
                   ],
                 ),

@@ -14,7 +14,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeInitialFetchEvent>(homeInitialFetch);
     on<SubscriptionInitialFetchEvent>(subscriptionInitialFetchEvent);
   }
-  FutureOr<void> homeInitialFetch(HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
+  // FutureOr<void> homeInitialFetch(HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
+  //   on<HomeProfileButtonOnTapEvent>(
+  //     (event, emit) {
+  //       print("""object""");
+  //       emit(HomeProfileButtonOnTapState());
+  //     },
+  //   );
+  //   on<HomePageChangeEvent>(
+  //     (event, emit) {
+  //       emit(HomePageChangeState(newIndex: event.newIndex));
+  //     },
+  //   );
+  // }
+
+  FutureOr<void> homeInitialFetch(
+      HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
     emit(HomeLoadingState());
     List<MenuDataModel> menu = await HomeRepo.fetchMenu();
     emit(HomeFetchSuccessfulState(menu: menu));

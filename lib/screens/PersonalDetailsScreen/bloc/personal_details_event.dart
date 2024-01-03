@@ -9,6 +9,7 @@ sealed class PersonalDetailsEvent extends Equatable {
 class ContinueButtonClickedEvent extends PersonalDetailsEvent{
   final String name;
   final String mailId;
-  ContinueButtonClickedEvent({required this.name, required this.mailId});
+  final String phoneNumber;
+  ContinueButtonClickedEvent({required this.name, required this.mailId, required this.phoneNumber});
 }
 

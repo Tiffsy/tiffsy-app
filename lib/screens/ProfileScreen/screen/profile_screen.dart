@@ -1,5 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tiffsy_app/Helpers/page_router.dart';
+import 'package:tiffsy_app/screens/AddressBookScreen/screen/address_book_screen.dart';
+import 'package:tiffsy_app/screens/FrequentlyAskedQuestionsScreen/screen/frequently_asked_questions_screen.dart';
+import 'package:tiffsy_app/screens/HowItWorksScreen/screen/how_it_works_screen.dart';
+import 'package:tiffsy_app/screens/LoginScreen/screen/login_screen.dart';
+import 'package:tiffsy_app/screens/OrderHistoryScreen/screen/order_history_screen.dart';
+import 'package:tiffsy_app/screens/ProfileScreen/bloc/profile_bloc.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -21,96 +29,275 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     // TODO: implement initState
+
     super.initState();
   }
 
-  Map getHorizontalListButtonOptions() {
-    return {
-      "Subscription": [
-        Icons.food_bank,
-        () {
-          print("Subscription");
-        }
-      ],
-      "Payments": [
-        Icons.credit_card,
-        () {
-          print("Payments");
-        }
-      ],
-      "Settings": [
-        Icons.settings,
-        () {
-          print("Settings");
-        }
-      ],
-    };
-  }
-
-  Map getVerticalListButtonOptions() {
-    return {
-      "Order History": [
-        Icons.history,
-        () {
-          print("Order History");
-        }
-      ],
-      "Address Book": [Icons.home, () {}],
-      "Contact Us": [Icons.phone_enabled, () {}],
-      "About Us": [Icons.people, () {}],
-      "Feedback": [Icons.forum, () {}],
-    };
-  }
-
-  void logoutOnPress() {}
-
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser!;
-    print(MediaQuery.sizeOf(context).width);
-    return Scaffold(
-      backgroundColor: const Color(0xfffffcef),
-      appBar: AppBar(
-        backgroundColor: const Color(0xfffffcef),
-        leadingWidth: 64,
-        titleSpacing: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_rounded,
-            color: Color(0xff323232),
-            size: 24,
-          ),
-          onPressed: () {
-            // go back functionality, most likely using Navigator.pop()
-          },
-        ),
-        title: const Text(
-          "Your Profile",
-          style: TextStyle(
-            fontSize: 20,
-            height: 28 / 20,
-            fontWeight: FontWeight.w400,
-            color: Color(0xff121212),
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 5),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-                  userCard(user),
-                  const SizedBox(height: 12),
-                  listOfHorizontalCardButtons(getHorizontalListButtonOptions(),
-                      MediaQuery.sizeOf(context).width),
-                  const SizedBox(height: 12)
-                ] +
-                listOfVerticalOptions(
-                    getVerticalListButtonOptions(), logoutOnPress),
-          ),
-        ),
+    final ProfileBloc profileBloc = ProfileBloc();
+    profileBloc.add(ProfileBlocInitialEvent());
+
+    Map getVerticalListButtonOptions() {
+      return {
+        "Order History": [
+          Icons.history,
+          () {
+            profileBloc.add(const ProfilePageButtonPressEvent(
+                newPage: OrderHistoryScreen()));
+          }
+        ],
+        "Address Book": [
+          Icons.home,
+          () {
+            profileBloc.add(const ProfilePageButtonPressEvent(
+                newPage: AddressBookScreen()));
+          }
+        ],
+        "How it Works?": [
+          Icons.question_mark_rounded,
+          () {
+            profileBloc.add(
+                const ProfilePageButtonPressEvent(newPage: HowItWorksScreen()));
+          }
+        ],
+        "FAQs": [
+          Icons.question_answer_rounded,
+          () {
+            profileBloc.add(const ProfilePageButtonPressEvent(
+                newPage: FrequentlyAskedQuestionsScreen()));
+          }
+        ]
+      };
+    }
+
+    Map getHorizontalListButtonOptions() {
+      return {
+        "Subscription": [
+          Icons.food_bank,
+          () {
+            print("Subscription");
+          }
+        ],
+        "Payments": [
+          Icons.credit_card,
+          () {
+            print("Payments");
+          }
+        ],
+        "Settings": [
+          Icons.settings,
+          () {
+            print("Settings");
+          }
+        ],
+      };
+    }
+
+    return BlocProvider(
+      create: (context) => profileBloc,
+      child: BlocConsumer<ProfileBloc, ProfileState>(
+        listener: (context, state) {
+          if (state is ProfileBlocInitialUserNotFoundState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  "User profile not found, try logging out and logging in again!",
+                ),
+              ),
+            );
+          }
+          if (state is ProfilePageButtonPressState) {
+            Navigator.push(
+                context, SlideTransitionRouter.toNextPage(state.newPage));
+            profileBloc.add(ProfileBlocInitialEvent());
+          }
+          if (state is ProfilePageLogoutButtonOnPressState) {
+            Navigator.pushAndRemoveUntil(
+                context,
+                SlideTransitionRouter.toNextPage(const LoginScreen()),
+                (route) => route.isFirst);
+          }
+        },
+        builder: (context, state) {
+          if (state is ProfileBlocInitialState) {
+            return Scaffold(
+              backgroundColor: const Color(0xfffffcef),
+              appBar: AppBar(
+                backgroundColor: const Color(0xfffffcef),
+                leadingWidth: 64,
+                titleSpacing: 0,
+                leading: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: Color(0xff323232),
+                    size: 24,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                title: const Text(
+                  "Your Profile",
+                  style: TextStyle(
+                    fontSize: 20,
+                    height: 28 / 20,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xff121212),
+                  ),
+                ),
+              ),
+              body: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 5),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                          userCard(state.user),
+                          const SizedBox(height: 12),
+                          listOfHorizontalCardButtons(
+                              getHorizontalListButtonOptions(),
+                              MediaQuery.sizeOf(context).width),
+                          const SizedBox(height: 12)
+                        ] +
+                        listOfVerticalOptions(getVerticalListButtonOptions()) +
+                        [
+                          logoutButton(
+                            onPressed: () {
+                              profileBloc
+                                  .add(ProfilePageLogoutButtonOnPressEvent());
+                            },
+                            icon: const Icon(
+                              Icons.power_settings_new_rounded,
+                              size: 24,
+                              color: Colors.white,
+                            ),
+                          )
+                        ],
+                  ),
+                ),
+              ),
+            );
+          }
+
+          if (state is ProfilePageLogoutLoadingState) {
+            return Scaffold(
+              backgroundColor: const Color(0xfffffcef),
+              appBar: AppBar(
+                backgroundColor: const Color(0xfffffcef),
+                leadingWidth: 64,
+                titleSpacing: 0,
+                leading: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: Color(0xff323232),
+                    size: 24,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                title: const Text(
+                  "Your Profile",
+                  style: TextStyle(
+                    fontSize: 20,
+                    height: 28 / 20,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xff121212),
+                  ),
+                ),
+              ),
+              body: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 5),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                          userCard(state.user),
+                          const SizedBox(height: 12),
+                          listOfHorizontalCardButtons(
+                              getHorizontalListButtonOptions(),
+                              MediaQuery.sizeOf(context).width),
+                          const SizedBox(height: 12)
+                        ] +
+                        listOfVerticalOptions(getVerticalListButtonOptions()) +
+                        [
+                          logoutButton(
+                              onPressed: () {
+                                profileBloc
+                                    .add(ProfilePageLogoutButtonOnPressEvent());
+                              },
+                              icon: const SizedBox(
+                                  height: 15,
+                                  width: 15,
+                                  child: CircularProgressIndicator()))
+                        ],
+                  ),
+                ),
+              ),
+            );
+          }
+          return Scaffold(
+            backgroundColor: const Color(0xfffffcef),
+            appBar: AppBar(
+              backgroundColor: const Color(0xfffffcef),
+              leadingWidth: 64,
+              titleSpacing: 0,
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_rounded,
+                  color: Color(0xff323232),
+                  size: 24,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              title: const Text(
+                "Your Profile",
+                style: TextStyle(
+                  fontSize: 20,
+                  height: 28 / 20,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xff121212),
+                ),
+              ),
+            ),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 5),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                        //userCard(state.user),
+                        const SizedBox(height: 12),
+                        listOfHorizontalCardButtons(
+                            getHorizontalListButtonOptions(),
+                            MediaQuery.sizeOf(context).width),
+                        const SizedBox(height: 12)
+                      ] +
+                      listOfVerticalOptions(getVerticalListButtonOptions()) +
+                      [
+                        logoutButton(
+                            onPressed: () {
+                              profileBloc
+                                  .add(ProfilePageLogoutButtonOnPressEvent());
+                            },
+                            icon: const SizedBox(
+                                height: 15,
+                                width: 15,
+                                child: CircularProgressIndicator()))
+                      ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -239,7 +426,7 @@ Widget customHorizontalCardButton({
   );
 }
 
-List<Widget> listOfVerticalOptions(Map options, VoidCallback logoutOnPress) {
+List<Widget> listOfVerticalOptions(Map options) {
   List<Widget> listOfOptionCards = [];
   options.forEach((key, value) {
     listOfOptionCards.addAll([
@@ -247,10 +434,6 @@ List<Widget> listOfVerticalOptions(Map options, VoidCallback logoutOnPress) {
       const SizedBox(height: 12)
     ]);
   });
-  listOfOptionCards.add(logoutButton(
-      text: "Logout",
-      icon: Icons.power_settings_new,
-      onPressed: logoutOnPress));
   return listOfOptionCards;
 }
 
@@ -292,10 +475,7 @@ Widget customVerticalCardButton(
   });
 }
 
-Widget logoutButton(
-    {required String text,
-    required IconData icon,
-    required VoidCallback onPressed}) {
+Widget logoutButton({required VoidCallback onPressed, required Widget icon}) {
   return Builder(builder: (context) {
     var width = MediaQuery.sizeOf(context).width;
     return SizedBox(
@@ -314,15 +494,11 @@ Widget logoutButton(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 24,
-                color: Colors.white,
-              ),
+              icon,
               const SizedBox(width: 12),
-              Text(
-                text,
-                style: const TextStyle(
+              const Text(
+                "Logout",
+                style: TextStyle(
                   color: Color(0xffffffff),
                   fontSize: 12,
                   fontWeight: FontWeight.w500,

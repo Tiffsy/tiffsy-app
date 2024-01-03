@@ -36,9 +36,7 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
               size: 24,
             ),
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => AddAddressScreen()));
-              // go back functionality, most likely using Navigator.pop()
+              Navigator.pop(context);
             },
           ),
           title: const Text(

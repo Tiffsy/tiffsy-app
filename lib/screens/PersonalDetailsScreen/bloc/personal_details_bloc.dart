@@ -10,18 +10,19 @@ part 'personal_details_event.dart';
 part 'personal_details_state.dart';
 
 class PersonalDetailsBloc extends Bloc<PersonalDetailsEvent, PersonalDetailsState> {
-  
   PersonalDetailsBloc(super.initialState) {  
     on<ContinueButtonClickedEvent>((event, emit) async {
       emit(ScreenLoadingScreen());
       String name = event.name;
       String mailId = event.mailId;
+      String phoneNumber = event.phoneNumber;
       print(mailId);
       try{
         var client = http.Client();
         Map<String, dynamic> params = {
-          "name": name,
-          "mailId": mailId
+          "cst_name": name,
+          "cst_mail": mailId,
+          "cst_contact": phoneNumber
         };
         var response = await http.post(Uri.parse(apiJsURL + '/add-user'), body: params);
         if(response.statusCode == 200){
@@ -35,5 +36,6 @@ class PersonalDetailsBloc extends Bloc<PersonalDetailsEvent, PersonalDetailsStat
         emit(ScreenErrorState(error: err.toString()));
       }
     });
+
   }
 }

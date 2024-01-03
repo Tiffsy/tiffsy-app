@@ -61,7 +61,7 @@ class _HowItWorksScreenState extends State<HowItWorksScreen> {
             size: 24,
           ),
           onPressed: () {
-            // go back functionality, most likely using Navigator.pop()
+            Navigator.pop(context);
           },
         ),
         title: const Text(

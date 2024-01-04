@@ -45,7 +45,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         print(cst_details);
         Box customerBox = await Hive.openBox("customer_box");
         customerBox.putAll(cst_details);
-        customerBox.close();
       } else {
         print(result.error);
       }

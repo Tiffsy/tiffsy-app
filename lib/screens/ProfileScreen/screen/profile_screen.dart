@@ -1,6 +1,8 @@
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:tiffsy_app/Helpers/page_router.dart';
 import 'package:tiffsy_app/screens/AddressBookScreen/screen/address_book_screen.dart';
 import 'package:tiffsy_app/screens/FrequentlyAskedQuestionsScreen/screen/frequently_asked_questions_screen.dart';
@@ -324,7 +326,7 @@ Widget userCard(User user) {
           IconButton(
             onPressed: () => {},
             icon: ClipOval(
-              child: (user.photoURL == null)
+              child: (user.photoURL != null)
                   ? Image.network(
                       '${user.photoURL}',
                       fit: BoxFit.cover,
@@ -337,7 +339,7 @@ Widget userCard(User user) {
                       color: Colors.teal[100],
                       child: Center(
                         child: Text(
-                          name[0].toUpperCase(),
+                          Hive.box('customer_box').get('cst_name')[0].toString().toUpperCase(),
                           style: const TextStyle(
                               fontSize: 30, fontWeight: FontWeight.w600),
                         ),

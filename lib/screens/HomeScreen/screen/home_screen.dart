@@ -31,7 +31,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+        overlays: [SystemUiOverlay.top]);
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(systemNavigationBarColor: Color(0xfffffcef)));
 
     super.initState();
   }
@@ -73,7 +75,8 @@ class _HomeState extends State<Home> {
                     padding: const EdgeInsets.only(right: 17),
                     child: IconButton(
                       onPressed: () {
-                        Navigator.push(context, SlideTransitionRouter.toNextPage(ProfileScreen()));
+                        Navigator.push(context,
+                            SlideTransitionRouter.toNextPage(ProfileScreen()));
                       },
                       icon: ClipOval(
                         child: Image.asset(

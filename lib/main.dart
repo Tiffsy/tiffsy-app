@@ -17,7 +17,7 @@ import 'package:tiffsy_app/screens/PersonalDetailsScreen/screen/personalDetails_
 import 'package:tiffsy_app/screens/ProfileScreen/bloc/profile_bloc.dart';
 import 'package:tiffsy_app/screens/ProfileScreen/screen/profile_screen.dart';
 import 'package:tiffsy_app/screens/PaymentCheckoutScreen/screen/payment_checkout_screen.dart';
-import 'package:tiffsy_app/screens/RefundPolicyScreen/screen/refund_policy_screen.dart';
+
 import 'package:tiffsy_app/screens/splash_screen.dart';
 import 'package:flutter/services.dart';
 

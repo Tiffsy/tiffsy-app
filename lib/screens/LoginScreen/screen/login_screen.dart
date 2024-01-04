@@ -103,8 +103,10 @@ class _contentState extends State<content> {
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (_) =>
-                      const PersonalDetailsScreen(isPhoneAuth: false)));
+                  builder: (_) => const PersonalDetailsScreen(
+                        isPhoneAuth: false,
+                        phoneNumber: "0000000000",
+                      )));
         } else if (state is PhoneAuthCodeSentSuccess) {
           Navigator.push(
               context,

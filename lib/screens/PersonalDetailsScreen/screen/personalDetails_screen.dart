@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tiffsy_app/Helpers/loading_animation.dart';
@@ -5,8 +6,11 @@ import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/PersonalDetailsScreen/bloc/personal_details_bloc.dart';
 
 class PersonalDetailsScreen extends StatefulWidget {
-  const PersonalDetailsScreen({super.key, required this.isPhoneAuth});
+  const PersonalDetailsScreen(
+      {Key? key, required this.isPhoneAuth, required this.phoneNumber})
+      : super(key: key);
   final bool isPhoneAuth;
+  final String phoneNumber;
   @override
   State<PersonalDetailsScreen> createState() => _PersonalDetailsScreenState();
 }
@@ -15,6 +19,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController number = TextEditingController();
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -63,8 +68,10 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                         ElevatedButton(
                           onPressed: () {
                             BlocProvider.of<PersonalDetailsBloc>(context).add(
-                              ContinueButtonClickedForEmailEvent(
-                                  name: name.text, mailId: email.text),
+                              ContinueButtonClickedForPhoneEvent(
+                                  name: name.text,
+                                  mailId: email.text,
+                                  number: widget.phoneNumber),
                             );
                           },
                           child: const Text(
@@ -93,8 +100,10 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                         ElevatedButton(
                           onPressed: () {
                             BlocProvider.of<PersonalDetailsBloc>(context).add(
-                              ContinueButtonClickedForPhoneEvent(
-                                  name: name.text, number: number.text),
+                              ContinueButtonClickedForEmailEvent(
+                                  name: name.text,
+                                  number: number.text,
+                                  mailId: user.email!),
                             );
                           },
                           child: const Text(

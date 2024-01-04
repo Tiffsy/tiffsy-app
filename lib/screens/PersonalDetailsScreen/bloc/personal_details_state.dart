@@ -9,7 +9,6 @@ sealed class PersonalDetailsState extends Equatable {
 
 final class PersonalDetailsInitial extends PersonalDetailsState {
   final bool isPhoneAuth;
-
   PersonalDetailsInitial({required this.isPhoneAuth});
 }
 

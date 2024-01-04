@@ -9,11 +9,13 @@ sealed class PersonalDetailsEvent extends Equatable {
 class ContinueButtonClickedForEmailEvent extends PersonalDetailsEvent {
   final String name;
   final String mailId;
-  const ContinueButtonClickedForEmailEvent({required this.name, required this.mailId});
+  final String number;
+  const ContinueButtonClickedForEmailEvent({required this.name, required this.mailId, required this.number});
 }
 
 class ContinueButtonClickedForPhoneEvent extends PersonalDetailsEvent {
   final String name;
   final String number;
-  const ContinueButtonClickedForPhoneEvent({required this.name, required this.number});
+  final String mailId;
+  const ContinueButtonClickedForPhoneEvent({required this.name, required this.number, required this.mailId});
 }

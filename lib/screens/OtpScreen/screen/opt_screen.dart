@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -151,8 +150,9 @@ class _contentState extends State<content> {
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (_) =>
-                      const PersonalDetailsScreen(isPhoneAuth: true)));
+                  builder: (_) => PersonalDetailsScreen(
+                      isPhoneAuth: true,
+                      phoneNumber: widget.phoneNumber.toString())));
         } else if (state is AuthErrorState) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(state.error),

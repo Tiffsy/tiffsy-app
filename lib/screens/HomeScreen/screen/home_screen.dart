@@ -7,8 +7,6 @@ import 'package:tiffsy_app/Helpers/loading_animation.dart';
 import 'package:tiffsy_app/Helpers/page_router.dart';
 import 'package:tiffsy_app/screens/HomeScreen/bloc/home_bloc.dart';
 import 'package:tiffsy_app/screens/HomeScreen/model/home_model.dart';
-import 'package:tiffsy_app/screens/LoginScreen/bloc/login_bloc.dart';
-import 'package:tiffsy_app/screens/LoginScreen/screen/login_screen.dart';
 import 'package:tiffsy_app/screens/ProfileScreen/screen/profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -58,7 +56,6 @@ class _HomeState extends State<Home> {
       child: BlocConsumer<HomeBloc, HomeState>(
         listener: (context, state) {
           if (state is HomeProfileButtonOnTapState) {
-            print("object ok");
             Navigator.push(context,
                 SlideTransitionRouter.toNextPage(const ProfileScreen()));
             homeBloc.add(HomeInitialFetchEvent());
@@ -77,7 +74,7 @@ class _HomeState extends State<Home> {
                     padding: const EdgeInsets.only(right: 17),
                     child: IconButton(
                       onPressed: () {
-                        homeBloc.add(HomeProfileButtonOnTapEvent());
+                        Navigator.push(context, SlideTransitionRouter.toNextPage(ProfileScreen()));
                       },
                       icon: ClipOval(
                         child: Image.asset(

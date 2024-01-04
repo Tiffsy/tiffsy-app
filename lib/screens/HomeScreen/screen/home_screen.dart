@@ -32,8 +32,8 @@ class _HomeState extends State<Home> {
   void initState() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.top]);
-    SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(systemNavigationBarColor: Color(0xfffffcef)));
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        systemNavigationBarColor: Color(0xfffffcef)));
 
     super.initState();
   }
@@ -55,179 +55,92 @@ class _HomeState extends State<Home> {
     return BlocProvider(
       create: (context) => homeBloc,
       child: BlocConsumer<HomeBloc, HomeState>(
-        listener: (context, state) {
-          if (state is HomeProfileButtonOnTapState) {
-            Navigator.push(context,
-                SlideTransitionRouter.toNextPage(const ProfileScreen()));
-            homeBloc.add(HomeInitialFetchEvent());
-          }
-        },
+        listener: (context, state) {},
         builder: (context, state) {
-          if (state is HomePageChangeState) {
-            return Scaffold(
-              backgroundColor: const Color(0xffffffff),
-              appBar: AppBar(
-                title: Row(
-                  children: [],
-                ),
-                actions: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 17),
-                    child: IconButton(
-                      onPressed: () {
-                        Navigator.push(context,
-                            SlideTransitionRouter.toNextPage(ProfileScreen()));
-                      },
-                      icon: ClipOval(
-                        child: Image.asset(
-                          'assets/images/logo/tiffsy.png',
-                          fit: BoxFit.contain,
-                        ),
-                      ), // TODO: Bio Pic
-                    ),
-                  ),
-                ],
+          return Scaffold(
+            backgroundColor: const Color(0xffffffff),
+            appBar: AppBar(
+              title: Row(
+                children: [],
               ),
-              bottomNavigationBar: NavigationBar(
-                onDestinationSelected: (int index) {
-                  homeBloc.add(HomePageChangeEvent(newIndex: index));
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 17),
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          SlideTransitionRouter.toNextPage(
+                              const ProfileScreen()));
+                    },
+                    icon: ClipOval(
+                      child: Image.asset(
+                        'assets/images/logo/tiffsy.png',
+                        fit: BoxFit.contain,
+                      ),
+                    ), // TODO: Bio Pic
+                  ),
+                ),
+              ],
+            ),
+            bottomNavigationBar: NavigationBar(
+              onDestinationSelected: (int index) {
+                setState(() {
                   currentPageIndex = index;
-                },
-                selectedIndex: state.newIndex,
-                destinations: const <Widget>[
-                  NavigationDestination(
-                    selectedIcon: Icon(Icons.restaurant_menu),
-                    icon: Icon(Icons.restaurant_menu_outlined),
-                    label: 'Menu',
-                  ),
-                  NavigationDestination(
-                    selectedIcon: Icon(Icons.credit_card),
-                    icon: Icon(Icons.credit_card_outlined),
-                    label: 'Payments',
-                  ),
-                  NavigationDestination(
-                    selectedIcon: Icon(Icons.food_bank),
-                    icon: Icon(Icons.food_bank_outlined),
-                    label: 'Subscription',
-                  )
-                ],
-              ),
-              body: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
+                });
+              },
+              selectedIndex: currentPageIndex,
+              destinations: const <Widget>[
+                NavigationDestination(
+                  selectedIcon: Icon(Icons.restaurant_menu),
+                  icon: Icon(Icons.restaurant_menu_outlined),
+                  label: 'Menu',
                 ),
-                child: <Widget>[
-                  menuPage(theme, homeBloc),
-                  Card(
-                    shadowColor: Colors.transparent,
-                    margin: const EdgeInsets.all(8.0),
-                    child: SizedBox.expand(
-                      child: Center(
-                        child: Text(
-                          'Payments',
-                          style: theme.textTheme.titleLarge,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Card(
-                    shadowColor: Colors.transparent,
-                    margin: const EdgeInsets.all(8.0),
-                    child: SizedBox.expand(
-                      child: Center(
-                        child: Text(
-                          'Subscription',
-                          style: theme.textTheme.titleLarge,
-                        ),
-                      ),
-                    ),
-                  ),
-                ][state.newIndex],
-              ),
-            );
-          } else {
-            return Scaffold(
-              backgroundColor: const Color(0xffffffff),
-              appBar: AppBar(
-                title: Row(
-                  children: [],
+                NavigationDestination(
+                  selectedIcon: Icon(Icons.credit_card),
+                  icon: Icon(Icons.credit_card_outlined),
+                  label: 'Payments',
                 ),
-                actions: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 17),
-                    child: IconButton(
-                      onPressed: () {
-                        Navigator.push(context,
-                            SlideTransitionRouter.toNextPage(ProfileScreen()));
-                      },
-                      icon: ClipOval(
-                        child: Image.asset(
-                          'assets/images/logo/tiffsy.png',
-                          fit: BoxFit.contain,
-                        ),
-                      ), // TODO: Bio Pic
+                NavigationDestination(
+                  selectedIcon: Icon(Icons.food_bank),
+                  icon: Icon(Icons.food_bank_outlined),
+                  label: 'Subscription',
+                )
+              ],
+            ),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+              ),
+              child: <Widget>[
+                menuPage(theme, homeBloc),
+                Card(
+                  shadowColor: Colors.transparent,
+                  margin: const EdgeInsets.all(8.0),
+                  child: SizedBox.expand(
+                    child: Center(
+                      child: Text(
+                        'Payments',
+                        style: theme.textTheme.titleLarge,
+                      ),
                     ),
                   ),
-                ],
-              ),
-              bottomNavigationBar: NavigationBar(
-                onDestinationSelected: (int index) {
-                  homeBloc.add(HomePageChangeEvent(newIndex: index));
-                  currentPageIndex = index;
-                },
-                selectedIndex: currentPageIndex,
-                destinations: const <Widget>[
-                  NavigationDestination(
-                    selectedIcon: Icon(Icons.restaurant_menu),
-                    icon: Icon(Icons.restaurant_menu_outlined),
-                    label: 'Menu',
-                  ),
-                  NavigationDestination(
-                    selectedIcon: Icon(Icons.credit_card),
-                    icon: Icon(Icons.credit_card_outlined),
-                    label: 'Payments',
-                  ),
-                  NavigationDestination(
-                    selectedIcon: Icon(Icons.food_bank),
-                    icon: Icon(Icons.food_bank_outlined),
-                    label: 'Subscription',
-                  )
-                ],
-              ),
-              body: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
                 ),
-                child: <Widget>[
-                  menuPage(theme, homeBloc),
-                  Card(
-                    shadowColor: Colors.transparent,
-                    margin: const EdgeInsets.all(8.0),
-                    child: SizedBox.expand(
-                      child: Center(
-                        child: Text(
-                          'Payments',
-                          style: theme.textTheme.titleLarge,
-                        ),
+                Card(
+                  shadowColor: Colors.transparent,
+                  margin: const EdgeInsets.all(8.0),
+                  child: SizedBox.expand(
+                    child: Center(
+                      child: Text(
+                        'Subscription',
+                        style: theme.textTheme.titleLarge,
                       ),
                     ),
                   ),
-                  Card(
-                    shadowColor: Colors.transparent,
-                    margin: const EdgeInsets.all(8.0),
-                    child: SizedBox.expand(
-                      child: Center(
-                        child: Text(
-                          'Subscription',
-                          style: theme.textTheme.titleLarge,
-                        ),
-                      ),
-                    ),
-                  ),
-                ][currentPageIndex],
-              ),
-            );
-          }
+                ),
+              ][currentPageIndex],
+            ),
+          );
         },
       ),
     );
@@ -236,7 +149,6 @@ class _HomeState extends State<Home> {
 
 Widget menuPage(ThemeData theme, HomeBloc homeBloc) {
   return Builder(builder: (context) {
-    var mediaQuery = MediaQuery.of(context);
     return BlocConsumer<HomeBloc, HomeState>(
       bloc: homeBloc,
       listener: (context, state) {},

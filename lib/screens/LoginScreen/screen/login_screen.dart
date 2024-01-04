@@ -22,18 +22,27 @@ class _LoginScreenState extends State<LoginScreen> {
     // TODO: implement initState
 
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.immersiveSticky,
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: [SystemUiOverlay.top]);
+
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemNavigationBarColor: Color(0xfffafafa),
+        statusBarColor: Color(0xffF2B620),
+      ),
     );
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      systemNavigationBarColor: Color(0xfffafafa),
-      statusBarColor: Color(0xffF2B620),
-    ));
   }
 
   @override
   void dispose() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemNavigationBarColor: Color(0xfffafafa),
+        statusBarColor: Color(0xffF2B620),
+      ),
+    );
     super.dispose();
   }
 
@@ -92,7 +101,12 @@ class _contentState extends State<content> {
         } else if (state is LoginScreenLoadedState) {
           Navigator.popUntil(context, (route) => route.isFirst);
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (_) => const PersonalDetailsScreen(isPhoneAuth: false, phoneNumber: "0000000000",)));
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const PersonalDetailsScreen(
+                        isPhoneAuth: false,
+                        phoneNumber: "0000000000",
+                      )));
         } else if (state is PhoneAuthCodeSentSuccess) {
           Navigator.push(
               context,
@@ -105,7 +119,7 @@ class _contentState extends State<content> {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => HomeScreen()),
-            (route) => route.isFirst,
+            (route) => false,
           );
         }
       },
@@ -134,7 +148,9 @@ class _contentState extends State<content> {
                 Container(
                   height: _mediaQuery.size.height * 0.550,
                   decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(24.0), topRight: Radius.circular(24.0)),
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24.0),
+                        topRight: Radius.circular(24.0)),
                     color: Color(0xffFAFAFA),
                   ),
                   child: Column(
@@ -147,10 +163,14 @@ class _contentState extends State<content> {
                         children: [
                           Expanded(
                               child: Divider(
-                                  thickness: 1, color: Color.fromARGB(255, 194, 194, 194), indent: 20, endIndent: 22)),
+                                  thickness: 1,
+                                  color: Color.fromARGB(255, 194, 194, 194),
+                                  indent: 20,
+                                  endIndent: 22)),
                           Text(
                             'Log in or sign up',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500),
                           ),
                           Expanded(
                               child: Divider(
@@ -161,7 +181,8 @@ class _contentState extends State<content> {
                           ))
                         ],
                       ),
-                      SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.01),
                       Container(
                         margin: const EdgeInsets.all(20.0),
                         height: _mediaQuery.size.height * 0.060,
@@ -194,7 +215,8 @@ class _contentState extends State<content> {
                                   textAlignVertical: TextAlignVertical.center,
                                   keyboardType: TextInputType.phone,
                                   controller: countryCode,
-                                  decoration: const InputDecoration(border: InputBorder.none),
+                                  decoration: const InputDecoration(
+                                      border: InputBorder.none),
                                   style: const TextStyle(
                                       color: Colors.grey,
                                       fontSize: 18,
@@ -210,9 +232,15 @@ class _contentState extends State<content> {
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                   hintText: 'Enter Phone Number',
-                                  hintStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
+                                  hintStyle: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'Roboto'),
                                 ),
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'Roboto'),
                               ),
                             ),
                             Tooltip(
@@ -226,14 +254,16 @@ class _contentState extends State<content> {
                           ],
                         ),
                       ),
-                      SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.01),
                       SizedBox(
                         height: _mediaQuery.size.height * 0.045,
                         width: _mediaQuery.size.width * 0.9,
                         child: OutlinedButton(
                           onPressed: () {
                             String phoneNumber = "+91${phoneController.text}";
-                            loginBloc.add(SendOtpToPhoneEvent(phoneNumber: phoneNumber));
+                            loginBloc.add(
+                                SendOtpToPhoneEvent(phoneNumber: phoneNumber));
                           },
                           style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: Color(0xffFAFAFA)),
@@ -251,17 +281,24 @@ class _contentState extends State<content> {
                               'Continue'),
                         ),
                       ),
-                      SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.04),
                       const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Expanded(
                               child: Divider(
-                                  thickness: 1, color: Color.fromARGB(255, 194, 194, 194), indent: 20, endIndent: 20)),
+                                  thickness: 1,
+                                  color: Color.fromARGB(255, 194, 194, 194),
+                                  indent: 20,
+                                  endIndent: 20)),
                           Text(
                             'or',
-                            style: TextStyle(color: Color(0xFF121212), fontSize: 16, fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                                color: Color(0xFF121212),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
                           ),
                           Expanded(
                               child: Divider(
@@ -272,12 +309,14 @@ class _contentState extends State<content> {
                           ))
                         ],
                       ),
-                      SizedBox(height: MediaQuery.of(context).size.height * 0.04),
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.04),
                       Container(
                         height: _mediaQuery.size.height * 0.045,
                         width: _mediaQuery.size.width * 0.9,
                         child: OutlinedButton(
-                          onPressed: () => {loginBloc.add(SignInWithGooglePressedEvent())},
+                          onPressed: () =>
+                              {loginBloc.add(SignInWithGooglePressedEvent())},
                           style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: Colors.black),
                               shape: RoundedRectangleBorder(
@@ -290,14 +329,17 @@ class _contentState extends State<content> {
                               SvgPicture.asset(
                                 'assets/images/vectors/Google_icon.svg',
                                 semanticsLabel: 'vector image',
-                                width: MediaQuery.of(context).size.width * 0.038,
+                                width:
+                                    MediaQuery.of(context).size.width * 0.038,
                               ),
                               const SizedBox(width: 8),
                               Text(
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     color: Colors.black,
-                                    fontSize: MediaQuery.of(context).size.width * 0.038,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.038,
                                     fontWeight: FontWeight.w500,
                                     letterSpacing: 0.10,
                                     height: 0.10),

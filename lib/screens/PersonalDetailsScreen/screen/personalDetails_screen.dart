@@ -5,7 +5,9 @@ import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/PersonalDetailsScreen/bloc/personal_details_bloc.dart';
 
 class PersonalDetailsScreen extends StatefulWidget {
-  const PersonalDetailsScreen({Key? key, required this.isPhoneAuth, required this.phoneNumber}) : super(key: key);
+  const PersonalDetailsScreen(
+      {Key? key, required this.isPhoneAuth, required this.phoneNumber})
+      : super(key: key);
   final bool isPhoneAuth;
   final String phoneNumber;
   @override
@@ -16,7 +18,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
   TextEditingController name = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController number = TextEditingController();
-   final user = FirebaseAuth.instance.currentUser!;
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +67,10 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                         ElevatedButton(
                           onPressed: () {
                             BlocProvider.of<PersonalDetailsBloc>(context).add(
-                              ContinueButtonClickedForPhoneEvent(name: name.text, mailId: email.text, number: widget.phoneNumber),
+                              ContinueButtonClickedForPhoneEvent(
+                                  name: name.text,
+                                  mailId: email.text,
+                                  number: widget.phoneNumber),
                             );
                           },
                           child: const Text(
@@ -92,7 +97,10 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                         ElevatedButton(
                           onPressed: () {
                             BlocProvider.of<PersonalDetailsBloc>(context).add(
-                              ContinueButtonClickedForEmailEvent(name: name.text, number: number.text, mailId: user.email!),
+                              ContinueButtonClickedForEmailEvent(
+                                  name: name.text,
+                                  number: number.text,
+                                  mailId: user.email!),
                             );
                           },
                           child: const Text(

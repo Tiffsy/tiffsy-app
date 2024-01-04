@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinput/pinput.dart';
+import 'package:tiffsy_app/Helpers/loading_animation.dart';
+import 'package:tiffsy_app/repositories/user_repository.dart';
 import 'package:tiffsy_app/screens/LoginScreen/bloc/login_bloc.dart';
 import 'package:tiffsy_app/screens/PersonalDetailsScreen/screen/personalDetails_screen.dart';
 

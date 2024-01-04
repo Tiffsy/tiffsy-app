@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:tiffsy_app/Helpers/result.dart';
 import 'package:tiffsy_app/screens/HomeScreen/model/home_model.dart';
@@ -29,40 +30,40 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   // }
 
   FutureOr<void> homeInitialFetch(
-    HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
+      HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
     emit(HomeLoadingState());
     List<MenuDataModel> menu = await HomeRepo.fetchMenu();
     bool loginMethod = HomeRepo.checkUserAuthenticationMethod();
     String cst_id = "";
-    if(loginMethod){
-        String cst_phone = HomeRepo.getUserInfo();
-        cst_phone  = cst_phone.substring(3);
-        Result<Map<String, dynamic>> result = await HomeRepo.getCustomerIdByPhone(cst_phone);
-        if(result.isSuccess){
-          Map<String, dynamic> cst_details = result.data!;
-          print(cst_details);
-        }  
-        else{
-          print(result.error);
-        }
-    }
-    else{
+    if (loginMethod) {
+      String cst_phone = HomeRepo.getUserInfo();
+      cst_phone = cst_phone.substring(3);
+      Result<Map<String, dynamic>> result =
+          await HomeRepo.getCustomerIdByPhone(cst_phone);
+      if (result.isSuccess) {
+        Map<String, dynamic> cst_details = result.data!;
+        print(cst_details);
+        Box customerBox = await Hive.openBox("customer_box");
+        customerBox.putAll(cst_details);
+      } else {
+        print(result.error);
+      }
+    } else {
       String cst_mail = HomeRepo.getUserInfo();
-      Result<Map<String, dynamic>> result = await HomeRepo.getCustomerIdByMail(cst_mail);
-        if(result.isSuccess){
-          Map<String, dynamic> cst_details = result.data!;
-          print(cst_details);
-        }
-        else{
-          print(result.error);
-        }
+      Result<Map<String, dynamic>> result =
+          await HomeRepo.getCustomerIdByMail(cst_mail);
+      if (result.isSuccess) {
+        Map<String, dynamic> cst_details = result.data!;
+        print(cst_details);
+      } else {
+        print(result.error);
+      }
     }
     emit(HomeFetchSuccessfulState(menu: menu));
   }
 
-  FutureOr<void> subscriptionInitialFetchEvent(SubscriptionInitialFetchEvent event, Emitter<HomeState> emit) {
+  FutureOr<void> subscriptionInitialFetchEvent(
+      SubscriptionInitialFetchEvent event, Emitter<HomeState> emit) {
     emit(SubscriptionLoadingState());
   }
-  
 }
-

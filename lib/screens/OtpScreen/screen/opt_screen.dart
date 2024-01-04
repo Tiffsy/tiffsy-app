@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinput/pinput.dart';
+import 'package:tiffsy_app/Helpers/loading_animation.dart';
 import 'package:tiffsy_app/repositories/user_repository.dart';
 import 'package:tiffsy_app/screens/LoginScreen/bloc/login_bloc.dart';
 import 'package:tiffsy_app/screens/PersonalDetailsScreen/screen/personalDetails_screen.dart';
@@ -14,7 +15,9 @@ import '../../HomeScreen/screen/home_screen.dart';
 class OtpScreen extends StatefulWidget {
   final String verificationId;
   final String phoneNumber;
-  const OtpScreen({Key? key, required this.verificationId, required this.phoneNumber}) : super(key: key);
+  const OtpScreen(
+      {Key? key, required this.verificationId, required this.phoneNumber})
+      : super(key: key);
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -30,7 +33,8 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   void dispose() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
     super.dispose();
   }
 
@@ -61,7 +65,9 @@ class _OtpScreenState extends State<OtpScreen> {
 class content extends StatefulWidget {
   final String verificationId;
   final String phoneNumber;
-  const content({Key? key, required this.verificationId, required this.phoneNumber}) : super(key: key);
+  const content(
+      {Key? key, required this.verificationId, required this.phoneNumber})
+      : super(key: key);
 
   @override
   State<content> createState() => _contentState();
@@ -103,14 +109,18 @@ class _contentState extends State<content> {
   void dispose() {
     // TODO: implement dispose
     timer.cancel();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
     super.dispose();
   }
 
   final defaultPinTheme = PinTheme(
     width: 48,
     height: 48,
-    textStyle: const TextStyle(fontSize: 20, color: Color.fromRGBO(30, 60, 87, 1), fontWeight: FontWeight.w600),
+    textStyle: const TextStyle(
+        fontSize: 20,
+        color: Color.fromRGBO(30, 60, 87, 1),
+        fontWeight: FontWeight.w600),
     decoration: BoxDecoration(
       border: Border.all(color: Color(0xFFCDCDCD)),
       borderRadius: BorderRadius.circular(8),
@@ -139,7 +149,10 @@ class _contentState extends State<content> {
         if (state is LoginScreenLoadedState) {
           Navigator.popUntil(context, (route) => route.isFirst);
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (_) => const PersonalDetailsScreen(isPhoneAuth: true)));
+              context,
+              MaterialPageRoute(
+                  builder: (_) =>
+                      const PersonalDetailsScreen(isPhoneAuth: true)));
         } else if (state is AuthErrorState) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(state.error),
@@ -147,14 +160,13 @@ class _contentState extends State<content> {
             duration: Duration(seconds: 10),
           ));
         } else if (state is LoadHomeScreenState) {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => HomeScreen()));
         }
       },
       builder: (context, state) {
         if (state is AuthLoadingState) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return LoadingAnimation.loadingAnimationTwo(context);
         } else if (state is OTPScreenInitialState) {
           return SingleChildScrollView(
             child: Container(
@@ -196,7 +208,9 @@ class _contentState extends State<content> {
                     pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
                     showCursor: true,
                     onCompleted: (pin) {
-                      loginBloc.add(VerifySentOtp(optCode: pin.toString(), verificationId: widget.verificationId));
+                      loginBloc.add(VerifySentOtp(
+                          optCode: pin.toString(),
+                          verificationId: widget.verificationId));
                     },
                     controller: otpController,
                   ),

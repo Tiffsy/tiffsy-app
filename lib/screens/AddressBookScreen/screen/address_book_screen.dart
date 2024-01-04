@@ -2,6 +2,7 @@ import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_svg/svg.dart";
+import "package:tiffsy_app/Helpers/loading_animation.dart";
 import "package:tiffsy_app/screens/AddAddressScreen/screen/add_address_screen.dart";
 import "package:tiffsy_app/screens/AddressBookScreen/bloc/address_book_bloc.dart";
 import "package:tiffsy_app/screens/AddressBookScreen/model/address_data_model.dart";
@@ -71,7 +72,7 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
                 ],
               );
             } else if (state is AddressBookLoadingState) {
-              return Center(child: CircularProgressIndicator());
+              return LoadingAnimation.loadingAnimationOne(context);
             } else {
               return Center(child: Text("Error While loading page"));
             }

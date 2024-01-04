@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tiffsy_app/Helpers/loading_animation.dart';
 import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/PersonalDetailsScreen/bloc/personal_details_bloc.dart';
 
@@ -17,8 +18,8 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    PersonalDetailsBloc personalDetailsBloc =
-        PersonalDetailsBloc(PersonalDetailsInitial(isPhoneAuth: widget.isPhoneAuth));
+    PersonalDetailsBloc personalDetailsBloc = PersonalDetailsBloc(
+        PersonalDetailsInitial(isPhoneAuth: widget.isPhoneAuth));
     return Scaffold(
       backgroundColor: const Color(0xffffffff),
       appBar: AppBar(
@@ -38,19 +39,19 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
             }
             if (state is ContinueButtonClickedSuccessState) {
               Navigator.popUntil(context, (route) => route.isFirst);
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (_) => const HomeScreen()));
             }
           },
           builder: (context, state) {
             if (state is ScreenLoadingScreen) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return LoadingAnimation.loadingAnimationTwo(context);
             } else if (state is PersonalDetailsInitial) {
               if (state.isPhoneAuth) {
                 return Center(
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 30, left: 30, bottom: 100),
+                    padding:
+                        const EdgeInsets.only(right: 30, left: 30, bottom: 100),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -62,7 +63,8 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                         ElevatedButton(
                           onPressed: () {
                             BlocProvider.of<PersonalDetailsBloc>(context).add(
-                              ContinueButtonClickedForEmailEvent(name: name.text, mailId: email.text),
+                              ContinueButtonClickedForEmailEvent(
+                                  name: name.text, mailId: email.text),
                             );
                           },
                           child: const Text(
@@ -77,19 +79,22 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
               } else {
                 return Center(
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 30, left: 30, bottom: 100),
+                    padding:
+                        const EdgeInsets.only(right: 30, left: 30, bottom: 100),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         entryBox(name, "Name", AutofillHints.name),
                         const SizedBox(height: 20),
-                        entryBox(number, "10-digit Phone Number", AutofillHints.telephoneNumber),
+                        entryBox(number, "10-digit Phone Number",
+                            AutofillHints.telephoneNumber),
                         const SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: () {
                             BlocProvider.of<PersonalDetailsBloc>(context).add(
-                              ContinueButtonClickedForPhoneEvent(name: name.text, number: number.text),
+                              ContinueButtonClickedForPhoneEvent(
+                                  name: name.text, number: number.text),
                             );
                           },
                           child: const Text(
@@ -112,7 +117,8 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
   }
 }
 
-Widget entryBox(TextEditingController controller, String label, String? autofillHints) {
+Widget entryBox(
+    TextEditingController controller, String label, String? autofillHints) {
   Iterable<String>? autoFill = autofillHints == null ? {} : {autofillHints};
   return TextFormField(
     autofillHints: autoFill,

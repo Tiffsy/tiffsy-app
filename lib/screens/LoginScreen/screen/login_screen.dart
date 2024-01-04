@@ -92,7 +92,7 @@ class _contentState extends State<content> {
         } else if (state is LoginScreenLoadedState) {
           Navigator.popUntil(context, (route) => route.isFirst);
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (_) => const PersonalDetailsScreen(isPhoneAuth: false)));
+              context, MaterialPageRoute(builder: (_) => const PersonalDetailsScreen(isPhoneAuth: false, phoneNumber: "0000000000",)));
         } else if (state is PhoneAuthCodeSentSuccess) {
           Navigator.push(
               context,

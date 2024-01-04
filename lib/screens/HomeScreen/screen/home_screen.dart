@@ -157,7 +157,8 @@ class _HomeState extends State<Home> {
                     padding: const EdgeInsets.only(right: 17),
                     child: IconButton(
                       onPressed: () {
-                        homeBloc.add(HomeProfileButtonOnTapEvent());
+                        Navigator.push(context,
+                            SlideTransitionRouter.toNextPage(ProfileScreen()));
                       },
                       icon: ClipOval(
                         child: Image.asset(

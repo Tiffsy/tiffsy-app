@@ -43,29 +43,31 @@ class _ProfileState extends State<Profile> {
         "Order History": [
           Icons.history,
           () {
-            profileBloc.add(const ProfilePageButtonPressEvent(
-                newPage: OrderHistoryScreen()));
+            Navigator.push(context,
+                SlideTransitionRouter.toNextPage(const OrderHistoryScreen()));
           }
         ],
         "Address Book": [
           Icons.home,
           () {
-            profileBloc.add(const ProfilePageButtonPressEvent(
-                newPage: AddressBookScreen()));
+            Navigator.push(context,
+                SlideTransitionRouter.toNextPage(const AddressBookScreen()));
           }
         ],
         "How it Works?": [
           Icons.question_mark_rounded,
           () {
-            profileBloc.add(
-                const ProfilePageButtonPressEvent(newPage: HowItWorksScreen()));
+            Navigator.push(context,
+                SlideTransitionRouter.toNextPage(const HowItWorksScreen()));
           }
         ],
         "FAQs": [
           Icons.question_answer_rounded,
           () {
-            profileBloc.add(const ProfilePageButtonPressEvent(
-                newPage: FrequentlyAskedQuestionsScreen()));
+            Navigator.push(
+                context,
+                SlideTransitionRouter.toNextPage(
+                    const FrequentlyAskedQuestionsScreen()));
           }
         ]
       };

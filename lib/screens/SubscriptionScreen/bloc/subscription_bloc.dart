@@ -5,7 +5,7 @@ part 'subscription_event.dart';
 part 'subscription_state.dart';
 
 class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
-  SubscriptionBloc() : super(SubscriptionInitial()) {
+  SubscriptionBloc(super.initialState) {
     on<SubscriptionEvent>((event, emit) {
       // TODO: implement event handler
     });

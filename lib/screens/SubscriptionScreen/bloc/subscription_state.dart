@@ -1,10 +1,13 @@
 part of 'subscription_bloc.dart';
 
-sealed class SubscriptionState extends Equatable {
+abstract class SubscriptionState extends Equatable {
   const SubscriptionState();
   
   @override
   List<Object> get props => [];
 }
 
-final class SubscriptionInitial extends SubscriptionState {}
+final class SubscriptionInitial extends SubscriptionState {
+  final String subType;
+  SubscriptionInitial({required this.subType});
+}

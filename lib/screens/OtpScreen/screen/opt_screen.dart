@@ -189,6 +189,7 @@ class _contentState extends State<content> {
                   ),
                   const SizedBox(width: double.infinity, height: 20),
                   Pinput(
+                    androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsUserConsentApi,
                     defaultPinTheme: defaultPinTheme,
                     focusedPinTheme: focusedPinTheme,
                     submittedPinTheme: submittedPinTheme,

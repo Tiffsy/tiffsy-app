@@ -67,8 +67,33 @@ class _HomeState extends State<Home> {
             return Scaffold(
               backgroundColor: const Color(0xffffffff),
               appBar: AppBar(
-                title: Row(
-                  children: [],
+                title: Padding(
+                  padding: const EdgeInsets.only(left: 23),
+                  child: Row(
+                    children: [
+                      Icon(Icons.location_on, size: 30,color: Color(0xffffbe1d),),
+                      SizedBox(width: 8,),
+                      Container(
+                        width: 200,
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                              Text("addr_line", style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500
+                                ),
+                                ),
+                                IconButton(onPressed: (){
+                                  _showBottomSheet(context);
+                                }, 
+                                icon: Icon(Icons.keyboard_arrow_down))
+                            ],), 
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 actions: [
                   Padding(
@@ -149,8 +174,34 @@ class _HomeState extends State<Home> {
             return Scaffold(
               backgroundColor: const Color(0xffffffff),
               appBar: AppBar(
-                title: Row(
-                  children: [],
+                toolbarHeight: 60,
+                title: Padding(
+                  padding: const EdgeInsets.only(left: 23),
+                  child: Row(
+                    children: [
+                      Icon(Icons.location_on, size: 30,color: Color(0xffffbe1d),),
+                      SizedBox(width: 8,),
+                      Container(
+                        width: 200,
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                              Text("addr_line", style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500
+                                ),
+                                ),
+                                IconButton(onPressed: (){
+                                  _showBottomSheet(context);
+                                }, 
+                                icon: Icon(Icons.keyboard_arrow_down))
+                            ],), 
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 actions: [
                   Padding(
@@ -195,8 +246,10 @@ class _HomeState extends State<Home> {
                 ],
               ),
               body: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
+                padding: const EdgeInsets.only(
+                  top: 20,
+                  left: 20,
+                  right: 20
                 ),
                 child: <Widget>[
                   menuPage(theme, homeBloc),
@@ -518,3 +571,21 @@ Widget subscriptionCard(String subscriptionType) {
     ),
   );
 }
+
+ void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 200.0,
+          color: Colors.white,
+          child: Center(
+            child: Text(
+              'This is a BottomSheet',
+              style: TextStyle(fontSize: 20.0),
+            ),
+          ),
+        );
+      },
+    );
+  }

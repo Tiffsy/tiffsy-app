@@ -9,41 +9,49 @@ AddressDataModel addressDataModelFromJson(String str) => AddressDataModel.fromJs
 String addressDataModelToJson(AddressDataModel data) => json.encode(data.toJson());
 
 class AddressDataModel {
-    String addrType;
+    String cstId;
+    String addrId;
+    String houseNum;
+    String addrLine;
+    String state;
     String pin;
     String city;
-    String state;
-    String hsNm;
-    String addrId;
-    String addLine1;
+    String contact;
+    String addrType;
 
     AddressDataModel({
-        required this.addrType,
+        required this.cstId,
+        required this.addrId,
+        required this.houseNum,
+        required this.addrLine,
+        required this.state,
         required this.pin,
         required this.city,
-        required this.state,
-        required this.hsNm,
-        required this.addrId,
-        required this.addLine1,
+        required this.contact,
+        required this.addrType,
     });
 
     factory AddressDataModel.fromJson(Map<String, dynamic> json) => AddressDataModel(
-        addrType: json["addr_type"],
+        cstId: json["cst_id"],
+        addrId: json["addr_id"],
+        houseNum: json["house_num"],
+        addrLine: json["addr_line"],
+        state: json["state"],
         pin: json["pin"],
         city: json["city"],
-        state: json["state"],
-        hsNm: json["hs_nm"],
-        addrId: json["addr_id"],
-        addLine1: json["add_line_1"],
+        contact: json["contact"],
+        addrType: json["addr_type"],
     );
 
     Map<String, dynamic> toJson() => {
-        "addr_type": addrType,
+        "cst_id": cstId,
+        "addr_id": addrId,
+        "house_num": houseNum,
+        "addr_line": addrLine,
+        "state": state,
         "pin": pin,
         "city": city,
-        "state": state,
-        "hs_nm": hsNm,
-        "addr_id": addrId,
-        "add_line_1": addLine1,
+        "contact": contact,
+        "addr_type": addrType,
     };
 }

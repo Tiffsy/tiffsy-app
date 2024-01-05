@@ -130,8 +130,11 @@ Widget listOfAddressCards(List<AddressDataModel> listOfAddress) {
   List<Widget> listOfAddressCardsFromAddresses = [];
   for (int i = 0; i < listOfAddress.length; i++) {
     listOfAddressCardsFromAddresses.add(
-      addressCard(listOfAddress[i].addrType, listOfAddress[i].addLine1),
+      addressCard(listOfAddress[i].addrType, listOfAddress[i].addrLine),
     );
+  }
+  if(listOfAddressCardsFromAddresses.isEmpty){
+    return Center(child: Text("No Address Found"));
   }
   return Flexible(
     child: SingleChildScrollView(

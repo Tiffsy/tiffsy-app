@@ -1,6 +1,6 @@
 part of 'add_address_screen_dart_bloc.dart';
 
-sealed class AddAddressScreenDartState extends Equatable {
+abstract class AddAddressScreenDartState extends Equatable {
   const AddAddressScreenDartState();
   
   @override
@@ -8,3 +8,9 @@ sealed class AddAddressScreenDartState extends Equatable {
 }
 
 final class AddAddressScreenDartInitial extends AddAddressScreenDartState {}
+class AddAddressErrorState extends AddAddressScreenDartState{
+  final String error;
+  AddAddressErrorState({required this.error});
+}
+class AddAddressSuccessState extends AddAddressScreenDartState{}
+class AddAddressLoadingState extends AddAddressScreenDartState{}

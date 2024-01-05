@@ -70,10 +70,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   FutureOr<void> homePageCartQuantityChangeEvent(
       HomePageCartQuantityChangeEvent event, Emitter<HomeState> emit) {
     Box cartBox = Hive.box("cart_box");
-    int currentValue = cartBox.get(event.mealType);
+    int currentValue = cartBox.get(event.mealType, defaultValue: 0);
     cartBox.put(event.mealType,
         event.isIncreased ? (currentValue + 1) : (currentValue - 1));
-
     emit(HomePageCartQuantityChangeState());
   }
 }

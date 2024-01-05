@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hive/hive.dart';
 import 'package:tiffsy_app/Helpers/page_router.dart';
+import 'package:tiffsy_app/screens/CartScreen/screen/cart_screen.dart';
 import 'package:tiffsy_app/screens/HomeScreen/bloc/home_bloc.dart';
 import 'package:tiffsy_app/screens/HomeScreen/model/home_model.dart';
 import 'package:tiffsy_app/screens/ProfileScreen/screen/profile_screen.dart';
@@ -31,7 +33,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: [SystemUiOverlay.top]);
+        overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         systemNavigationBarColor: Color(0xfffffcef)));
 
@@ -46,12 +48,15 @@ class _HomeState extends State<Home> {
   }
 
   int currentPageIndex = 0;
+  Box cartBox = Hive.box("cart_box");
+  HomeFetchSuccessfulState menuState = HomeFetchSuccessfulState(menu: const []);
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     HomeBloc homeBloc = HomeBloc();
     homeBloc.add(HomeInitialFetchEvent());
+
     return BlocProvider(
       create: (context) => homeBloc,
       child: BlocConsumer<HomeBloc, HomeState>(
@@ -69,9 +74,11 @@ class _HomeState extends State<Home> {
                   child: IconButton(
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          SlideTransitionRouter.toNextPage(
-                              const ProfileScreen()));
+                        context,
+                        SlideTransitionRouter.toNextPage(
+                          const ProfileScreen(),
+                        ),
+                      );
                     },
                     icon: ClipOval(
                       child: Image.asset(
@@ -97,9 +104,9 @@ class _HomeState extends State<Home> {
                   label: 'Menu',
                 ),
                 NavigationDestination(
-                  selectedIcon: Icon(Icons.credit_card),
-                  icon: Icon(Icons.credit_card_outlined),
-                  label: 'Payments',
+                  selectedIcon: Icon(Icons.shopping_cart),
+                  icon: Icon(Icons.shopping_cart_outlined),
+                  label: 'Cart',
                 ),
                 NavigationDestination(
                   selectedIcon: Icon(Icons.food_bank),
@@ -114,18 +121,7 @@ class _HomeState extends State<Home> {
               ),
               child: <Widget>[
                 menuPage(theme, homeBloc),
-                Card(
-                  shadowColor: Colors.transparent,
-                  margin: const EdgeInsets.all(8.0),
-                  child: SizedBox.expand(
-                    child: Center(
-                      child: Text(
-                        'Payments',
-                        style: theme.textTheme.titleLarge,
-                      ),
-                    ),
-                  ),
-                ),
+                cartPage(theme, homeBloc),
                 Card(
                   shadowColor: Colors.transparent,
                   margin: const EdgeInsets.all(8.0),
@@ -145,23 +141,28 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-}
 
-Widget menuPage(ThemeData theme, HomeBloc homeBloc) {
-  return Builder(builder: (context) {
-    return BlocConsumer<HomeBloc, HomeState>(
-      bloc: homeBloc,
-      listener: (context, state) {},
-      builder: (context, state) {
-        if (state is HomeLoadingState) {
-          return const CircularProgressIndicator();
-        } else if (state is HomeFetchSuccessfulState) {
-          final menuState = state;
+  Widget menuPage(ThemeData theme, HomeBloc homeBloc) {
+    return Builder(builder: (context) {
+      return BlocConsumer<HomeBloc, HomeState>(
+        bloc: homeBloc,
+        listener: (context, state) {},
+        builder: (context, state) {
+          if (state is HomeLoadingState) {
+            return const CircularProgressIndicator();
+          } else if (state is HomeFetchSuccessfulState) {
+            menuState = state;
+          } else if (state is HomeErrorState) {
+            return const SnackBar(
+              content: Text("Error"),
+            );
+          } else if (state is HomePageCartQuantityChangeState) {}
           return SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 20),
                 upgradeToDeluxCard(() {
                   // onTap for the upgrade to deluxe button.
                 }),
@@ -185,166 +186,311 @@ Widget menuPage(ThemeData theme, HomeBloc homeBloc) {
               ],
             ),
           );
-        }
-        if (state is HomeErrorState) {
-          return const SnackBar(
-            content: Text("Error"),
-          );
-        }
-        return const SizedBox();
-      },
-    );
-  });
-}
-
-Widget upgradeToDeluxCard(Function upgradeCardOnTap) {
-  return Builder(builder: (context) {
-    return GestureDetector(
-      onTap: () {
-        upgradeCardOnTap();
-      },
-      child: SizedBox(
-        width: (MediaQuery.sizeOf(context).width - 40),
-        height: (MediaQuery.sizeOf(context).width - 40) * (154 / 372),
-        child: Stack(
-          children: [
-            SvgPicture.asset(
-              'assets/images/vectors/home_banner.svg',
-              semanticsLabel: 'vector image',
-            ),
-            SizedBox(
-              width: MediaQuery.sizeOf(context).width,
-              child: Image.asset(
-                'assets/images/vectors/thali1 1.png',
-                fit: BoxFit.contain,
-                alignment: Alignment.bottomRight,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  });
-}
-
-List<Widget> listOfMenuCards(
-    List<MenuDataModel> menu, BuildContext context, HomeBloc homeBloc) {
-  List<Widget> listOfMenuCards = [];
-  for (var element in menu) {
-    listOfMenuCards.addAll([
-      customMenuCard(context, element, homeBloc),
-      const SizedBox(height: 18),
-      dashedDivider(context),
-      const SizedBox(height: 16)
-    ]);
+        },
+      );
+    });
   }
-  return listOfMenuCards;
-}
 
-Widget customMenuCard(
-    BuildContext context, MenuDataModel menuPage, HomeBloc homeBloc) {
-  return SizedBox(
-    width: MediaQuery.sizeOf(context).width - 20,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            mealTypeTag(menuPage.type),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: (MediaQuery.sizeOf(context).width * 0.45) - 20,
-              child: Row(
-                children: [
-                  Flexible(
-                    child: mealCardBoldText(menuPage.title),
+  Widget cartPage(ThemeData theme, HomeBloc homeBloc) {
+    return Builder(builder: (context) {
+      return BlocConsumer<HomeBloc, HomeState>(
+        bloc: homeBloc,
+        listener: (context, state) {},
+        builder: (context, state) {
+          if (state is HomeLoadingState) {
+            return const CircularProgressIndicator();
+          } else if (state is HomeFetchSuccessfulState) {
+            menuState = state;
+          } else if (state is HomeErrorState) {
+            return const SnackBar(
+              content: Text("Error"),
+            );
+          } else if (state is HomePageCartQuantityChangeState) {}
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                upgradeToDeluxCard(() {
+                  // onTap for the upgrade to deluxe button.
+                }),
+                const SizedBox(height: 24),
+                const Text(
+                  "Your Cart",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    height: 24 / 16,
+                    letterSpacing: 0.15,
+                    color: Color(0xff121212),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 12),
+                Column(
+                  // list of menu cards
+                  children: listOfCartCards(menuState.menu, context, homeBloc),
+                ),
+                orderNowButton(() {
+                  Navigator.push(context,
+                      SlideTransitionRouter.toNextPage(const CartScreen()));
+                })
+              ],
             ),
-            const SizedBox(height: 6),
-            Text(
-              "₹${menuPage.price.toString()}",
-              style: const TextStyle(
-                color: Color(0xff121212),
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                height: 16 / 12,
-                letterSpacing: 0.5,
+          );
+        },
+      );
+    });
+  }
+
+  Widget upgradeToDeluxCard(Function upgradeCardOnTap) {
+    return Builder(builder: (context) {
+      return GestureDetector(
+        onTap: () {
+          upgradeCardOnTap();
+        },
+        child: SizedBox(
+          width: (MediaQuery.sizeOf(context).width - 40),
+          height: (MediaQuery.sizeOf(context).width - 40) * (154 / 372),
+          child: Stack(
+            children: [
+              SvgPicture.asset(
+                'assets/images/vectors/home_banner.svg',
+                semanticsLabel: 'vector image',
               ),
-            ),
-            const SizedBox(height: 9),
-            SizedBox(
-              width: (MediaQuery.sizeOf(context).width * 0.45) - 20,
-              child: Row(
-                children: [
-                  Flexible(
-                    child: Text(
-                      menuPage.description,
-                      style: const TextStyle(
-                        color: Color(0xff121212),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        height: 16 / 12,
-                        letterSpacing: 0.5,
+              SizedBox(
+                width: MediaQuery.sizeOf(context).width,
+                child: Image.asset(
+                  'assets/images/vectors/thali1 1.png',
+                  fit: BoxFit.contain,
+                  alignment: Alignment.bottomRight,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  List<Widget> listOfMenuCards(
+      List<MenuDataModel> menu, BuildContext context, HomeBloc homeBloc) {
+    List<Widget> listOfMenuCards = [];
+    for (var element in menu) {
+      listOfMenuCards.addAll([
+        customMenuCard(context, element, homeBloc),
+        const SizedBox(height: 18),
+        dashedDivider(context),
+        const SizedBox(height: 16)
+      ]);
+    }
+    return listOfMenuCards;
+  }
+
+  List<Widget> listOfCartCards(
+      List<MenuDataModel> menu, BuildContext context, HomeBloc homeBloc) {
+    List<Widget> listOfMenuCards = [];
+    for (var element in menu) {
+      if (cartBox.get(element.type, defaultValue: 0) > 0) {
+        listOfMenuCards.addAll([
+          customMenuCard(context, element, homeBloc),
+          const SizedBox(height: 18),
+          dashedDivider(context),
+          const SizedBox(height: 16)
+        ]);
+      }
+    }
+    return listOfMenuCards;
+  }
+
+  Widget customMenuCard(
+      BuildContext context, MenuDataModel menuPage, HomeBloc homeBloc) {
+    return SizedBox(
+      width: MediaQuery.sizeOf(context).width - 20,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              mealTypeTag(menuPage.type),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: (MediaQuery.sizeOf(context).width * 0.45) - 20,
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: mealCardBoldText(menuPage.title),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                "₹${menuPage.price.toString()}",
+                style: const TextStyle(
+                  color: Color(0xff121212),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  height: 16 / 12,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              const SizedBox(height: 9),
+              SizedBox(
+                width: (MediaQuery.sizeOf(context).width * 0.45) - 20,
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        menuPage.description,
+                        style: const TextStyle(
+                          color: Color(0xff121212),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          height: 16 / 12,
+                          letterSpacing: 0.5,
+                        ),
                       ),
                     ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          (currentPageIndex == 0)
+              ? menuImage(menuPage.type, homeBloc, menuPage, context)
+              : cardImage(menuPage.type, homeBloc, menuPage, context)
+        ],
+      ),
+    );
+  }
+
+  Widget menuImage(String menuType, HomeBloc homeBloc, MenuDataModel menuPage,
+      BuildContext context) {
+    double width = MediaQuery.sizeOf(context).width;
+    return SizedBox(
+      width: width * 0.35,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          Image.asset(
+            'assets/images/vectors/thali_full.png',
+            fit: BoxFit.contain,
+            width: width * 0.3,
+          ),
+          InkWell(
+            onTap: () {
+              homeBloc.add(
+                HomePageCartQuantityChangeEvent(
+                    mealType: menuType, isIncreased: true),
+              );
+            },
+            borderRadius: BorderRadius.circular(6),
+            child: Container(
+              height: (MediaQuery.sizeOf(context).width * 0.2) * 0.4,
+              width: (MediaQuery.sizeOf(context).width * 0.2) < 90
+                  ? 90
+                  : (MediaQuery.sizeOf(context).width * 0.2),
+              decoration: BoxDecoration(
+                color: const Color(0xffcbffb3),
+                border: Border.all(width: 1, color: const Color(0xff6aa64f)),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: const Center(
+                child: Text(
+                  "Add",
+                  style: TextStyle(
+                    color: Color(0xFF6AA64F),
+                    fontSize: 16,
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w500,
+                    height: 0.09,
+                    letterSpacing: 0.15,
                   ),
-                ],
+                ),
               ),
             ),
-          ],
-        ),
-        menuImage(homeBloc, menuPage, context)
-      ],
-    ),
-  );
-}
+          )
+        ],
+      ),
+    );
+  }
 
-Widget menuImage(
-    HomeBloc homeBloc, MenuDataModel menuPage, BuildContext context) {
-  double width = MediaQuery.sizeOf(context).width;
-  return SizedBox(
-    width: width * 0.35,
-    child: Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        Image.asset(
-          'assets/images/vectors/thali_full.png',
-          fit: BoxFit.contain,
-          width: width * 0.3,
-        ),
-        InkWell(
-          onTap: () {},
-          borderRadius: BorderRadius.circular(6),
-          child: Container(
+  Widget cardImage(String menuType, HomeBloc homeBloc, MenuDataModel menuPage,
+      BuildContext context) {
+    double width = MediaQuery.sizeOf(context).width;
+    return SizedBox(
+      width: width * 0.35,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          Image.asset(
+            'assets/images/vectors/thali_full.png',
+            fit: BoxFit.contain,
+            width: width * 0.3,
+          ),
+          Container(
             height: (MediaQuery.sizeOf(context).width * 0.2) * 0.4,
-            width: MediaQuery.sizeOf(context).width * 0.2,
+            width: (MediaQuery.sizeOf(context).width * 0.2) < 90
+                ? 90
+                : (MediaQuery.sizeOf(context).width * 0.2),
             decoration: BoxDecoration(
               color: const Color(0xffcbffb3),
               border: Border.all(width: 1, color: const Color(0xff6aa64f)),
               borderRadius: BorderRadius.circular(6),
             ),
-            child: const Center(
-              child: Text(
-                "Add",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  height: 24 / 16,
-                  letterSpacing: 0.15,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                InkWell(
+                  onTap: () {
+                    homeBloc.add(
+                      HomePageCartQuantityChangeEvent(
+                          mealType: menuType, isIncreased: false),
+                    );
+                  },
+                  child: const Icon(
+                    Icons.remove_rounded,
+                    color: Color(0xff329c00),
+                  ),
                 ),
-              ),
+                Text(
+                  cartBox.get(menuType).toString(),
+                  style: const TextStyle(
+                    color: Color(0xFF329C00),
+                    fontSize: 16,
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w500,
+                    height: 0.09,
+                    letterSpacing: 0.15,
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    homeBloc.add(
+                      HomePageCartQuantityChangeEvent(
+                          mealType: menuType, isIncreased: true),
+                    );
+                  },
+                  child: const Icon(
+                    Icons.add_rounded,
+                    color: Color(0xff329c00),
+                  ),
+                ),
+              ],
             ),
-          ),
-        )
-      ],
-    ),
-  );
+          )
+        ],
+      ),
+    );
+  }
 }
+
+// These funtions are only used for styling and decoration, No logic exists here
 
 Text mealCardBoldText(String text) {
   // Returns the string as a Text widget with the bold formatting mentioned in the
@@ -427,6 +573,41 @@ Widget subscriptionCard(String subscriptionType) {
       children: [
         SizedBox(height: 47),
       ],
+    ),
+  );
+}
+
+Widget orderNowButton(VoidCallback onpress) {
+  Widget buttonText = const Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Spacer(),
+      Text(
+        "Order Now",
+        style: TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 16,
+          color: Color(0xff121212),
+          height: 1.5,
+        ),
+      ),
+      Spacer()
+    ],
+  );
+  return InkWell(
+    onTap: () {
+      onpress();
+    },
+    child: Container(
+      constraints: const BoxConstraints(maxHeight: 40),
+      decoration: BoxDecoration(
+        color: const Color(0xffffbe1d),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 10, 24, 10),
+        child: buttonText,
+      ),
     ),
   );
 }

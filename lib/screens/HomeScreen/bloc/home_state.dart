@@ -17,3 +17,5 @@ final class HomeFetchSuccessfulState extends HomeState {
 final class HomeErrorState extends HomeState {}
 
 final class SubscriptionLoadingState extends HomeState {}
+
+final class HomePageCartQuantityChangeState extends HomeState {}

@@ -5,6 +5,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:tiffsy_app/firebase_options.dart';
 import 'package:tiffsy_app/screens/AddAddressScreen/screen/add_address_screen.dart';
 import 'package:tiffsy_app/screens/AddressBookScreen/screen/address_book_screen.dart';
+import 'package:tiffsy_app/screens/BillingSumaryScreen/screen/billing_summary_screen.dart';
 import 'package:tiffsy_app/screens/CartScreen/screen/cart_screen.dart';
 import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/HowItWorksScreen/bloc/how_it_works_bloc.dart';
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const SubscriptionScreen(noOfDays: 1),
+      home: SplashScreen(),
       title: 'Tiffsy',
       theme: getTheme(),
     );

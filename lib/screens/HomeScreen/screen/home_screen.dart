@@ -232,9 +232,11 @@ class _HomeState extends State<Home> {
                   children: listOfCartCards(menuState.menu, context, homeBloc),
                 ),
                 orderNowButton(() {
+                  print(cartBox.values.toList().toString());
                   Navigator.push(context,
                       SlideTransitionRouter.toNextPage(const CartScreen()));
-                })
+                }),
+                const SizedBox(height: 10),
               ],
             ),
           );
@@ -277,6 +279,7 @@ class _HomeState extends State<Home> {
       List<MenuDataModel> menu, BuildContext context, HomeBloc homeBloc) {
     List<Widget> listOfMenuCards = [];
     for (var element in menu) {
+      cartBox.put("${element.type}_price", element.price);
       listOfMenuCards.addAll([
         customMenuCard(context, element, homeBloc),
         const SizedBox(height: 18),

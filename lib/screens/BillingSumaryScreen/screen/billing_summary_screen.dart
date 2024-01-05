@@ -1,4 +1,6 @@
 import "package:flutter/material.dart";
+import "package:tiffsy_app/Helpers/page_router.dart";
+import "package:tiffsy_app/screens/PaymentCheckoutScreen/screen/payment_checkout_screen.dart";
 
 class BillingSummaryScreen extends StatefulWidget {
   const BillingSummaryScreen({super.key});
@@ -17,12 +19,7 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
     // as the value. Also all te values will be added up later so if they need to be
     // substracted then they should be negative, when displaying the sign will be
     // ignored.
-    return {
-      "Subtotal": 1000.33,
-      "Discount": -285.36,
-      "Shipping": 0,
-      "GST": 420.69
-    };
+    return {"Subtotal": 2983, "Discount": 0, "Shipping": 0, "GST": 0.18};
   }
 
   double calculateTotal(Map<String, double> summaryBreakdown) {
@@ -41,7 +38,6 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
     return ["FIRST", "NOFOOD", "OKAY"];
   }
 
-  void proceedButtonOnPress() {}
   @override
   void initState() {
     super.initState();
@@ -65,7 +61,7 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
             size: 24,
           ),
           onPressed: () {
-            // go back functionality, most likely using Navigator.pop()
+            Navigator.pop(context);
           },
         ),
         title: const Text(
@@ -85,7 +81,12 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
               children: billingInformation(summaryBreakdown, grandTotal) +
                   couponEntryBox(couponCodeController, getlistOfCoupons(),
                       clearCouponButton) +
-                  proceedButton(proceedButtonOnPress)),
+                  proceedButton(() {
+                    Navigator.push(
+                        context,
+                        SlideTransitionRouter.toNextPage(
+                            PaymentCheckoutScreen(amount: grandTotal)));
+                  })),
         ),
       ),
     );
@@ -193,7 +194,8 @@ List<Widget> couponEntryBox(TextEditingController couponTextEditingController,
           height: 24 / 16,
         ),
       ),
-    )
+    ),
+    const SizedBox(height: 16)
   ];
 }
 

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
+import 'package:tiffsy_app/screens/AddAddressScreen/bloc/add_address_screen_dart_bloc.dart';
+import 'package:tiffsy_app/screens/AddressBookScreen/screen/address_book_screen.dart';
 
 class AddAddressScreen extends StatefulWidget {
   const AddAddressScreen({super.key});
@@ -28,10 +32,9 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   TextEditingController stateController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController addressTypeController = TextEditingController();
+  
 
   late List<DropdownMenuEntry> stateEntries = [];
-
-  void saveAddress() {}
 
   @override
   void initState() {
@@ -48,87 +51,124 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xffffffff),
-      appBar: AppBar(
-        leadingWidth: 64,
-        titleSpacing: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_rounded,
-            color: Color(0xff323232),
-            size: 24,
+    return BlocProvider(
+      create: (context) => AddAddressScreenDartBloc(),
+      child: Scaffold(
+        backgroundColor: const Color(0xffffffff),
+        appBar: AppBar(
+          leadingWidth: 64,
+          titleSpacing: 0,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_rounded,
+              color: Color(0xff323232),
+              size: 24,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          onPressed: () {
-            Navigator.pop(context);
+          title: const Text(
+            "Add New Address",
+            style: TextStyle(
+              fontSize: 20,
+              height: 28 / 20,
+              fontWeight: FontWeight.w400,
+              color: Color(0xff121212),
+            ),
+          ),
+        ),
+        body: BlocConsumer<AddAddressScreenDartBloc, AddAddressScreenDartState>(
+          listener: (context, state) {
+            if(state is AddAddressErrorState){
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.error)),
+              );
+            }
+            else if(state is AddAddressSuccessState){
+              Navigator.pushReplacement(
+            context,
+  MaterialPageRoute(builder: (BuildContext context) => AddressBookScreen()),
+);
+            }
           },
-        ),
-        title: const Text(
-          "Add New Address",
-          style: TextStyle(
-            fontSize: 20,
-            height: 28 / 20,
-            fontWeight: FontWeight.w400,
-            color: Color(0xff121212),
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 10),
-                    child: Icon(Icons.home, size: 32),
-                  ),
-                  const SizedBox(width: 16),
-                  Flexible(
-                    child: Column(
+          builder: (context, state) {
+            if(state is AddAddressLoadingState){
+              return Center(child: CircularProgressIndicator(),);
+            }
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 10),
-                        entryBox(houseNumberController, "House Number",
-                            AutofillHints.streetAddressLine1),
-                        const SizedBox(height: 24),
-                        entryBox(streetController, "Street / Block",
-                            AutofillHints.streetAddressLine2),
-                        const SizedBox(height: 24),
-                        dropDownMenu("State", stateEntries, stateController),
-                        const SizedBox(height: 24),
-                        Row(
-                          children: [
-                            Flexible(
-                              child: entryBox(
-                                pincodeController,
-                                "Pincode",
-                                AutofillHints.postalCode,
-                              ),
-                            ),
-                            const SizedBox(width: 24),
-                            Flexible(
-                              child: dropDownMenu(
-                                "City",
-                                citesOfChoosenState,
-                                cityController,
-                              ),
-                            )
-                          ],
+                        const Padding(
+                          padding: EdgeInsets.only(top: 10),
+                          child: Icon(Icons.home, size: 32),
                         ),
-                        const SizedBox(height: 24),
-                        dropDownMenu("Address Type", addressTypes,
-                            addressTypeController),
-                        const SizedBox(height: 32),
+                        const SizedBox(width: 16),
+                        Flexible(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 10),
+                              entryBox(houseNumberController, "House Number",
+                                  AutofillHints.streetAddressLine1),
+                              const SizedBox(height: 24),
+                              entryBox(streetController, "Street / Block",
+                                  AutofillHints.streetAddressLine2),
+                              const SizedBox(height: 24),
+                              dropDownMenu(
+                                  "State", stateEntries, stateController),
+                              const SizedBox(height: 24),
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: entryBox(
+                                      pincodeController,
+                                      "Pincode",
+                                      AutofillHints.postalCode,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 24),
+                                  Flexible(
+                                    child: dropDownMenu(
+                                      "City",
+                                      citesOfChoosenState,
+                                      cityController,
+                                    ),
+                                  )
+                                ],
+                              ),
+                              const SizedBox(height: 24),
+                              dropDownMenu("Address Type", addressTypes,
+                                  addressTypeController),
+                              const SizedBox(height: 32),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                ],
+                    saveAddressButton(() {
+                      BlocProvider.of<AddAddressScreenDartBloc>(context).add(
+                              SaveAddressClicked(
+                              cst_id: Hive.box('customer_box').get('cst_id').toString(), 
+                              add_id: "5", 
+                              house_num: houseNumberController.text, 
+                              addr_line: streetController.text, 
+                              state: stateController.text, 
+                              pin: pincodeController.text, 
+                              city: cityController.text, 
+                              addr_type: addressTypeController.text, 
+                              contact: "9530077899"
+                          ));
+                    }),
+                  ],
+                ),
               ),
-              saveAddressButton(saveAddress),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

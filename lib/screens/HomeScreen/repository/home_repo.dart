@@ -44,13 +44,17 @@ class HomeRepo {
   }
 
   static Future<Result<Map<String, dynamic>>> getCustomerIdByPhone(
-      String phoneNumber) async {
+    
+    String phoneNumber) async {
     try {
       Map<String, dynamic> params = {
         "cst_contact": phoneNumber,
       };
+      String token = "";
       var response =
-      await http.post(Uri.parse('$apiJsURL/get-cst-phone'), body: params);
+      await http.post(Uri.parse('$apiJsURL/get-cst-phone'), body: params, headers: {
+        'Authorization': 'Bearer $token'
+      });
       print(response.body);
       Map<String, dynamic> result = jsonDecode(response.body);
       return Result(data: result, error: null);
@@ -58,7 +62,7 @@ class HomeRepo {
       return Result(data: null, error: err.toString());
     }
   }
-
+  
   static bool checkUserAuthenticationMethod() {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {

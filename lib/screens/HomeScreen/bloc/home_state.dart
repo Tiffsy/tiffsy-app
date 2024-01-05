@@ -14,14 +14,8 @@ final class HomeFetchSuccessfulState extends HomeState {
   HomeFetchSuccessfulState({required this.menu});
 }
 
-final class HomeErrorState extends HomeState{}
+final class HomeErrorState extends HomeState {}
 
-final class SubscriptionLoadingState extends HomeState{}
+final class SubscriptionLoadingState extends HomeState {}
 
-class HomeProfileButtonOnTapState extends HomeState {}
-
-class HomePageChangeState extends HomeState {
-  final int newIndex;
-
-  HomePageChangeState({required this.newIndex});
-}
+final class HomePageCartQuantityChangeState extends HomeState {}

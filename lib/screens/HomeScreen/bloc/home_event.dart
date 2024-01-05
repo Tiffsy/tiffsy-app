@@ -2,13 +2,17 @@ part of 'home_bloc.dart';
 
 @immutable
 abstract class HomeEvent {}
-final class HomeInitialFetchEvent extends HomeEvent{}
-final class SubscriptionInitialFetchEvent extends HomeEvent{}
+
+final class HomeInitialFetchEvent extends HomeEvent {}
+
+final class SubscriptionInitialFetchEvent extends HomeEvent {}
+
 class HomeProfileButtonOnTapEvent extends HomeEvent {}
 
-class HomePageChangeEvent extends HomeEvent {
-  final int newIndex;
+class HomePageCartQuantityChangeEvent extends HomeEvent {
+  final String mealType;
+  final bool isIncreased;
 
-  HomePageChangeEvent({required this.newIndex});
+  HomePageCartQuantityChangeEvent(
+      {required this.mealType, required this.isIncreased});
 }
-

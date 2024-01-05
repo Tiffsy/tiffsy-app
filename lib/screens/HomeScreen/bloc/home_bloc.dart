@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:tiffsy_app/Helpers/result.dart';
@@ -14,6 +13,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeInitial()) {
     on<HomeInitialFetchEvent>(homeInitialFetch);
     on<SubscriptionInitialFetchEvent>(subscriptionInitialFetchEvent);
+    on<HomePageCartQuantityChangeEvent>(homePageCartQuantityChangeEvent);
   }
   // FutureOr<void> homeInitialFetch(HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
   //   on<HomeProfileButtonOnTapEvent>(
@@ -65,5 +65,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   FutureOr<void> subscriptionInitialFetchEvent(
       SubscriptionInitialFetchEvent event, Emitter<HomeState> emit) {
     emit(SubscriptionLoadingState());
+  }
+
+  FutureOr<void> homePageCartQuantityChangeEvent(
+      HomePageCartQuantityChangeEvent event, Emitter<HomeState> emit) {
+    Box cartBox = Hive.box("cart_box");
+    int currentValue = cartBox.get(event.mealType, defaultValue: 0);
+    cartBox.put(event.mealType,
+        event.isIncreased ? (currentValue + 1) : (currentValue - 1));
+    emit(HomePageCartQuantityChangeState());
   }
 }

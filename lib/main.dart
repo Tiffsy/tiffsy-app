@@ -19,6 +19,7 @@ import 'package:tiffsy_app/screens/PersonalDetailsScreen/screen/personalDetails_
 import 'package:tiffsy_app/screens/ProfileScreen/bloc/profile_bloc.dart';
 import 'package:tiffsy_app/screens/ProfileScreen/screen/profile_screen.dart';
 import 'package:tiffsy_app/screens/PaymentCheckoutScreen/screen/payment_checkout_screen.dart';
+import 'package:tiffsy_app/screens/SubscriptionScreen/screen/subscription_screen.dart';
 
 import 'package:tiffsy_app/screens/splash_screen.dart';
 import 'package:flutter/services.dart';
@@ -27,6 +28,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Hive.initFlutter();
+  await Hive.openBox("cart_box");
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
     (value) => runApp(
       RepositoryProvider(
@@ -43,7 +45,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CartScreen(),
+      home: const SubscriptionScreen(noOfDays: 1),
       title: 'Tiffsy',
       theme: getTheme(),
     );

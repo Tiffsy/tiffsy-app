@@ -278,7 +278,10 @@ class _HomeState extends State<Home> {
       List<MenuDataModel> menu, BuildContext context, HomeBloc homeBloc) {
     List<Widget> listOfMenuCards = [];
     for (var element in menu) {
-      cartBox.put("${element.type}_price", element.price);
+      cartBox.putAll({
+        "${element.type.toLowerCase()}_price": element.price,
+        "${element.type.toLowerCase()}_data": element.toJson()
+      });
       listOfMenuCards.addAll([
         customMenuCard(context, element, homeBloc),
         const SizedBox(height: 18),
@@ -293,7 +296,7 @@ class _HomeState extends State<Home> {
       List<MenuDataModel> menu, BuildContext context, HomeBloc homeBloc) {
     List<Widget> listOfMenuCards = [];
     for (var element in menu) {
-      if (cartBox.get(element.type, defaultValue: 0) > 0) {
+      if (cartBox.get(element.type.toLowerCase(), defaultValue: 0) > 0) {
         listOfMenuCards.addAll([
           customMenuCard(context, element, homeBloc),
           const SizedBox(height: 18),
@@ -385,6 +388,7 @@ class _HomeState extends State<Home> {
           ),
           InkWell(
             onTap: () {
+              print("1_____________");
               homeBloc.add(
                 HomePageCartQuantityChangeEvent(
                     mealType: menuType, isIncreased: true),
@@ -461,7 +465,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 Text(
-                  cartBox.get(menuType).toString(),
+                  cartBox.get(menuType.toLowerCase()).toString(),
                   style: const TextStyle(
                     color: Color(0xFF329C00),
                     fontSize: 16,

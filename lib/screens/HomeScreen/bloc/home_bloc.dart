@@ -15,53 +15,45 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SubscriptionInitialFetchEvent>(subscriptionInitialFetchEvent);
     on<HomePageCartQuantityChangeEvent>(homePageCartQuantityChangeEvent);
   }
-  // FutureOr<void> homeInitialFetch(HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
-  //   on<HomeProfileButtonOnTapEvent>(
-  //     (event, emit) {
-  //       print("""object""");
-  //       emit(HomeProfileButtonOnTapState());
-  //     },
-  //   );
-  //   on<HomePageChangeEvent>(
-  //     (event, emit) {
-  //       emit(HomePageChangeState(newIndex: event.newIndex));
-  //     },
-  //   );
-  // }
 
   FutureOr<void> homeInitialFetch(
       HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
     emit(HomeLoadingState());
-    List<MenuDataModel> menu = await HomeRepo.fetchMenu();
-    bool loginMethod = HomeRepo.checkUserAuthenticationMethod();
-    String cst_id = "";
-    if (loginMethod) {
-      String cst_phone = HomeRepo.getUserInfo();
-      cst_phone = cst_phone.substring(3);
-      Result<Map<String, dynamic>> result =
-          await HomeRepo.getCustomerIdByPhone(cst_phone);
-      if (result.isSuccess) {
-        Map<String, dynamic> cst_details = result.data!;
-        print(cst_details);
-        Box customerBox = await Hive.openBox("customer_box");
-        customerBox.putAll(cst_details);
+    Result<List<MenuDataModel>> menu = await HomeRepo.fetchMenu();
+    if (menu.isSuccess) {
+      bool loginMethod = HomeRepo.checkUserAuthenticationMethod();
+      if (loginMethod) {
+        String cst_phone = HomeRepo.getUserInfo();
+        cst_phone = cst_phone.substring(3);
+        Result<Map<String, dynamic>> result =
+            await HomeRepo.getCustomerIdByPhone(cst_phone);
+        if (result.isSuccess) {
+          Map<String, dynamic> cst_details = result.data!;
+          Box customerBox = await Hive.openBox("customer_box");
+          customerBox.putAll(cst_details);
+        } else {
+          emit(HomeErrorState(error: result.error.toString()));
+        }
       } else {
-        print(result.error);
+        String cst_mail = HomeRepo.getUserInfo();
+        Result<Map<String, dynamic>> result =
+        await HomeRepo.getCustomerIdByMail(cst_mail);
+        if (result.isSuccess) {
+          Map<String, dynamic> cst_details = result.data!;
+          Box customerBox = await Hive.openBox("customer_box");
+          customerBox.putAll(cst_details);
+        } else {
+          emit(HomeErrorState(error: result.error.toString()));
+        }
       }
+      List<MenuDataModel> menuList = menu.data!;
+      emit(HomeFetchSuccessfulState(menu: menuList));
     } else {
-      String cst_mail = HomeRepo.getUserInfo();
-      Result<Map<String, dynamic>> result =
-          await HomeRepo.getCustomerIdByMail(cst_mail);
-      if (result.isSuccess) {
-        Map<String, dynamic> cst_details = result.data!;
-        print(cst_details);
-      } else {
-        print(result.error);
-      }
+      emit(HomeErrorState(error: menu.error.toString()));
     }
-    emit(HomeFetchSuccessfulState(menu: menu));
-  }
 
+    
+  }
   FutureOr<void> subscriptionInitialFetchEvent(
       SubscriptionInitialFetchEvent event, Emitter<HomeState> emit) {
     emit(SubscriptionLoadingState());
@@ -70,6 +62,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   FutureOr<void> homePageCartQuantityChangeEvent(
       HomePageCartQuantityChangeEvent event, Emitter<HomeState> emit) {
     Box cartBox = Hive.box("cart_box");
+    Box customer_box = Hive.box("customer_box");
+    String cst_id = customer_box.get("cst_id");
+    cartBox.put("cst_id", cst_id);
     int currentValue = cartBox.get(event.mealType, defaultValue: 0);
     cartBox.put(event.mealType,
         event.isIncreased ? (currentValue + 1) : (currentValue - 1));

@@ -71,14 +71,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(AuthErrorState(err.toString()));
       }
     });
-
+   
     on<SignInWithGooglePressedEvent>(((event, emit) async {
+      
       try {
         final GoogleSignInAccount? googleUser =
             await userRepo.googleSignIn.signIn();
         if (googleUser == null) {
           emit(AuthErrorState("Google User id null"));
         }
+        emit(AuthLoadingState());
         final GoogleSignInAuthentication? googleAuth =
             await googleUser?.authentication;
 
@@ -94,13 +96,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             add(CheckPreviousEmailEvent(mailId: user.email.toString()));
           });
         } catch (e) {
-          print("Okayyyyyyyy");
-          print(e.toString());
           emit(AuthErrorState(e.toString()));
         }
       } catch (err) {
-        print("Okayyyyyyyy");
-        print(err.toString());
         emit(AuthErrorState(err.toString()));
       }
     }));

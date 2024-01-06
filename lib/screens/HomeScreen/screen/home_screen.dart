@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
+import 'package:lottie/lottie.dart';
 import 'package:tiffsy_app/Helpers/page_router.dart';
 import 'package:tiffsy_app/screens/CartScreen/screen/cart_screen.dart';
 import 'package:tiffsy_app/screens/HomeScreen/bloc/home_bloc.dart';
@@ -49,6 +50,7 @@ class _HomeState extends State<Home> {
 
   int currentPageIndex = 0;
   Box cartBox = Hive.box("cart_box");
+  
   HomeFetchSuccessfulState menuState = HomeFetchSuccessfulState(menu: const []);
 
   @override
@@ -56,7 +58,7 @@ class _HomeState extends State<Home> {
     final ThemeData theme = Theme.of(context);
     HomeBloc homeBloc = HomeBloc();
     homeBloc.add(HomeInitialFetchEvent());
-
+    cartBox.put("addr", "A1, Leiure Town");
     return BlocProvider(
       create: (context) => homeBloc,
       child: BlocConsumer<HomeBloc, HomeState>(
@@ -122,6 +124,7 @@ class _HomeState extends State<Home> {
               child: <Widget>[
                 menuPage(theme, homeBloc),
                 cartPage(theme, homeBloc),
+
                 Card(
                   shadowColor: Colors.transparent,
                   margin: const EdgeInsets.all(8.0),
@@ -149,7 +152,9 @@ class _HomeState extends State<Home> {
         listener: (context, state) {},
         builder: (context, state) {
           if (state is HomeLoadingState) {
-            return const CircularProgressIndicator();
+            return Center(
+              child: Lottie.asset('assets/home_loader.json'),
+            );
           } else if (state is HomeFetchSuccessfulState) {
             menuState = state;
           } else if (state is HomeErrorState) {
@@ -198,7 +203,11 @@ class _HomeState extends State<Home> {
         listener: (context, state) {},
         builder: (context, state) {
           if (state is HomeLoadingState) {
-            return const CircularProgressIndicator();
+            return Center(
+              child: Container(
+              child: Lottie.asset('assets/home_loader.json', fit: BoxFit.cover),
+                        ),
+            );
           } else if (state is HomeFetchSuccessfulState) {
             menuState = state;
           } else if (state is HomeErrorState) {
@@ -232,9 +241,11 @@ class _HomeState extends State<Home> {
                   children: listOfCartCards(menuState.menu, context, homeBloc),
                 ),
                 orderNowButton(() {
+                  print(cartBox.values.toList().toString());
                   Navigator.push(context,
                       SlideTransitionRouter.toNextPage(const CartScreen()));
-                })
+                }),
+                const SizedBox(height: 10),
               ],
             ),
           );
@@ -277,6 +288,7 @@ class _HomeState extends State<Home> {
       List<MenuDataModel> menu, BuildContext context, HomeBloc homeBloc) {
     List<Widget> listOfMenuCards = [];
     for (var element in menu) {
+      cartBox.put("${element.type}_price", element.price);
       listOfMenuCards.addAll([
         customMenuCard(context, element, homeBloc),
         const SizedBox(height: 18),

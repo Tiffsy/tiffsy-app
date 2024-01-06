@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:tiffsy_app/repositories/user_repository.dart';
+import 'package:hive/hive.dart';
+import 'package:lottie/lottie.dart';
 import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/LoginScreen/bloc/login_bloc.dart';
-import 'package:tiffsy_app/screens/LoginScreen/repository/user_repo.dart';
 import 'package:tiffsy_app/screens/OtpScreen/screen/opt_screen.dart';
-
 import '../../PersonalDetailsScreen/screen/personalDetails_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -49,7 +48,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      backgroundColor: Color(0xffF2B620),
       body: content(),
     );
   }
@@ -125,8 +123,10 @@ class _contentState extends State<content> {
       },
       builder: (context, state) {
         if (state is AuthLoadingState) {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return  Center(
+            child: Container(
+              child: Lottie.asset('assets/Tiffsy1.json'),
+            ),
           );
         } else {
           return SingleChildScrollView(

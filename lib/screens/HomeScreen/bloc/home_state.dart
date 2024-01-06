@@ -14,7 +14,10 @@ final class HomeFetchSuccessfulState extends HomeState {
   HomeFetchSuccessfulState({required this.menu});
 }
 
-final class HomeErrorState extends HomeState {}
+final class HomeErrorState extends HomeState {
+  final String error;
+  HomeErrorState({required this.error});
+}
 
 final class SubscriptionLoadingState extends HomeState {}
 

@@ -10,6 +10,7 @@ import 'package:tiffsy_app/screens/CartScreen/screen/cart_screen.dart';
 import 'package:tiffsy_app/screens/HomeScreen/bloc/home_bloc.dart';
 import 'package:tiffsy_app/screens/HomeScreen/model/home_model.dart';
 import 'package:tiffsy_app/screens/ProfileScreen/screen/profile_screen.dart';
+import 'package:tiffsy_app/screens/SubscriptionHomePageScreen/screen/subscription_home_page_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -50,7 +51,7 @@ class _HomeState extends State<Home> {
 
   int currentPageIndex = 0;
   Box cartBox = Hive.box("cart_box");
-  
+
   HomeFetchSuccessfulState menuState = HomeFetchSuccessfulState(menu: const []);
 
   @override
@@ -124,19 +125,7 @@ class _HomeState extends State<Home> {
               child: <Widget>[
                 menuPage(theme, homeBloc),
                 cartPage(theme, homeBloc),
-
-                Card(
-                  shadowColor: Colors.transparent,
-                  margin: const EdgeInsets.all(8.0),
-                  child: SizedBox.expand(
-                    child: Center(
-                      child: Text(
-                        'Subscription',
-                        style: theme.textTheme.titleLarge,
-                      ),
-                    ),
-                  ),
-                ),
+                SubscriptionHomePageScreen()
               ][currentPageIndex],
             ),
           );
@@ -205,8 +194,9 @@ class _HomeState extends State<Home> {
           if (state is HomeLoadingState) {
             return Center(
               child: Container(
-              child: Lottie.asset('assets/home_loader.json', fit: BoxFit.cover),
-                        ),
+                child:
+                    Lottie.asset('assets/home_loader.json', fit: BoxFit.cover),
+              ),
             );
           } else if (state is HomeFetchSuccessfulState) {
             menuState = state;

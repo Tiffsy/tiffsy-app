@@ -15,7 +15,7 @@ class PaymentCheckoutBloc
 }
 
 FutureOr<void> paymentCheckoutGooglePay(
-    GooglePayUPIEvent event, Emitter<PaymentCheckoutState> emit) {
+  GooglePayUPIEvent event, Emitter<PaymentCheckoutState> emit) {
   print("Gpay pressed");
   PaymentCheckoutOptions.googlePayUPI(event.orderID, event.amount);
   print("object");

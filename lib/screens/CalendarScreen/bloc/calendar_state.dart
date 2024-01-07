@@ -10,11 +10,10 @@ final class CalendarErrorState extends CalendarState{
   CalendarErrorState({required this.error});
 }
 final class CalendarFetchSuccessState extends CalendarState{
-  List<DateTime> cancelDates;
-  List<DateTime> orderDate;
-  CalendarFetchSuccessState({
-    required this.cancelDates, required this.orderDate
-  });
+  List<CalendarDataModel> calendarData;
+
+  CalendarFetchSuccessState({required this.calendarData});
+
 }
 final class OrderCancelSuccessState extends CalendarState{}
 

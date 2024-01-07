@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:tiffsy_app/Helpers/result.dart';
+import 'package:tiffsy_app/screens/CalendarScreen/model/calendar_date_model.dart';
 import 'package:tiffsy_app/screens/CalendarScreen/repository/calendar_repo.dart';
 
 part 'calendar_event.dart';
@@ -11,36 +12,33 @@ part 'calendar_state.dart';
 class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
   CalendarBloc() : super(CalendarInitial()) {
     on<CalendarInitialFetchEvent>(calendarInitialFetchEvent);
-    on<CancelClickedEvent>(cancelClickedEvent);
+    on<CancelOrderClicked>(cancelOrderClickedEvent);
   }
 
   FutureOr<void> calendarInitialFetchEvent(
       CalendarInitialFetchEvent event, Emitter<CalendarState> emit) async {
     emit(CalendarLoadingState());
+    String cst_id = event.cst_id;
+    String subs_id = event.subs_id;
     print("testing debug");
-    Result<List<DateTime>> cancelDates =
-        await CalendarRepo.fetchCancelOrderDates("bvdz");
-    
-    Result<List<DateTime>> orderDates =
-        await CalendarRepo.fetchCalendarDates("bvdz");
-
-    if (cancelDates.isSuccess && orderDates.isSuccess) {
-      List<DateTime> cnclDt = cancelDates.data!;
-      List<DateTime> odrDt = orderDates.data!;
-      emit(CalendarFetchSuccessState(cancelDates: cnclDt, orderDate: odrDt));
-    } else if(!cancelDates.isSuccess && orderDates.isSuccess) {
-      emit(CalendarErrorState(error: cancelDates.error.toString()));
+    Result<List<CalendarDataModel>> calendarDates =
+        await CalendarRepo.fetchCalendarDates(
+            cst_id, subs_id); // cst_id, subs_id
+    if(calendarDates.isSuccess){
+      List<CalendarDataModel> calendarData = calendarDates.data!;
+      print(calendarData);
+      emit(CalendarFetchSuccessState(calendarData: calendarData));
+    }
+    else{
+      emit(CalendarErrorState(error: calendarDates.error.toString()));
     }
   }
 
-  FutureOr<void> cancelClickedEvent(CancelClickedEvent event, Emitter<CalendarState> emit) async {
-    emit(CalendarLoadingState());
-    Result<String> result = await CalendarRepo.cancelOrder(event.cst_id, event.cancelDate);
-    if(result.isSuccess){
-      emit(OrderCancelSuccessState());
-    }
-    else{
-      emit(CalendarErrorState(error: result.error.toString()));
-    }
+  FutureOr<void> cancelClickedEvent(
+      CancelClickedEvent event, Emitter<CalendarState> emit) async {
+
+      }
+
+  FutureOr<void> cancelOrderClickedEvent(CancelOrderClicked event, Emitter<CalendarState> emit) {
   }
 }

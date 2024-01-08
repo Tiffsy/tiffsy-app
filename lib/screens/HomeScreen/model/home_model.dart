@@ -4,38 +4,39 @@
 
 import 'dart:convert';
 
-MenuDataModel menuDataModelFromJson(String str) => MenuDataModel.fromJson(json.decode(str));
+MenuDataModel menuDataModelFromJson(String str) =>
+    MenuDataModel.fromJson(json.decode(str));
 
 String menuDataModelToJson(MenuDataModel data) => json.encode(data.toJson());
 
 class MenuDataModel {
-    String title;
-    int price;
-    String description;
-    int rating;
-    String type;
+  String title;
+  int price;
+  String description;
+  String mealType;
+  String mealTime;
 
-    MenuDataModel({
-        required this.title,
-        required this.price,
-        required this.description,
-        required this.rating,
-        required this.type,
-    });
+  MenuDataModel({
+    required this.title,
+    required this.price,
+    required this.description,
+    required this.mealType,
+    required this.mealTime,
+  });
 
-    factory MenuDataModel.fromJson(Map<String, dynamic> json) => MenuDataModel(
+  factory MenuDataModel.fromJson(Map<String, dynamic> json) => MenuDataModel(
         title: json["title"],
         price: json["price"],
         description: json["description"],
-        rating: json["rating"],
-        type: json["type"],
-    );
+        mealType: json["mealType"],
+        mealTime: json["mealTime"],
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "title": title,
         "price": price,
         "description": description,
-        "rating": rating,
-        "type": type,
-    };
+        "mealType": mealType,
+        "mealTime": mealTime
+      };
 }

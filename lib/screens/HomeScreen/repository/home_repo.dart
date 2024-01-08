@@ -11,10 +11,13 @@ class HomeRepo {
     try {
       var response = await http.get(Uri.parse('$apiJsURL/today-menu'));
       List result = jsonDecode(response.body);
+      print("2____________________");
+      print(result[0].toString());
       for (int i = 0; i < result.length; i++) {
         MenuDataModel menuItem = MenuDataModel.fromJson(result[i]);
         menu.add(menuItem);
       }
+      print(menu.toString());
       return Result(data: menu, error: null);
     } catch (err) {
       return Result(data: null, error: err.toString());

@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tiffsy_app/Helpers/page_router.dart';
+import 'package:tiffsy_app/screens/CartScreen/bloc/cart_bloc.dart';
 import 'package:tiffsy_app/screens/CartScreen/screen/cart_screen.dart';
 import 'package:tiffsy_app/screens/HomeScreen/bloc/home_bloc.dart';
 import 'package:tiffsy_app/screens/HomeScreen/model/home_model.dart';
@@ -44,7 +46,6 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     //homeBloc.close();
     super.dispose();
   }
@@ -58,76 +59,147 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     HomeBloc homeBloc = HomeBloc();
-    homeBloc.add(HomeInitialFetchEvent());
+
+    if (menuState.menu.isEmpty) {
+      homeBloc.add(HomeInitialFetchEvent(isCached: false));
+    } else {
+      homeBloc.add(HomeInitialFetchEvent(isCached: true));
+    }
     cartBox.put("addr", "A1, Leiure Town");
     return BlocProvider(
       create: (context) => homeBloc,
       child: BlocConsumer<HomeBloc, HomeState>(
         listener: (context, state) {},
         builder: (context, state) {
-          return Scaffold(
-            backgroundColor: const Color(0xffffffff),
-            appBar: AppBar(
-              title: Row(
-                children: [],
-              ),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 17),
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        SlideTransitionRouter.toNextPage(
-                          const ProfileScreen(),
-                        ),
-                      );
-                    },
-                    icon: ClipOval(
-                      child: Image.asset(
-                        'assets/images/logo/tiffsy.png',
-                        fit: BoxFit.contain,
-                      ),
-                    ), // TODO: Bio Pic
+          return BlocConsumer<HomeBloc, HomeState>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              if (state is HomeLoadingState) {
+                return Container(
+                  color: const Color(0xffffffff),
+                  child: Center(
+                    child: Lottie.asset('assets/home_loader.json'),
                   ),
+                );
+              } else if (state is HomeFetchSuccessfulState) {
+                menuState = state;
+              } else if (state is HomeErrorState) {
+                return const SnackBar(
+                  content: Text("Error"),
+                );
+              } else if (state is HomePageCartQuantityChangeState) {
+              } else if (state is HomeFetchSuccessfulIsCachedState) {}
+              return Scaffold(
+                backgroundColor: const Color(0xffffffff),
+                appBar: AppBar(
+                  leadingWidth: 70,
+                  leading: const Icon(
+                    Icons.location_on_rounded,
+                    size: 36,
+                    color: Color(0xffffbe1d),
+                  ),
+                  title: GestureDetector(
+                    onTap: () {},
+                    child: SizedBox(
+                      width: MediaQuery.sizeOf(context).width * 0.4,
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'Grihapravesh',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF121212),
+                                  fontSize: 16,
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.w500,
+                                  height: 24 / 16,
+                                  letterSpacing: 0.15,
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                size: 24,
+                              )
+                            ],
+                          ),
+                          Text(
+                            'Community Center Road...',
+                            style: TextStyle(
+                              color: Color(0xFF121212),
+                              fontSize: 12,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w400,
+                              height: 16 / 12,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  actions: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 17),
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            SlideTransitionRouter.toNextPage(
+                              const ProfileScreen(),
+                            ),
+                          );
+                        },
+                        icon: ClipOval(
+                          child: Image.asset(
+                            'assets/images/logo/tiffsy.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ), // TODO: Bio Pic
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            bottomNavigationBar: NavigationBar(
-              onDestinationSelected: (int index) {
-                setState(() {
-                  currentPageIndex = index;
-                });
-              },
-              selectedIndex: currentPageIndex,
-              destinations: const <Widget>[
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.restaurant_menu),
-                  icon: Icon(Icons.restaurant_menu_outlined),
-                  label: 'Menu',
+                bottomNavigationBar: NavigationBar(
+                  onDestinationSelected: (int index) {
+                    setState(() {
+                      currentPageIndex = index;
+                    });
+                  },
+                  selectedIndex: currentPageIndex,
+                  destinations: const <Widget>[
+                    NavigationDestination(
+                      selectedIcon: Icon(Icons.restaurant_menu),
+                      icon: Icon(Icons.restaurant_menu_outlined),
+                      label: 'Menu',
+                    ),
+                    NavigationDestination(
+                      selectedIcon: Icon(Icons.shopping_cart),
+                      icon: Icon(Icons.shopping_cart_outlined),
+                      label: 'Cart',
+                    ),
+                    NavigationDestination(
+                      selectedIcon: Icon(Icons.food_bank),
+                      icon: Icon(Icons.food_bank_outlined),
+                      label: 'Subscription',
+                    )
+                  ],
                 ),
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.shopping_cart),
-                  icon: Icon(Icons.shopping_cart_outlined),
-                  label: 'Cart',
+                body: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                  ),
+                  child: <Widget>[
+                    menuPage(theme, homeBloc),
+                    cartPage(theme, homeBloc, context),
+                    SubscriptionHomePageScreen()
+                  ][currentPageIndex],
                 ),
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.food_bank),
-                  icon: Icon(Icons.food_bank_outlined),
-                  label: 'Subscription',
-                )
-              ],
-            ),
-            body: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-              ),
-              child: <Widget>[
-                menuPage(theme, homeBloc),
-                cartPage(theme, homeBloc),
-                SubscriptionHomePageScreen()
-              ][currentPageIndex],
-            ),
+              );
+            },
           );
         },
       ),
@@ -135,113 +207,85 @@ class _HomeState extends State<Home> {
   }
 
   Widget menuPage(ThemeData theme, HomeBloc homeBloc) {
-    return Builder(builder: (context) {
-      return BlocConsumer<HomeBloc, HomeState>(
-        bloc: homeBloc,
-        listener: (context, state) {},
-        builder: (context, state) {
-          if (state is HomeLoadingState) {
-            return Center(
-              child: Lottie.asset('assets/home_loader.json'),
-            );
-          } else if (state is HomeFetchSuccessfulState) {
-            menuState = state;
-          } else if (state is HomeErrorState) {
-            return const SnackBar(
-              content: Text("Error"),
-            );
-          } else if (state is HomePageCartQuantityChangeState) {}
-          return SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20),
-                upgradeToDeluxCard(() {
-                  // onTap for the upgrade to deluxe button.
-                }),
-                const SizedBox(height: 24),
-                const Text(
-                  // Today's Menu
-                  "Today's Menu",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    height: 24 / 16,
-                    letterSpacing: 0.15,
-                    color: Color(0xff121212),
-                  ),
+    return Builder(
+      builder: (context) {
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              upgradeToDeluxCard(() {
+                // onTap for the upgrade to deluxe button.
+              }),
+              const SizedBox(height: 24),
+              const Text(
+                // Today's Menu
+                "Today's Menu",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  height: 24 / 16,
+                  letterSpacing: 0.15,
+                  color: Color(0xff121212),
                 ),
-                const SizedBox(height: 12),
-                Column(
-                  // list of menu cards
-                  children: listOfMenuCards(menuState.menu, context, homeBloc),
-                ),
-              ],
-            ),
-          );
-        },
-      );
-    });
+              ),
+              const SizedBox(height: 12),
+              Column(
+                // list of menu cards
+                children: listOfMenuCards(menuState.menu, context, homeBloc),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
-  Widget cartPage(ThemeData theme, HomeBloc homeBloc) {
-    return Builder(builder: (context) {
-      return BlocConsumer<HomeBloc, HomeState>(
-        bloc: homeBloc,
-        listener: (context, state) {},
-        builder: (context, state) {
-          if (state is HomeLoadingState) {
-            return Center(
-              child: Container(
-                child:
-                    Lottie.asset('assets/home_loader.json', fit: BoxFit.cover),
-              ),
-            );
-          } else if (state is HomeFetchSuccessfulState) {
-            menuState = state;
-          } else if (state is HomeErrorState) {
-            return const SnackBar(
-              content: Text("Error"),
-            );
-          } else if (state is HomePageCartQuantityChangeState) {}
-          return SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20),
-                upgradeToDeluxCard(() {
-                  // onTap for the upgrade to deluxe button.
-                }),
-                const SizedBox(height: 24),
-                const Text(
-                  "Your Cart",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    height: 24 / 16,
-                    letterSpacing: 0.15,
-                    color: Color(0xff121212),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Column(
-                  // list of menu cards
-                  children: listOfCartCards(menuState.menu, context, homeBloc),
-                ),
-                orderNowButton(() {
-                  print(cartBox.values.toList().toString());
+  Widget cartPage(ThemeData theme, HomeBloc homeBloc, BuildContext context) {
+    List<Widget> listOfCards = listOfCartCards(context, homeBloc);
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 20),
+          upgradeToDeluxCard(() {
+            // onTap for the upgrade to deluxe button.
+          }),
+          const SizedBox(height: 24),
+          const Text(
+            "Your Cart",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              height: 24 / 16,
+              letterSpacing: 0.15,
+              color: Color(0xff121212),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Column(
+            // list of menu cards
+            children: listOfCards,
+          ),
+          emptyCartMessageBox(
+            context,
+            listOfCards.isEmpty
+                ? "Add items from the menu."
+                : "Choose delivery address on top",
+          ),
+          const SizedBox(height: 10),
+          listOfCards.isEmpty
+              ? const SizedBox()
+              : orderNowButton(() {
                   Navigator.push(context,
                       SlideTransitionRouter.toNextPage(const CartScreen()));
                 }),
-                const SizedBox(height: 10),
-              ],
-            ),
-          );
-        },
-      );
-    });
+          const SizedBox(height: 10),
+        ],
+      ),
+    );
   }
 
   Widget upgradeToDeluxCard(Function upgradeCardOnTap) {
@@ -277,33 +321,38 @@ class _HomeState extends State<Home> {
   List<Widget> listOfMenuCards(
       List<MenuDataModel> menu, BuildContext context, HomeBloc homeBloc) {
     List<Widget> listOfMenuCards = [];
+    Map<String, List<MenuDataModel>> temp = {};
+
     for (var element in menu) {
-      cartBox.putAll({
-        "${element.type.toLowerCase()}_price": element.price,
-        "${element.type.toLowerCase()}_data": element.toJson()
-      });
+      temp[element.mealTime] = (temp[element.mealTime] ?? []) + [element];
+    }
+    temp.forEach((key, value) {
+      value.sort((a, b) => a.price.compareTo(b.price));
+    });
+
+    temp.forEach((key, value) {
       listOfMenuCards.addAll([
-        customMenuCard(context, element, homeBloc),
+        customMenuCard(context, value[0], homeBloc),
         const SizedBox(height: 18),
         dashedDivider(context),
         const SizedBox(height: 16)
       ]);
-    }
+    });
+
     return listOfMenuCards;
   }
 
-  List<Widget> listOfCartCards(
-      List<MenuDataModel> menu, BuildContext context, HomeBloc homeBloc) {
+  List<Widget> listOfCartCards(BuildContext context, HomeBloc homeBloc) {
     List<Widget> listOfMenuCards = [];
-    for (var element in menu) {
-      if (cartBox.get(element.type.toLowerCase(), defaultValue: 0) > 0) {
-        listOfMenuCards.addAll([
-          customMenuCard(context, element, homeBloc),
-          const SizedBox(height: 18),
-          dashedDivider(context),
-          const SizedBox(height: 16)
-        ]);
-      }
+    List cartItems = cartBox.get("cart", defaultValue: []);
+
+    for (var element in cartItems) {
+      listOfMenuCards.addAll([
+        customCartCard(context, element, homeBloc),
+        const SizedBox(height: 18),
+        dashedDivider(context),
+        const SizedBox(height: 16)
+      ]);
     }
     return listOfMenuCards;
   }
@@ -320,7 +369,7 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              mealTypeTag(menuPage.type),
+              mealTimeTag(menuPage.mealTime),
               const SizedBox(height: 12),
               SizedBox(
                 width: (MediaQuery.sizeOf(context).width * 0.45) - 20,
@@ -334,7 +383,7 @@ class _HomeState extends State<Home> {
               ),
               const SizedBox(height: 6),
               Text(
-                "₹${menuPage.price.toString()}",
+                "Starting from ₹${menuPage.price.toString()}/-",
                 style: const TextStyle(
                   color: Color(0xff121212),
                   fontSize: 12,
@@ -365,15 +414,91 @@ class _HomeState extends State<Home> {
               ),
             ],
           ),
-          (currentPageIndex == 0)
-              ? menuImage(menuPage.type, homeBloc, menuPage, context)
-              : cardImage(menuPage.type, homeBloc, menuPage, context)
+          menuImage(menuPage.mealTime, homeBloc, menuPage, context)
         ],
       ),
     );
   }
 
-  Widget menuImage(String menuType, HomeBloc homeBloc, MenuDataModel menuPage,
+  Widget customCartCard(BuildContext context, Map menuPage, HomeBloc homeBloc) {
+    Map menu = cartBox.get('menu');
+    Map menuObject = menu[menuPage["mealTime"]][menuPage["mealType"]];
+    Map<String, dynamic> menuObjectCasted = {};
+    menuObject.forEach((key, value) {
+      menuObjectCasted[key.toString()] = value;
+    });
+    MenuDataModel menuData = MenuDataModel.fromJson(menuObjectCasted);
+    return SizedBox(
+      width: MediaQuery.sizeOf(context).width - 20,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 162,
+                child: Row(
+                  children: [
+                    mealTimeTag(menuData.mealTime),
+                    const SizedBox(width: 10),
+                    mealTypeTag(menuData.mealType),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: (MediaQuery.sizeOf(context).width * 0.45) - 20,
+                child: Flexible(
+                  child: Row(
+                    children: [
+                      mealCardBoldText(menuData.title),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                "₹${menuData.price.toString()}/-",
+                style: const TextStyle(
+                  color: Color(0xff121212),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  height: 20 / 14,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              const SizedBox(height: 9),
+              SizedBox(
+                width: (MediaQuery.sizeOf(context).width * 0.45) - 20,
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        menuData.description,
+                        style: const TextStyle(
+                          color: Color(0xff121212),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          height: 16 / 12,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          cartImage(homeBloc, menuData, context)
+        ],
+      ),
+    );
+  }
+
+  Widget menuImage(String menuTime, HomeBloc homeBloc, MenuDataModel menuPage,
       BuildContext context) {
     double width = MediaQuery.sizeOf(context).width;
     return SizedBox(
@@ -387,12 +512,9 @@ class _HomeState extends State<Home> {
             width: width * 0.3,
           ),
           InkWell(
-            onTap: () {
-              print("1_____________");
-              homeBloc.add(
-                HomePageCartQuantityChangeEvent(
-                    mealType: menuType, isIncreased: true),
-              );
+            onTap: () async {
+              Map<String, Map<String, Map>> menu = cartBox.get('menu');
+              showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
             },
             borderRadius: BorderRadius.circular(6),
             child: Container(
@@ -425,8 +547,8 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget cardImage(String menuType, HomeBloc homeBloc, MenuDataModel menuPage,
-      BuildContext context) {
+  Widget cartImage(
+      HomeBloc homeBloc, MenuDataModel menuPage, BuildContext context) {
     double width = MediaQuery.sizeOf(context).width;
     return SizedBox(
       width: width * 0.35,
@@ -438,36 +560,32 @@ class _HomeState extends State<Home> {
             fit: BoxFit.contain,
             width: width * 0.3,
           ),
-          Container(
-            height: (MediaQuery.sizeOf(context).width * 0.2) * 0.4,
-            width: (MediaQuery.sizeOf(context).width * 0.2) < 90
-                ? 90
-                : (MediaQuery.sizeOf(context).width * 0.2),
-            decoration: BoxDecoration(
-              color: const Color(0xffcbffb3),
-              border: Border.all(width: 1, color: const Color(0xff6aa64f)),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                InkWell(
-                  onTap: () {
-                    homeBloc.add(
-                      HomePageCartQuantityChangeEvent(
-                          mealType: menuType, isIncreased: false),
-                    );
-                  },
-                  child: const Icon(
-                    Icons.remove_rounded,
-                    color: Color(0xff329c00),
-                  ),
+          InkWell(
+            onTap: () {
+              homeBloc.add(
+                HomePageRemoveFromCartEvent(
+                  mealTime: menuPage.mealTime,
+                  mealType: menuPage.mealType,
                 ),
-                Text(
-                  cartBox.get(menuType.toLowerCase()).toString(),
-                  style: const TextStyle(
-                    color: Color(0xFF329C00),
+              );
+              setState(() {});
+            },
+            borderRadius: BorderRadius.circular(6),
+            child: Container(
+              height: (MediaQuery.sizeOf(context).width * 0.2) * 0.4,
+              width: (MediaQuery.sizeOf(context).width * 0.2) < 90
+                  ? 90
+                  : (MediaQuery.sizeOf(context).width * 0.2),
+              decoration: BoxDecoration(
+                color: const Color(0xffFFDDDD),
+                border: Border.all(width: 1, color: const Color(0xffF84545)),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: const Center(
+                child: Text(
+                  "Remove",
+                  style: TextStyle(
+                    color: Color(0xFFF84545),
                     fontSize: 16,
                     fontFamily: 'Roboto',
                     fontWeight: FontWeight.w500,
@@ -475,24 +593,86 @@ class _HomeState extends State<Home> {
                     letterSpacing: 0.15,
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    homeBloc.add(
-                      HomePageCartQuantityChangeEvent(
-                          mealType: menuType, isIncreased: true),
-                    );
-                  },
-                  child: const Icon(
-                    Icons.add_rounded,
-                    color: Color(0xff329c00),
-                  ),
-                ),
-              ],
+              ),
             ),
           )
         ],
       ),
     );
+  }
+
+  Future<dynamic> showOptionsOfMeal(
+    Map<String, Map> menuOptions,
+    String menuTime,
+    HomeBloc homeBloc,
+    BuildContext context,
+  ) {
+    List<String> listOfMealTypes = menuOptions.keys.toList();
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          decoration: BoxDecoration(
+              color: const Color(0xfffffcef),
+              borderRadius: BorderRadius.circular(12)),
+          constraints: BoxConstraints(
+              maxHeight: MediaQuery.sizeOf(context).height * 0.3),
+          width: MediaQuery.sizeOf(context).width,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+            child: Column(
+              children: [
+                Text(
+                  "Choose $menuTime Type",
+                  style: const TextStyle(
+                    color: Color(0xFF121212),
+                    fontSize: 16,
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w500,
+                    height: 24 / 16,
+                    letterSpacing: 0.15,
+                  ),
+                ),
+                const Divider(
+                  height: 1,
+                  thickness: 1,
+                ),
+                SingleChildScrollView(
+                  child: Column(
+                    children: listOfButtons(
+                        menuTime, listOfMealTypes, homeBloc, menuOptions),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  List<Widget> listOfButtons(String mealTime, List<String> listOfMealTypes,
+      HomeBloc homeBloc, Map<String, Map> menuOptions) {
+    List<Widget> listOfMealOptions = [];
+    for (var element in listOfMealTypes) {
+      listOfMealOptions.add(
+        OutlinedButton(
+          onPressed: () {
+            homeBloc.add(
+                HomePageAddTocartEvent(mealTime: mealTime, mealType: element));
+            Navigator.pop(context);
+          },
+          child: Row(
+            children: [
+              Text(element),
+              const Spacer(),
+              Text(menuOptions[element]?["price"].toString() ?? "0"),
+            ],
+          ),
+        ),
+      );
+    }
+    return listOfMealOptions;
   }
 }
 
@@ -512,8 +692,8 @@ Text mealCardBoldText(String text) {
   );
 }
 
-Widget mealTypeTag(String mealType) {
-  // Returns the meal type string placed in the tag like container as mentioned in the
+Widget mealTimeTag(String mealTime) {
+  // Returns the meal time string placed in the tag like container as mentioned in the
   // design.
   return Container(
     decoration: BoxDecoration(
@@ -524,8 +704,33 @@ Widget mealTypeTag(String mealType) {
     height: 23,
     child: Center(
       child: Text(
+        mealTime,
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          height: 16 / 11,
+          letterSpacing: 0.5,
+        ),
+      ),
+    ),
+  );
+}
+
+Widget mealTypeTag(String mealType) {
+  return Container(
+    decoration: ShapeDecoration(
+      shape: RoundedRectangleBorder(
+        side: const BorderSide(width: 1, color: Color(0xFFFFBE1D)),
+        borderRadius: BorderRadius.circular(6),
+      ),
+    ),
+    width: 76,
+    height: 23,
+    child: Center(
+      child: Text(
         mealType,
         style: const TextStyle(
+          color: Color(0xFFFFBE1D),
           fontSize: 11,
           fontWeight: FontWeight.w500,
           height: 16 / 11,
@@ -616,4 +821,37 @@ Widget orderNowButton(VoidCallback onpress) {
       ),
     ),
   );
+}
+
+Widget emptyCartMessageBox(BuildContext context, String message) {
+  return Container(
+    width: MediaQuery.sizeOf(context).width - 40,
+    height: 40,
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+    clipBehavior: Clip.antiAlias,
+    decoration: ShapeDecoration(
+      shape: RoundedRectangleBorder(
+        side: const BorderSide(width: 1, color: Color(0xFFFFBE1D)),
+        borderRadius: BorderRadius.circular(6),
+      ),
+    ),
+    child: Center(
+      child: Text(
+        message,
+        style: const TextStyle(
+          color: Color(0xFF121212),
+          fontSize: 12,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeight.w500,
+          height: 0.11,
+          letterSpacing: 0.50,
+        ),
+      ),
+    ),
+  );
+}
+
+String toSentenceCase(String input) {
+  if (input.isEmpty) return '';
+  return '${input[0].toUpperCase()}${input.substring(1).toLowerCase()}';
 }

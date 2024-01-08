@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -308,61 +307,67 @@ class _ProfileState extends State<Profile> {
 }
 
 Widget userCard(User user) {
-  return Builder(builder: (context) {
-    String name = user.displayName ?? "User";
-    return Container(
-      decoration: ShapeDecoration(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+  return Builder(
+    builder: (context) {
+      return Container(
+        decoration: ShapeDecoration(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
-      ),
-      height: 112,
-      width: MediaQuery.sizeOf(context).width,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(width: 20),
-          IconButton(
-            onPressed: () => {},
-            icon: ClipOval(
-              child: (user.photoURL != null)
-                  ? Image.network(
-                      '${user.photoURL}',
-                      fit: BoxFit.cover,
-                      height: 64,
-                      width: 64,
-                    )
-                  : Container(
-                      height: 64,
-                      width: 64,
-                      color: Colors.teal[100],
-                      child: Center(
-                        child: Text(
-                          Hive.box('customer_box').get('cst_name')[0].toString().toUpperCase(),
-                          style: const TextStyle(
-                              fontSize: 30, fontWeight: FontWeight.w600),
+        height: 112,
+        width: MediaQuery.sizeOf(context).width,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(width: 20),
+            IconButton(
+              onPressed: () => {},
+              icon: ClipOval(
+                child: (user.photoURL != null)
+                    ? Image.network(
+                        '${user.photoURL}',
+                        fit: BoxFit.cover,
+                        height: 64,
+                        width: 64,
+                      )
+                    : Container(
+                        height: 64,
+                        width: 64,
+                        color: Colors.teal[100],
+                        child: Center(
+                          child: Text(
+                            Hive.box('customer_box')
+                                .get('cst_name')[0]
+                                .toString()
+                                .toUpperCase(),
+                            style: const TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+              ),
             ),
-          ),
-          const SizedBox(width: 18),
-          Text(
-            user.displayName ?? "User",
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Color(0xFF121212),
-              fontSize: 20,
-              fontFamily: 'Roboto',
-              fontWeight: FontWeight.w400,
-              height: 0.07,
-            ),
-          )
-        ],
-      ),
-    );
-  });
+            const SizedBox(width: 18),
+            Text(
+              user.displayName ?? "User",
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Color(0xFF121212),
+                fontSize: 20,
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w400,
+                height: 0.07,
+              ),
+            )
+          ],
+        ),
+      );
+    },
+  );
 }
 
 Widget listOfHorizontalCardButtons(Map options, double width) {

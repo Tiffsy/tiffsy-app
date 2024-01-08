@@ -10,7 +10,7 @@ final class HomeInitialFetchState extends HomeState {}
 final class HomeLoadingState extends HomeState {}
 
 final class HomeFetchSuccessfulState extends HomeState {
-  List<MenuDataModel> menu;
+  final List<MenuDataModel> menu;
   HomeFetchSuccessfulState({required this.menu});
 }
 

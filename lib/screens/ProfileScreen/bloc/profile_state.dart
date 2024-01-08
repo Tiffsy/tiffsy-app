@@ -10,8 +10,8 @@ sealed class ProfileState extends Equatable {
 final class ProfileInitial extends ProfileState {}
 
 class ProfileBlocInitialState extends ProfileState {
-  User user;
-  ProfileBlocInitialState({required this.user});
+  final User user;
+  const ProfileBlocInitialState({required this.user});
 }
 
 class ProfileBlocInitialUserNotFoundState extends ProfileState {}
@@ -25,6 +25,6 @@ class ProfilePageButtonPressState extends ProfileState {
 class ProfilePageLogoutButtonOnPressState extends ProfileState {}
 
 class ProfilePageLogoutLoadingState extends ProfileState {
-  User user;
-  ProfilePageLogoutLoadingState({required this.user});
+  final User user;
+  const ProfilePageLogoutLoadingState({required this.user});
 }

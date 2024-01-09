@@ -107,8 +107,10 @@ Widget addAddressButton(VoidCallback onpress) {
   );
   return Padding(
     padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-    child: ElevatedButton(
-      onPressed: onpress,
+    child: InkWell(
+      onTap: () {
+        onpress();
+      },
       child: Container(
         constraints: const BoxConstraints(maxHeight: 40),
         decoration: BoxDecoration(
@@ -128,13 +130,14 @@ Widget listOfAddressCards(List<AddressDataModel> listOfAddress) {
 // Returns a list of addressCards arranged in a column and a scrollView to be
 // placed directly into the body of addressBookScreen
   List<Widget> listOfAddressCardsFromAddresses = [];
-  for (int i = 0; i < listOfAddress.length; i++) {
+  for (AddressDataModel element in listOfAddress) {
     listOfAddressCardsFromAddresses.add(
-      addressCard(listOfAddress[i].addrType, listOfAddress[i].addrLine),
+      addressCard(element.addrType, element.houseNum, element.addrLine,
+          element.city, element.state),
     );
   }
-  if(listOfAddressCardsFromAddresses.isEmpty){
-    return Center(child: Text("No Address Found"));
+  if (listOfAddressCardsFromAddresses.isEmpty) {
+    return const Center(child: Text("No Address Found"));
   }
   return Flexible(
     child: SingleChildScrollView(
@@ -144,7 +147,8 @@ Widget listOfAddressCards(List<AddressDataModel> listOfAddress) {
   );
 }
 
-Widget addressCard(String addressType, String address) {
+Widget addressCard(String addressType, String houseNum, String addrLine,
+    String city, String state) {
   IconData addressTypeIcon = Icons.home;
   if (addressType == "Work") {
     addressTypeIcon = Icons.work;
@@ -171,24 +175,6 @@ Widget addressCard(String addressType, String address) {
           height: 1.5,
         ),
       ),
-    ],
-  );
-
-  Widget addressText = Row(
-    mainAxisAlignment: MainAxisAlignment.start,
-    children: [
-      const SizedBox(width: 36),
-      Flexible(
-        child: Text(
-          address,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w400,
-            height: 4 / 3,
-          ),
-        ),
-      ),
-      const SizedBox(width: 26)
     ],
   );
 
@@ -230,12 +216,34 @@ Widget addressCard(String addressType, String address) {
           children: [
             addressTypeData,
             const SizedBox(height: 8),
-            addressText,
+            addressText(houseNum),
+            addressText(addrLine),
+            addressText("$city, $state"),
             const SizedBox(height: 8),
             addressActionsButtons
           ],
         ),
       ),
     ),
+  );
+}
+
+Widget addressText(String text) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: [
+      const SizedBox(width: 36),
+      Flexible(
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+            height: 4 / 3,
+          ),
+        ),
+      ),
+      const SizedBox(width: 26)
+    ],
   );
 }

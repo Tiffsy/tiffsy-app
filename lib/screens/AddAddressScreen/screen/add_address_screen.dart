@@ -32,7 +32,6 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   TextEditingController stateController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController addressTypeController = TextEditingController();
-  
 
   late List<DropdownMenuEntry> stateEntries = [];
 
@@ -80,21 +79,19 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
         ),
         body: BlocConsumer<AddAddressScreenDartBloc, AddAddressScreenDartState>(
           listener: (context, state) {
-            if(state is AddAddressErrorState){
+            if (state is AddAddressErrorState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.error)),
               );
-            }
-            else if(state is AddAddressSuccessState){
-              Navigator.pushReplacement(
-            context,
-  MaterialPageRoute(builder: (BuildContext context) => AddressBookScreen()),
-);
+            } else if (state is AddAddressSuccessState) {
+              Navigator.pop(context);
             }
           },
           builder: (context, state) {
-            if(state is AddAddressLoadingState){
-              return Center(child: CircularProgressIndicator(),);
+            if (state is AddAddressLoadingState) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
             }
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -150,20 +147,25 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                         ),
                       ],
                     ),
-                    saveAddressButton(() {
-                      BlocProvider.of<AddAddressScreenDartBloc>(context).add(
-                              SaveAddressClicked(
-                              cst_id: Hive.box('customer_box').get('cst_id').toString(), 
-                              add_id: "5", 
-                              house_num: houseNumberController.text, 
-                              addr_line: streetController.text, 
-                              state: stateController.text, 
-                              pin: pincodeController.text, 
-                              city: cityController.text, 
-                              addr_type: addressTypeController.text, 
-                              contact: "9530077899"
-                          ));
-                    }),
+                    saveAddressButton(
+                      () {
+                        BlocProvider.of<AddAddressScreenDartBloc>(context).add(
+                          SaveAddressClicked(
+                            cst_id: Hive.box('customer_box')
+                                .get('cst_id')
+                                .toString(),
+                            add_id: "5",
+                            house_num: houseNumberController.text,
+                            addr_line: streetController.text,
+                            state: stateController.text,
+                            pin: pincodeController.text,
+                            city: cityController.text,
+                            addr_type: addressTypeController.text,
+                            contact: "9530077899",
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -220,7 +222,7 @@ Widget dropDownMenu(
         height: 24 / 16,
       ),
     ),
-    // expandedInsets: EdgeInsets.zero,
+    expandedInsets: EdgeInsets.zero,
   );
 }
 

@@ -6,6 +6,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tiffsy_app/Helpers/page_router.dart';
+import 'package:tiffsy_app/screens/AddAddressScreen/screen/add_address_screen.dart';
+import 'package:tiffsy_app/screens/AddressBookScreen/model/address_data_model.dart';
 import 'package:tiffsy_app/screens/CartScreen/screen/cart_screen.dart';
 import 'package:tiffsy_app/screens/HomeScreen/bloc/home_bloc.dart';
 import 'package:tiffsy_app/screens/HomeScreen/model/home_model.dart';
@@ -50,6 +52,8 @@ class _HomeState extends State<Home> {
 
   int currentPageIndex = 0;
   Box cartBox = Hive.box("cart_box");
+  Box addressBox = Hive.box("address_box");
+  AddressDataModel? defaultAddress;
 
   HomeFetchSuccessfulState menuState = HomeFetchSuccessfulState(menu: const []);
 
@@ -69,135 +73,174 @@ class _HomeState extends State<Home> {
       child: BlocConsumer<HomeBloc, HomeState>(
         listener: (context, state) {},
         builder: (context, state) {
-          return BlocConsumer<HomeBloc, HomeState>(
-            listener: (context, state) {},
-            builder: (context, state) {
-              if (state is HomeLoadingState) {
-                return Container(
-                  color: const Color(0xffffffff),
-                  child: Center(
-                    child: Lottie.asset('assets/home_loader.json'),
-                  ),
-                );
-              } else if (state is HomeFetchSuccessfulState) {
-                menuState = state;
-              } else if (state is HomeErrorState) {
-                return const SnackBar(
-                  content: Text("Error"),
-                );
-              } else if (state is HomePageCartQuantityChangeState) {
-              } else if (state is HomeFetchSuccessfulIsCachedState) {}
-              return Scaffold(
-                backgroundColor: const Color(0xffffffff),
-                appBar: AppBar(
-                  leadingWidth: 70,
-                  leading: const Icon(
-                    Icons.location_on_rounded,
-                    size: 36,
-                    color: Color(0xffffbe1d),
-                  ),
-                  title: GestureDetector(
-                    onTap: () {},
-                    child: SizedBox(
-                      width: MediaQuery.sizeOf(context).width * 0.4,
-                      child: const Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                'Grihapravesh',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Color(0xFF121212),
-                                  fontSize: 16,
-                                  fontFamily: 'Roboto',
-                                  fontWeight: FontWeight.w500,
-                                  height: 24 / 16,
-                                  letterSpacing: 0.15,
-                                ),
+          if (state is HomeLoadingState) {
+            return Container(
+              color: const Color(0xffffffff),
+              child: Center(
+                child: Lottie.asset('assets/home_loader.json'),
+              ),
+            );
+          } else if (state is HomeFetchSuccessfulState) {
+            menuState = state;
+            Map? temp = addressBox.get("default_address");
+            Map<String, dynamic>? tempTwo;
+            if (temp != null) {
+              tempTwo =
+                  temp.map((key, value) => MapEntry(key.toString(), value));
+            }
+            defaultAddress = AddressDataModel.fromJsonAllowNull(
+              tempTwo,
+            );
+          } else if (state is HomeErrorState) {
+            return const SnackBar(
+              content: Text("Error"),
+            );
+          } else if (state is HomePageCartQuantityChangeState) {
+          } else if (state is HomeFetchSuccessfulIsCachedState) {}
+          return Scaffold(
+            backgroundColor: const Color(0xffffffff),
+            appBar: AppBar(
+              leadingWidth: 60,
+              leading: const Icon(
+                Icons.location_on,
+                size: 36,
+                color: Color(0xffffbe1d),
+              ),
+              title: GestureDetector(
+                onTap: () async {
+                  (defaultAddress == null)
+                      ? Navigator.push(
+                          context,
+                          SlideTransitionRouter.toNextPage(
+                            const AddAddressScreen(),
+                          ),
+                        )
+                      : await showAddressBottomSheet(homeBloc);
+                },
+                child: SizedBox(
+                  width: MediaQuery.sizeOf(context).width * 0.4 + 32,
+                  child: (defaultAddress == null)
+                      ? const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Add Address",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color(0xFF121212),
+                                fontSize: 16,
+                                fontFamily: 'Roboto',
+                                fontWeight: FontWeight.w500,
+                                height: 24 / 16,
+                                letterSpacing: 0.15,
                               ),
-                              SizedBox(width: 8),
-                              Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                size: 24,
-                              )
-                            ],
-                          ),
-                          Text(
-                            'Community Center Road...',
-                            style: TextStyle(
-                              color: Color(0xFF121212),
-                              fontSize: 12,
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w400,
-                              height: 16 / 12,
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  actions: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 17),
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            SlideTransitionRouter.toNextPage(
-                              const ProfileScreen(),
+                          ],
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  constraints: BoxConstraints(
+                                      maxWidth:
+                                          MediaQuery.sizeOf(context).width *
+                                              0.4),
+                                  child: Text(
+                                    defaultAddress!.houseNum,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Color(0xFF121212),
+                                      fontSize: 16,
+                                      fontFamily: 'Roboto',
+                                      fontWeight: FontWeight.w500,
+                                      height: 24 / 16,
+                                      letterSpacing: 0.15,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                const Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  size: 24,
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                        icon: ClipOval(
-                          child: Image.asset(
-                            'assets/images/logo/tiffsy.png',
-                            fit: BoxFit.contain,
-                          ),
-                        ), // TODO: Bio Pic
+                            Text(
+                              (defaultAddress != null)
+                                  ? defaultAddress!.addrLine
+                                  : "",
+                              style: const TextStyle(
+                                color: Color(0xFF121212),
+                                fontSize: 12,
+                                fontFamily: 'Roboto',
+                                fontWeight: FontWeight.w400,
+                                height: 16 / 12,
+                              ),
+                            )
+                          ],
+                        ),
+                ),
+              ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 17),
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        SlideTransitionRouter.toNextPage(
+                          const ProfileScreen(),
+                        ),
+                      );
+                    },
+                    icon: ClipOval(
+                      child: Image.asset(
+                        'assets/images/logo/tiffsy.png',
+                        fit: BoxFit.contain,
                       ),
-                    ),
-                  ],
-                ),
-                bottomNavigationBar: NavigationBar(
-                  onDestinationSelected: (int index) {
-                    setState(() {
-                      currentPageIndex = index;
-                    });
-                  },
-                  selectedIndex: currentPageIndex,
-                  destinations: const <Widget>[
-                    NavigationDestination(
-                      selectedIcon: Icon(Icons.restaurant_menu),
-                      icon: Icon(Icons.restaurant_menu_outlined),
-                      label: 'Menu',
-                    ),
-                    NavigationDestination(
-                      selectedIcon: Icon(Icons.shopping_cart),
-                      icon: Icon(Icons.shopping_cart_outlined),
-                      label: 'Cart',
-                    ),
-                    NavigationDestination(
-                      selectedIcon: Icon(Icons.food_bank),
-                      icon: Icon(Icons.food_bank_outlined),
-                      label: 'Subscription',
-                    )
-                  ],
-                ),
-                body: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
+                    ), // TODO: Bio Pic
                   ),
-                  child: <Widget>[
-                    menuPage(theme, homeBloc),
-                    cartPage(theme, homeBloc, context),
-                    SubscriptionHomePageScreen()
-                  ][currentPageIndex],
                 ),
-              );
-            },
+              ],
+            ),
+            bottomNavigationBar: NavigationBar(
+              onDestinationSelected: (int index) {
+                setState(() {
+                  currentPageIndex = index;
+                });
+              },
+              selectedIndex: currentPageIndex,
+              destinations: const <Widget>[
+                NavigationDestination(
+                  selectedIcon: Icon(Icons.restaurant_menu),
+                  icon: Icon(Icons.restaurant_menu_outlined),
+                  label: 'Menu',
+                ),
+                NavigationDestination(
+                  selectedIcon: Icon(Icons.shopping_cart),
+                  icon: Icon(Icons.shopping_cart_outlined),
+                  label: 'Cart',
+                ),
+                NavigationDestination(
+                  selectedIcon: Icon(Icons.food_bank),
+                  icon: Icon(Icons.food_bank_outlined),
+                  label: 'Subscription',
+                )
+              ],
+            ),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+              ),
+              child: <Widget>[
+                menuPage(theme, homeBloc),
+                cartPage(theme, homeBloc, context),
+                SubscriptionHomePageScreen()
+              ][currentPageIndex],
+            ),
           );
         },
       ),
@@ -328,14 +371,18 @@ class _HomeState extends State<Home> {
       value.sort((a, b) => a.price.compareTo(b.price));
     });
 
-    temp.forEach((key, value) {
-      listOfMenuCards.addAll([
-        customMenuCard(context, value[0], homeBloc),
-        const SizedBox(height: 18),
-        dashedDivider(context),
-        const SizedBox(height: 16)
-      ]);
-    });
+    List<String> mealOrder = ["breakfast", "lunch", "dinner"];
+
+    for (var key in mealOrder) {
+      if (temp[key] != null) {
+        listOfMenuCards.addAll([
+          customMenuCard(context, temp[key]![0], homeBloc),
+          const SizedBox(height: 18),
+          dashedDivider(context),
+          const SizedBox(height: 16)
+        ]);
+      }
+    }
 
     return listOfMenuCards;
   }
@@ -611,10 +658,12 @@ class _HomeState extends State<Home> {
       builder: (context) {
         return Container(
           decoration: BoxDecoration(
-              color: const Color(0xfffffcef),
-              borderRadius: BorderRadius.circular(12)),
+            color: const Color(0xffffffff),
+            borderRadius: BorderRadius.circular(12),
+          ),
           constraints: BoxConstraints(
-              maxHeight: MediaQuery.sizeOf(context).height * 0.3),
+            minHeight: MediaQuery.sizeOf(context).height * 0.3,
+          ),
           width: MediaQuery.sizeOf(context).width,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
@@ -672,10 +721,129 @@ class _HomeState extends State<Home> {
     }
     return listOfMealOptions;
   }
+
+  Future<dynamic> showAddressBottomSheet(HomeBloc homeBloc) {
+    Box addressBox = Hive.box("address_box");
+    List listOfAddress = addressBox.get("list_of_address");
+    List<Widget> listOfAddressCards = [];
+    for (Map element in listOfAddress) {
+      Map<String, dynamic> addressData =
+          element.map((key, value) => MapEntry(key.toString(), value));
+      listOfAddressCards
+          .add(addressCard(AddressDataModel.fromJson(addressData), context));
+    }
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          decoration: BoxDecoration(
+            color: const Color(0xffffffff),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.3,
+          ),
+          width: MediaQuery.sizeOf(context).width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(left: 24, bottom: 20, top: 20),
+                child: Text(
+                  "Choose Your Address:",
+                  style: TextStyle(
+                    color: Color(0xFF121212),
+                    fontSize: 16,
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w500,
+                    height: 24 / 16,
+                    letterSpacing: 0.10,
+                  ),
+                ),
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children:
+                      <Widget>[const SizedBox(width: 20)] + listOfAddressCards,
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget addressCard(AddressDataModel address, BuildContext context) {
+    IconData addressTypeIcon = Icons.home;
+    if (address.addrType == "Work") {
+      addressTypeIcon = Icons.work;
+    } else if (address.addrType == "Home") {
+      addressTypeIcon = Icons.home;
+    } else {
+      addressTypeIcon = Icons.language_rounded;
+    }
+    Widget addressTypeData = Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Icon(
+          addressTypeIcon,
+          size: 24,
+          color: const Color(0xffffbe1d),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          address.addrType,
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 16,
+            color: Color(0xff121212),
+            height: 1.5,
+          ),
+        ),
+      ],
+    );
+
+    return InkWell(
+      onTap: () {
+        Hive.box("address_box").put("default_address", address.toJson());
+        setState(() {
+          defaultAddress = address;
+        });
+        Navigator.pop(context);
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(right: 20),
+        child: Container(
+          constraints: const BoxConstraints(minWidth: 200),
+          decoration: ShapeDecoration(
+            color: const Color(0xFFFFFCEF),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                addressTypeData,
+                const SizedBox(height: 8),
+                mealCardBoldText(address.houseNum),
+                mealCardBoldText(address.addrLine),
+                mealCardBoldText("${address.city}, ${address.state}"),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 // These funtions are only used for styling and decoration, No logic exists here
-
 Text mealCardBoldText(String text) {
   // Returns the string as a Text widget with the bold formatting mentioned in the
   // design.
@@ -702,7 +870,7 @@ Widget mealTimeTag(String mealTime) {
     height: 23,
     child: Center(
       child: Text(
-        mealTime,
+        toSentenceCase(mealTime),
         style: const TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w500,
@@ -726,7 +894,7 @@ Widget mealTypeTag(String mealType) {
     height: 23,
     child: Center(
       child: Text(
-        mealType,
+        toSentenceCase(mealType),
         style: const TextStyle(
           color: Color(0xFFFFBE1D),
           fontSize: 11,
@@ -853,3 +1021,5 @@ String toSentenceCase(String input) {
   if (input.isEmpty) return '';
   return '${input[0].toUpperCase()}${input.substring(1).toLowerCase()}';
 }
+
+//Widget navigationBarCartItem(bool isSelected, int count) {}

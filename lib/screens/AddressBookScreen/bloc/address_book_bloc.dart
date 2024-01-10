@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:tiffsy_app/Helpers/result.dart';
 import 'package:tiffsy_app/screens/AddressBookScreen/model/address_data_model.dart';
@@ -16,6 +17,11 @@ class AddressBookBloc extends Bloc<AddressBookEvent, AddressBookState> {
       if (result.isSuccess) {
         List<AddressDataModel> addressList = result.data!;
         emit(AddressListFetchSuccessState(addressList: addressList));
+        List<Map<String, dynamic>> listOfAddressInMapForm = [];
+        for (var element in addressList) {
+          listOfAddressInMapForm.add(element.toJson());
+        }
+        Hive.box("address_box").put("list_of_address", listOfAddressInMapForm);
       } else {
         emit(AddressBookErrorState(error: result.error.toString()));
       }

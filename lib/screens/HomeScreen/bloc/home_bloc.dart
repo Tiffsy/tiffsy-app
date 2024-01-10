@@ -4,6 +4,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 import 'package:tiffsy_app/Helpers/result.dart';
+import 'package:tiffsy_app/screens/AddressBookScreen/model/address_data_model.dart';
+import 'package:tiffsy_app/screens/AddressBookScreen/repository/address_book_repo.dart';
 import 'package:tiffsy_app/screens/HomeScreen/model/home_model.dart';
 import 'package:tiffsy_app/screens/HomeScreen/repository/home_repo.dart';
 
@@ -21,31 +23,30 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   FutureOr<void> homeInitialFetch(
       HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
     emit(HomeLoadingState());
-
     if (!event.isCached) {
       Result<List<MenuDataModel>> menu = await HomeRepo.fetchMenu();
       if (menu.isSuccess) {
         bool loginMethod = HomeRepo.checkUserAuthenticationMethod();
         if (loginMethod) {
-          String cst_phone = HomeRepo.getUserInfo();
-          cst_phone = cst_phone.substring(3);
+          String cstPhone = HomeRepo.getUserInfo();
+          cstPhone = cstPhone.substring(3);
           Result<Map<String, dynamic>> result =
-              await HomeRepo.getCustomerIdByPhone(cst_phone);
+              await HomeRepo.getCustomerIdByPhone(cstPhone);
           if (result.isSuccess) {
-            Map<String, dynamic> cst_details = result.data!;
+            Map<String, dynamic> cstDetails = result.data!;
             Box customerBox = await Hive.openBox("customer_box");
-            customerBox.putAll(cst_details);
+            customerBox.putAll(cstDetails);
           } else {
             emit(HomeErrorState(error: result.error.toString()));
           }
         } else {
-          String cst_mail = HomeRepo.getUserInfo();
+          String cstMail = HomeRepo.getUserInfo();
           Result<Map<String, dynamic>> result =
-              await HomeRepo.getCustomerIdByMail(cst_mail);
+              await HomeRepo.getCustomerIdByMail(cstMail);
           if (result.isSuccess) {
-            Map<String, dynamic> cst_details = result.data!;
+            Map<String, dynamic> cstDetails = result.data!;
             Box customerBox = await Hive.openBox("customer_box");
-            customerBox.putAll(cst_details);
+            customerBox.putAll(cstDetails);
           } else {
             emit(HomeErrorState(error: result.error.toString()));
           }
@@ -61,8 +62,25 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           }
         }
 
-        cartBox.put('menu', menuData);
+        // getting the address part starts here.
+        Box addressBox = Hive.box('address_box');
+        Map defaultAddress =
+            addressBox.get("default_address", defaultValue: {});
+        if (defaultAddress.isEmpty) {
+          Result<List<AddressDataModel>> addressResult =
+              await AddressBookRepo.fetchAddressList();
+          if (addressResult.isSuccess && addressResult.data!.isNotEmpty) {
+            Map<String, dynamic> firstAddress = addressResult.data![0].toJson();
+            addressBox.put("default_address", firstAddress);
+            List<Map<String, String>> listOfAddress = [];
+            for (var element in addressResult.data!) {
+              listOfAddress.add(element.toJson());
+            }
+            addressBox.put("list_of_address", listOfAddress);
+          }
+        }
 
+        cartBox.put('menu', menuData);
         emit(HomeFetchSuccessfulState(menu: menuList));
       } else {
         emit(HomeErrorState(error: menu.error.toString()));
@@ -81,12 +99,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       HomePageAddTocartEvent event, Emitter<HomeState> emit) {
     Box cartBox = Hive.box("cart_box");
     Map menu = cartBox.get("menu");
-
-    print(menu.toString());
     var menuAddedToCart = menu[event.mealTime][event.mealType];
-    //Box customer_box = Hive.box("customer_box");
-    //String cst_id = customer_box.get("cst_id");
-    //cartBox.put("cst_id", cst_id);
+    Box customer_box = Hive.box("customer_box");
+    String cst_id = customer_box.get("cst_id");
+    cartBox.put("cst_id", cst_id);
     List cart = cartBox.get("cart", defaultValue: []);
     bool alreadyExists = false;
     for (var element in cart) {

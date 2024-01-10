@@ -46,6 +46,24 @@ class AddressDataModel {
         addrType: json["addr_type"],
       );
 
+  static AddressDataModel? fromJsonAllowNull(Map<String, dynamic>? json) {
+    if ((json == null)) {
+      return null;
+    } else {
+      return AddressDataModel(
+        cstId: json["cst_id"],
+        addrId: json["addr_id"],
+        houseNum: json["house_num"],
+        addrLine: json["addr_line"],
+        state: json["state"],
+        pin: json["pin"],
+        city: json["city"],
+        contact: json["contact"],
+        addrType: json["addr_type"],
+      );
+    }
+  }
+
   Map<String, String> toJson() => {
         "cst_id": cstId,
         "addr_id": addrId,

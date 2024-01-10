@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:tiffsy_app/screens/AddAddressScreen/bloc/add_address_screen_dart_bloc.dart';
+import 'package:tiffsy_app/screens/AddressBookScreen/bloc/address_book_bloc.dart';
 import 'package:tiffsy_app/screens/AddressBookScreen/screen/address_book_screen.dart';
 
 class AddAddressScreen extends StatefulWidget {
@@ -85,6 +86,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
               );
             } else if (state is AddAddressSuccessState) {
               Navigator.pop(context);
+              AddressBookBloc().add(AddressBookInitialFetchEvent());
             }
           },
           builder: (context, state) {

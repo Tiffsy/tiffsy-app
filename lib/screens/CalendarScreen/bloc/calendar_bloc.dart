@@ -18,27 +18,23 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
   FutureOr<void> calendarInitialFetchEvent(
       CalendarInitialFetchEvent event, Emitter<CalendarState> emit) async {
     emit(CalendarLoadingState());
-    String cst_id = event.cst_id;
-    String subs_id = event.subs_id;
+    String cstId = event.cstId;
+    String subsId = event.subsId;
     print("testing debug");
     Result<List<CalendarDataModel>> calendarDates =
-        await CalendarRepo.fetchCalendarDates(
-            cst_id, subs_id); // cst_id, subs_id
-    if(calendarDates.isSuccess){
+        await CalendarRepo.fetchCalendarDates(cstId, subsId); // cst_id, subs_id
+    if (calendarDates.isSuccess) {
       List<CalendarDataModel> calendarData = calendarDates.data!;
       print(calendarData);
       emit(CalendarFetchSuccessState(calendarData: calendarData));
-    }
-    else{
+    } else {
       emit(CalendarErrorState(error: calendarDates.error.toString()));
     }
   }
 
   FutureOr<void> cancelClickedEvent(
-      CancelClickedEvent event, Emitter<CalendarState> emit) async {
+      CancelClickedEvent event, Emitter<CalendarState> emit) async {}
 
-      }
-
-  FutureOr<void> cancelOrderClickedEvent(CancelOrderClicked event, Emitter<CalendarState> emit) {
-  }
+  FutureOr<void> cancelOrderClickedEvent(
+      CancelOrderClicked event, Emitter<CalendarState> emit) {}
 }

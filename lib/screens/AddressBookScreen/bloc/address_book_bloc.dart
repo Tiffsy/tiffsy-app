@@ -14,7 +14,11 @@ class AddressBookBloc extends Bloc<AddressBookEvent, AddressBookState> {
       emit(AddressBookLoadingState());
       Result<List<AddressDataModel>> result =
           await AddressBookRepo.fetchAddressList();
-      if (result.isSuccess) {
+      if (!result.isSuccess) {
+        emit(AddressBookErrorState(error: result.error.toString()));
+      } else if (result.data!.isEmpty) {
+        emit(NoAddressAddedState());
+      } else {
         List<AddressDataModel> addressList = result.data!;
         emit(AddressListFetchSuccessState(addressList: addressList));
         List<Map<String, dynamic>> listOfAddressInMapForm = [];
@@ -22,8 +26,6 @@ class AddressBookBloc extends Bloc<AddressBookEvent, AddressBookState> {
           listOfAddressInMapForm.add(element.toJson());
         }
         Hive.box("address_box").put("list_of_address", listOfAddressInMapForm);
-      } else {
-        emit(AddressBookErrorState(error: result.error.toString()));
       }
     });
 

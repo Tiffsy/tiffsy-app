@@ -14,6 +14,8 @@ class AddressBookScreen extends StatefulWidget {
 }
 
 class _AddressBookScreenState extends State<AddressBookScreen> {
+  bool isEmpty = true;
+  List<AddressDataModel> addressListState = [];
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -57,21 +59,22 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
           },
           builder: (context, state) {
             if (state is AddressListFetchSuccessState) {
-              final addressListState = state;
-              return Column(
-                children: [
-                  addAddressButton(() {
-                    BlocProvider.of<AddressBookBloc>(context)
-                        .add(AddressBookAddAdresssButtonClickedEvent());
-                  }),
-                  listOfAddressCards(addressListState.addressList),
-                ],
-              );
+              addressListState = state.addressList;
+            } else if (state is NoAddressAddedState) {
             } else if (state is AddressBookLoadingState) {
-              return Center(child: CircularProgressIndicator());
-            } else {
-              return Center(child: Text("Error While loading page"));
+              return const Center(child: CircularProgressIndicator());
             }
+            return Column(
+              children: [
+                addAddressButton(() {
+                  BlocProvider.of<AddressBookBloc>(context)
+                      .add(AddressBookAddAdresssButtonClickedEvent());
+                }),
+                isEmpty
+                    ? Text("No address found")
+                    : listOfAddressCards(addressListState),
+              ],
+            );
           },
         ),
       ),

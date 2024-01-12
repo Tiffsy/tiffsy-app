@@ -26,22 +26,24 @@ class _SubscriptionHomePageScreenState
 
   int calculateDifferenceInDays(DateTime dateTime1, DateTime dateTime2) {
     Duration difference = dateTime2.difference(dateTime1);
-    return difference.inDays.abs(); // Return the absolute difference in days 
+    return difference.inDays.abs(); // Return the absolute difference in days
   }
-  int getRemainingDaysQuantity(String strDt, String enddt) {
 
+  int getRemainingDaysQuantity(String strDt, String enddt) {
     DateTime st = DateTime.parse(strDt);
     DateTime et = DateTime.parse(enddt);
 
     DateTime cur = DateTime.now();
 
-    if(cur.isBefore(st))
+    if (cur.isBefore(st))
       return -1;
-    else if(et.isBefore(cur))
-      return 0;
+    else if (et.isBefore(cur)) return 0;
 
     return calculateDifferenceInDays(et, cur);
   }
+
+  List<SubscriptionDataModel> subcriptionList = [];
+  List<Widget> subsCard = [];
 
   @override
   Widget build(BuildContext context) {
@@ -54,159 +56,162 @@ class _SubscriptionHomePageScreenState
           // TODO: implement listener
         },
         builder: (context, state) {
-          if(state is SubscriptionPageLoadingState){
-            return Center(
+          if (state is SubscriptionPageLoadingState) {
+            return const Center(
               child: CircularProgressIndicator(),
             );
-          }
-          else if(state is SubscriptionFetchSuccessState)
-          {
-            List<SubscriptionDataModel> subcriptionList = state.subcriptionList;
-            List<Widget> subsCard = [];
-
-            for(int index = 0; index < subcriptionList.length; index++){
-              subsCard.add(
-                subscriptionCard(subcriptionList[index].subtype, (){
-                  Navigator.push(context, SlideTransitionRouter.toNextPage(CalendarScreen(cst_id: "1", subs_id: "1")));
-                }, subcriptionList[index].endDt, subcriptionList[index].addrLine, subcriptionList[index].strDt)
-              );
+          } else if (state is SubscriptionFetchSuccessState) {
+            subcriptionList = state.subcriptionList;
+            subsCard = [];
+            for (int index = 0; index < subcriptionList.length; index++) {
+              subsCard.add(subscriptionCard(subcriptionList[index].subtype, () {
+                Navigator.push(
+                    context,
+                    SlideTransitionRouter.toNextPage(
+                        CalendarScreen(cstId: "1", subsId: "2")));
+              }, subcriptionList[index].endDt, subcriptionList[index].addrLine,
+                  subcriptionList[index].strDt));
             }
-            return SingleChildScrollView(
+          }
+          return SingleChildScrollView(
             child: Column(
-              children: subsCard,
-            )
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                    const SizedBox(height: 23),
+                    const Text(
+                      'Current Subscription',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xFF121212),
+                        fontSize: 16,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w500,
+                        height: 24 / 16,
+                        letterSpacing: 0.15,
+                      ),
+                    )
+                  ] +
+                  subsCard,
+            ),
           );
-          }
-          else{
-            return Center(child: Text("code Phat"));
-          }
-          
         },
       ),
     );
   }
 
-  Widget subscriptionCard(int subType, Function cancelOrder, String enddt, String addr, String strDt){
+  Widget subscriptionCard(int subType, Function cancelOrder, String enddt,
+      String addr, String strDt) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: () {},
+          child: Container(
+            height: 99,
+            decoration: ShapeDecoration(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              shadows: const [
+                BoxShadow(
+                  color: Color(0x1EFFBE1D),
+                  blurRadius: 16,
+                  offset: Offset(0, 4),
+                  spreadRadius: 0,
+                )
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 16),
-                const Text(
-                  'Current Subscription',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFF121212),
-                    fontSize: 16,
-                    fontFamily: 'Roboto',
-                    fontWeight: FontWeight.w500,
-                    height: 24 / 16,
-                    letterSpacing: 0.15,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    height: 99,
-                    decoration: ShapeDecoration(
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 14),
+                    Text(
+                      getSubscriptionLength(subType.toString()),
+                      style: const TextStyle(
+                        color: Color(0xFF121212),
+                        fontSize: 14,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w500,
+                        height: 20 / 14,
+                        letterSpacing: 0.10,
                       ),
-                      shadows: const [
-                        BoxShadow(
-                          color: Color(0x1EFFBE1D),
-                          blurRadius: 16,
-                          offset: Offset(0, 4),
-                          spreadRadius: 0,
-                        )
-                      ],
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 14),
-                            Text(
-                              getSubscriptionLength(subType.toString()),
-                              style: const TextStyle(
-                                color: Color(0xFF121212),
-                                fontSize: 14,
-                                fontFamily: 'Roboto',
-                                fontWeight: FontWeight.w500,
-                                height: 20 / 14,
-                                letterSpacing: 0.10,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              '$addr',
-                              style: const TextStyle(
-                                color: Color(0xFF323232),
-                                fontSize: 11,
-                                fontFamily: 'Roboto',
-                                fontWeight: FontWeight.w500,
-                                height: 16 / 11,
-                                letterSpacing: 0.50,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            InkWell(
-                              onTap: () {
-                                cancelOrder();
-                              },
-                              child: Container(
-                                height: 23,
-                                decoration: ShapeDecoration(
-                                  shape: RoundedRectangleBorder(
-                                    side: const BorderSide(
-                                        width: 1, color: Color(0xFFD39B0D)),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                ),
-                                child: const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 5),
-                                  child: Text(
-                                    'Cancel upcoming orders',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Color(0xFFD39B0D),
-                                      fontSize: 11,
-                                      height: 1,
-                                      fontFamily: 'Roboto',
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: 0.50,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
+                    const SizedBox(height: 5),
+                    Text(
+                      '$addr',
+                      style: const TextStyle(
+                        color: Color(0xFF323232),
+                        fontSize: 11,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w500,
+                        height: 16 / 11,
+                        letterSpacing: 0.50,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    InkWell(
+                      onTap: () {
+                        cancelOrder();
+                      },
+                      child: Container(
+                        height: 23,
+                        decoration: ShapeDecoration(
+                          shape: RoundedRectangleBorder(
+                            side: const BorderSide(
+                                width: 1, color: Color(0xFFD39B0D)),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
                         ),
-                        const Spacer(),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 12, right: 13),
-                          child: Text( getRemainingDaysQuantity(strDt, enddt) == -1 ? "Subscription haven't started yet":'${getRemainingDaysQuantity(strDt, enddt)} Days remaining',
-                            style: const TextStyle(
-                              color: Color(0xFFF84545),
+                        child: const Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                          child: Text(
+                            'Cancel upcoming orders',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xFFD39B0D),
                               fontSize: 11,
+                              height: 1,
                               fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w400,
-                              height: 16 / 11,
+                              fontWeight: FontWeight.w500,
                               letterSpacing: 0.50,
                             ),
                           ),
-                        )
-                      ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.only(top: 12, right: 13),
+                  child: Text(
+                    getRemainingDaysQuantity(strDt, enddt) == -1
+                        ? "Subscription haven't started yet"
+                        : '${getRemainingDaysQuantity(strDt, enddt)} Days remaining',
+                    style: const TextStyle(
+                      color: Color(0xFFF84545),
+                      fontSize: 11,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w400,
+                      height: 16 / 11,
+                      letterSpacing: 0.50,
                     ),
                   ),
                 )
               ],
-            );
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+      ],
+    );
   }
 }

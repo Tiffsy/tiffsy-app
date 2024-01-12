@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:tiffsy_app/Helpers/result.dart';
@@ -9,20 +8,25 @@ import 'package:tiffsy_app/screens/SubscriptionHomePageScreen/repository/subscri
 part 'subscription_home_page_event.dart';
 part 'subscription_home_page_state.dart';
 
-class SubscriptionHomePageBloc extends Bloc<SubscriptionHomePageEvent, SubscriptionHomePageState> {
+class SubscriptionHomePageBloc
+    extends Bloc<SubscriptionHomePageEvent, SubscriptionHomePageState> {
   SubscriptionHomePageBloc() : super(SubscriptionHomePageInitial()) {
     on<SubcriptionInitialFetchEvent>(subcriptionInitialFetchEvent);
   }
 
-  FutureOr<void> subcriptionInitialFetchEvent(SubcriptionInitialFetchEvent event, Emitter<SubscriptionHomePageState> emit) async {
+  FutureOr<void> subcriptionInitialFetchEvent(
+      SubcriptionInitialFetchEvent event,
+      Emitter<SubscriptionHomePageState> emit) async {
+    print("inter bloc");
     emit(SubscriptionPageLoadingState());
 
-    Result<List<SubscriptionDataModel>> subcription = await SubscriptionPageRepo.fetchSubscriptionList();
-    if(subcription.isSuccess){
+    Result<List<SubscriptionDataModel>> subcription =
+        await SubscriptionPageRepo.fetchSubscriptionList();
+    print(subcription.isSuccess);
+    if (subcription.isSuccess) {
       List<SubscriptionDataModel> subcriptionList = subcription.data!;
       emit(SubscriptionFetchSuccessState(subcriptionList: subcriptionList));
-    }
-    else{
+    } else {
       emit(SubscriptionPageErrorState(error: subcription.error.toString()));
     }
   }

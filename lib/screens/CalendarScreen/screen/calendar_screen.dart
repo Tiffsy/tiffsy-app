@@ -1,6 +1,3 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -8,9 +5,9 @@ import 'package:tiffsy_app/screens/CalendarScreen/bloc/calendar_bloc.dart';
 import 'package:tiffsy_app/screens/CalendarScreen/model/calendar_date_model.dart';
 
 class CalendarScreen extends StatefulWidget {
-  final String cst_id;
-  final String subs_id;
-  CalendarScreen({Key? key, required this.cst_id, required this.subs_id})
+  final String cstId;
+  final String subsId;
+  const CalendarScreen({Key? key, required this.cstId, required this.subsId})
       : super(key: key);
 
   @override
@@ -37,26 +34,59 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    CalendarBloc calendarBloc = CalendarBloc();
+    List<CalendarDataModel> calendarData = [];
     return BlocProvider(
-      create: (context) => CalendarBloc()
+      create: (context) => calendarBloc
         ..add(CalendarInitialFetchEvent(
-            cst_id: widget.cst_id, subs_id: widget.subs_id)),
+            cstId: widget.cstId, subsId: widget.subsId)),
       child: Scaffold(
-        appBar: AppBar(title: Text('Scheduled Meals')),
+        appBar: AppBar(
+          backgroundColor: const Color(0xfffffcef),
+          leadingWidth: 64,
+          titleSpacing: 0,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_rounded,
+              color: Color(0xff323232),
+              size: 24,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: const Text(
+            "Order Schedule",
+            style: TextStyle(
+              fontSize: 20,
+              height: 28 / 20,
+              fontWeight: FontWeight.w400,
+              color: Color(0xff121212),
+            ),
+          ),
+        ),
         body: BlocConsumer<CalendarBloc, CalendarState>(
           listener: (context, state) {
             if (state is CalendarErrorState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.error)),
               );
-            } else if (state is OrderCancelSuccessState) {}
+            }
           },
           builder: (context, state) {
             if (state is CalendarFetchSuccessState) {
-              List<CalendarDataModel> calendarData = state.calendarData;
-
-              return Center(
+              calendarData = state.calendarData;
+              print("___________________");
+              print(calendarData.last.toString());
+            } else if (state is OrderCancelSuccessState) {
+            } else if (state is CalendarLoadingState) {
+              return Center(child: CircularProgressIndicator());
+            }
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Center(
                 child: TableCalendar(
+                  calendarFormat: _calendarFormat,
                   onFormatChanged: (format) {
                     // This callback is triggered when the displayed calendar format changes.
                     // If you want to disable 2 weeks forward/backward navigation:
@@ -69,13 +99,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       });
                     }
                   },
-                  firstDay: DateTime.now().subtract(Duration(days: 45)),
-                  lastDay: DateTime.now().add(Duration(days: 45)),
+                  firstDay: DateTime.now().subtract(const Duration(days: 45)),
+                  lastDay: DateTime.now().add(const Duration(days: 45)),
                   focusedDay: DateTime.now(),
                   selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
                   calendarBuilders: CalendarBuilders(
                     defaultBuilder: (context, currDate, _) {
-
                       for (int i = 0; i < calendarData.length; i++) {
                         if (compareDates(
                             DateTime.parse(calendarData[i].dt), currDate)) {
@@ -85,68 +114,84 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               0) {
                             return Center(
                               child: Container(
-                                child: Text(
-                                  currDate.day.toString(),
-                                  style: TextStyle(color: Colors.white),
+                                decoration: const ShapeDecoration(
+                                    shape: CircleBorder(),
+                                    color: Color(0xffF84545)),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Text(
+                                    currDate.day.toString(),
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
                                 ),
-                                decoration:
-                                    BoxDecoration(color: Colors.red[400]),
                               ),
                             );
                           } else {
                             return Center(
-                              child: Container(
-                                child: ElevatedButton(
-                                child: Text(currDate.day.toString()),
-                                onPressed: () {
+                              child: InkWell(
+                                onTap: () {
                                   showDialog(
-                                      context: context,
-                                      builder: ((context) {
-                                        bool x = false;
-                                        return AlertDialog(
-                                          title: Text('Alert'),
-                                          content: Container(
-                                            height: 200,
-                                            width: 40,
-                                            child: Column(
-                                              children: [
-                                                Visibility(
-                                                  visible: calendarData[i].bc == 1,
-                                                  child: Row(
-                                                    children: [
-                                                      Text("Breakfast"),
-                                                      Switch(
-                                                        value:  x,
-                                                        onChanged: (value){
-                                                        setState(() {
-                                                        print(value);
-                                                        x = value;
-                                                        });
-                                                      }
-                                                      )
-                                                    ],
-                                                  ),
+                                    context: context,
+                                    builder: ((context) {
+                                      bool x = false;
+                                      return AlertDialog(
+                                        title: Text('Alert'),
+                                        content: Container(
+                                          height: 200,
+                                          width: 40,
+                                          child: Column(
+                                            children: [
+                                              Visibility(
+                                                visible:
+                                                    calendarData[i].bc == 1,
+                                                child: Row(
+                                                  children: [
+                                                    Text("Breakfast"),
+                                                    Switch(
+                                                        value: x,
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            print(value);
+                                                            x = value;
+                                                          });
+                                                        })
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
-                                          actions: [
-                                            TextButton(
-                                              child: Text("Cancel"),
-                                              onPressed: () {},
-                                            ),
-                                            TextButton(
-                                              child: Text("Continue"),
-                                              onPressed: () {
-                                                 BlocProvider.of<CalendarBloc>(context).add(CancelOrderClicked(cst_id: "1",ordr_id: "1" ));
-                                                 // add hoga abhi  
-                                              },
-                                            )
-                                          ],
-                                        );
-                                      }));
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            child: Text("Cancel"),
+                                            onPressed: () {},
+                                          ),
+                                          TextButton(
+                                            child: Text("Continue"),
+                                            onPressed: () {
+                                              BlocProvider.of<CalendarBloc>(
+                                                      context)
+                                                  .add(CancelOrderClicked(
+                                                      cst_id: "1",
+                                                      ordr_id: "1"));
+                                              // add hoga abhi
+                                            },
+                                          )
+                                        ],
+                                      );
+                                    }),
+                                  );
                                 },
-                              )),
+                                child: Container(
+                                  decoration: ShapeDecoration(
+                                      shape: CircleBorder(),
+                                      color: Color(0xffFFBE1D)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Text(currDate.day.toString()),
+                                  ),
+                                ),
+                              ),
                             );
                           }
                         }
@@ -155,12 +200,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     },
                   ),
                 ),
-              );
-            } else if (state is CalendarLoadingState) {
-              return Center(child: CircularProgressIndicator());
-            } else {
-              return Center(child: Text("Error While loading page"));
-            }
+              ),
+            );
           },
         ),
       ),

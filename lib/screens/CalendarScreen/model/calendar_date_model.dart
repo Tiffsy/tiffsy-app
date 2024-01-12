@@ -4,42 +4,45 @@
 
 import 'dart:convert';
 
-CalendarDataModel calendarDataModelFromJson(String str) => CalendarDataModel.fromJson(json.decode(str));
+CalendarDataModel calendarDataModelFromJson(String str) =>
+    CalendarDataModel.fromJson(json.decode(str));
 
-String calendarDataModelToJson(CalendarDataModel data) => json.encode(data.toJson());
+String calendarDataModelToJson(CalendarDataModel data) =>
+    json.encode(data.toJson());
 
 class CalendarDataModel {
-    String cst;
-    String subId;
-    String ordrId;
-    String dt;
-    String status;
-    int bc;
-    int lc;
-    int dc;
-    String cntct;
-    String addr;
-    String brkMealType;
-    String lchMealType;
-    String dinMealType;
+  String cst;
+  String subId;
+  String ordrId;
+  String dt;
+  String status;
+  int bc;
+  int lc;
+  int dc;
+  String cntct;
+  String addr;
+  String brkMealType;
+  String lchMealType;
+  String dinMealType;
 
-    CalendarDataModel({
-        required this.cst,
-        required this.subId,
-        required this.ordrId,
-        required this.dt,
-        required this.status,
-        required this.bc,
-        required this.lc,
-        required this.dc,
-        required this.cntct,
-        required this.addr,
-        required this.brkMealType,
-        required this.lchMealType,
-        required this.dinMealType,
-    });
+  CalendarDataModel({
+    required this.cst,
+    required this.subId,
+    required this.ordrId,
+    required this.dt,
+    required this.status,
+    required this.bc,
+    required this.lc,
+    required this.dc,
+    required this.cntct,
+    required this.addr,
+    required this.brkMealType,
+    required this.lchMealType,
+    required this.dinMealType,
+  });
 
-    factory CalendarDataModel.fromJson(Map<String, dynamic> json) => CalendarDataModel(
+  factory CalendarDataModel.fromJson(Map<String, dynamic> json) =>
+      CalendarDataModel(
         cst: json["cst"],
         subId: json["subId"],
         ordrId: json["ordr_id"],
@@ -53,9 +56,14 @@ class CalendarDataModel {
         brkMealType: json["brkMealType"],
         lchMealType: json["lchMealType"],
         dinMealType: json["dinMealType"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  @override
+  String toString() {
+    return toJson().toString();
+  }
+
+  Map<String, dynamic> toJson() => {
         "cst": cst,
         "subId": subId,
         "ordr_id": ordrId,
@@ -69,5 +77,5 @@ class CalendarDataModel {
         "brkMealType": brkMealType,
         "lchMealType": lchMealType,
         "dinMealType": dinMealType,
-    };
+      };
 }

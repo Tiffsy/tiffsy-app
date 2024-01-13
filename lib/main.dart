@@ -3,37 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:tiffsy_app/firebase_options.dart';
-import 'package:tiffsy_app/screens/AddAddressScreen/screen/add_address_screen.dart';
-import 'package:tiffsy_app/screens/AddressBookScreen/screen/address_book_screen.dart';
-import 'package:tiffsy_app/screens/CartScreen/screen/cart_screen.dart';
-import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
-import 'package:tiffsy_app/screens/HowItWorksScreen/bloc/how_it_works_bloc.dart';
-import 'package:tiffsy_app/screens/HowItWorksScreen/screen/how_it_works_screen.dart';
-import 'package:tiffsy_app/screens/LoginScreen/bloc/login_bloc.dart';
 import 'package:tiffsy_app/screens/LoginScreen/repository/user_repo.dart';
-import 'package:tiffsy_app/screens/LoginScreen/screen/login_screen.dart';
-import 'package:tiffsy_app/screens/OrderHistoryScreen/bloc/order_history_bloc.dart';
-import 'package:tiffsy_app/screens/OrderHistoryScreen/screen/order_history_screen.dart';
-import 'package:tiffsy_app/screens/OtpScreen/screen/opt_screen.dart';
-import 'package:tiffsy_app/screens/PersonalDetailsScreen/screen/personalDetails_screen.dart';
-import 'package:tiffsy_app/screens/ProfileScreen/bloc/profile_bloc.dart';
-import 'package:tiffsy_app/screens/ProfileScreen/screen/profile_screen.dart';
-import 'package:tiffsy_app/screens/PaymentCheckoutScreen/screen/payment_checkout_screen.dart';
-import 'package:tiffsy_app/screens/SubscriptionScreen/screen/subscription_screen.dart';
-
-import 'package:tiffsy_app/screens/splash_screen.dart';
 import 'package:flutter/services.dart';
+import 'package:tiffsy_app/screens/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Hive.initFlutter();
   await Hive.openBox("cart_box");
+  await Hive.openBox("address_box");
+  await Hive.openBox("customer_box");
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
     (value) => runApp(
       RepositoryProvider(
         create: (context) => UserRepo(),
-        child: MyApp(),
+        child: const MyApp(),
       ),
     ),
   );
@@ -45,7 +30,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const SubscriptionScreen(noOfDays: 1),
+      home: const SplashScreen(),
       title: 'Tiffsy',
       theme: getTheme(),
     );
@@ -55,9 +40,10 @@ class MyApp extends StatelessWidget {
 ThemeData getTheme() {
   return ThemeData(
     appBarTheme: const AppBarTheme(
-      titleSpacing: 0,
-      backgroundColor: Color(0xffffffff),
-    ),
+        titleSpacing: 0,
+        backgroundColor: Color(0xffffffff),
+        shadowColor: Color(0xffffffff),
+        surfaceTintColor: Color(0xffffffff)),
     textSelectionTheme: const TextSelectionThemeData(
       cursorColor: Color(0xcc121212),
       selectionHandleColor: Color(0xffffe5a3),

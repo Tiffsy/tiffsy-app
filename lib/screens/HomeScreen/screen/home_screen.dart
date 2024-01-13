@@ -274,7 +274,11 @@ class _HomeState extends State<Home> {
               const SizedBox(height: 12),
               Column(
                 // list of menu cards
-                children: listOfMenuCards(menuState.menu, context, homeBloc),
+                children: listOfMenuCards(menuState.menu, context, homeBloc) +
+                    [
+                      rowOfSubscriptionCards(context, homeBloc),
+                      const SizedBox(height: 12)
+                    ],
               ),
             ],
           ),
@@ -417,7 +421,7 @@ class _HomeState extends State<Home> {
               mealTimeTag(menuPage.mealTime),
               const SizedBox(height: 12),
               SizedBox(
-                width: (MediaQuery.sizeOf(context).width * 0.45) - 20,
+                width: (MediaQuery.sizeOf(context).width * 0.40) - 20,
                 child: Row(
                   children: [
                     Flexible(
@@ -426,20 +430,9 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
-              const SizedBox(height: 6),
-              Text(
-                "Starting from ₹${menuPage.price.toString()}/-",
-                style: const TextStyle(
-                  color: Color(0xff121212),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  height: 16 / 12,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              const SizedBox(height: 9),
+              const SizedBox(height: 11),
               SizedBox(
-                width: (MediaQuery.sizeOf(context).width * 0.45) - 20,
+                width: (MediaQuery.sizeOf(context).width * 0.55) - 20,
                 child: Row(
                   children: [
                     Flexible(
@@ -460,6 +453,108 @@ class _HomeState extends State<Home> {
             ],
           ),
           menuImage(menuPage.mealTime, homeBloc, menuPage, context)
+        ],
+      ),
+    );
+  }
+
+  Widget rowOfSubscriptionCards(BuildContext context, HomeBloc homeBloc) {
+    return SizedBox(
+      width: MediaQuery.sizeOf(context).width - 40,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          orderButtons(context, "assets/images/vectors/home_screen/Brunch.svg",
+              "breakfast", homeBloc),
+          orderButtons(context, "assets/images/vectors/home_screen/Ramen.svg",
+              "lunch", homeBloc),
+          orderButtons(
+              context,
+              "assets/images/vectors/home_screen/Spaghetti.svg",
+              "dinner",
+              homeBloc),
+        ],
+      ),
+    );
+  }
+
+  Widget orderButtons(BuildContext context, String imageAsset, String menuTime,
+      HomeBloc homeBloc) {
+    return SizedBox(
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          Column(
+            children: [
+              Container(
+                decoration: ShapeDecoration(
+                  color: const Color(0xFFFFFCEF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                height: 80,
+                width: (MediaQuery.sizeOf(context).width - 72) / 3,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 7),
+                    SizedBox(height: 41, child: SvgPicture.asset(imageAsset)),
+                    Text(
+                      menuTime,
+                      style: const TextStyle(
+                        color: Color(0xFF121212),
+                        fontSize: 12,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w500,
+                        height: 16 / 12,
+                        letterSpacing: 0.50,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(height: 18),
+            ],
+          ),
+          InkWell(
+            onTap: () async {
+              Map<String, Map<String, Map>> menu = cartBox.get('menu');
+              showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
+            },
+            borderRadius: BorderRadius.circular(6),
+            child: Container(
+              width: 76,
+              height: 28,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              clipBehavior: Clip.antiAlias,
+              decoration: ShapeDecoration(
+                color: const Color(0xffcbffb3),
+                shape: RoundedRectangleBorder(
+                  side: const BorderSide(width: 1, color: Color(0xFF6AA64F)),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Add',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFF6AA64F),
+                      fontSize: 12,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w500,
+                      height: 16 / 12,
+                      letterSpacing: 0.50,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -556,37 +651,37 @@ class _HomeState extends State<Home> {
             fit: BoxFit.contain,
             width: width * 0.3,
           ),
-          InkWell(
-            onTap: () async {
-              Map<String, Map<String, Map>> menu = cartBox.get('menu');
-              showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
-            },
-            borderRadius: BorderRadius.circular(6),
-            child: Container(
-              height: (MediaQuery.sizeOf(context).width * 0.2) * 0.4,
-              width: (MediaQuery.sizeOf(context).width * 0.2) < 90
-                  ? 90
-                  : (MediaQuery.sizeOf(context).width * 0.2),
-              decoration: BoxDecoration(
-                color: const Color(0xffcbffb3),
-                border: Border.all(width: 1, color: const Color(0xff6aa64f)),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: const Center(
-                child: Text(
-                  "Add",
-                  style: TextStyle(
-                    color: Color(0xFF6AA64F),
-                    fontSize: 16,
-                    fontFamily: 'Roboto',
-                    fontWeight: FontWeight.w500,
-                    height: 0.09,
-                    letterSpacing: 0.15,
-                  ),
-                ),
-              ),
-            ),
-          )
+          // InkWell(
+          //   onTap: () async {
+          //     Map<String, Map<String, Map>> menu = cartBox.get('menu');
+          //     showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
+          //   },
+          //   borderRadius: BorderRadius.circular(6),
+          //   child: Container(
+          //     height: (MediaQuery.sizeOf(context).width * 0.2) * 0.4,
+          //     width: (MediaQuery.sizeOf(context).width * 0.2) < 90
+          //         ? 90
+          //         : (MediaQuery.sizeOf(context).width * 0.2),
+          //     decoration: BoxDecoration(
+          //       color: const Color(0xffcbffb3),
+          //       border: Border.all(width: 1, color: const Color(0xff6aa64f)),
+          //       borderRadius: BorderRadius.circular(6),
+          //     ),
+          //     child: const Center(
+          //       child: Text(
+          //         "Add",
+          //         style: TextStyle(
+          //           color: Color(0xFF6AA64F),
+          //           fontSize: 16,
+          //           fontFamily: 'Roboto',
+          //           fontWeight: FontWeight.w500,
+          //           height: 0.09,
+          //           letterSpacing: 0.15,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // )
         ],
       ),
     );
@@ -617,10 +712,8 @@ class _HomeState extends State<Home> {
             },
             borderRadius: BorderRadius.circular(6),
             child: Container(
-              height: (MediaQuery.sizeOf(context).width * 0.2) * 0.4,
-              width: (MediaQuery.sizeOf(context).width * 0.2) < 90
-                  ? 90
-                  : (MediaQuery.sizeOf(context).width * 0.2),
+              height: 28,
+              width: 96,
               decoration: BoxDecoration(
                 color: const Color(0xffFFDDDD),
                 border: Border.all(width: 1, color: const Color(0xffF84545)),
@@ -631,10 +724,10 @@ class _HomeState extends State<Home> {
                   "Remove",
                   style: TextStyle(
                     color: Color(0xFFF84545),
-                    fontSize: 16,
+                    fontSize: 12,
                     fontFamily: 'Roboto',
                     fontWeight: FontWeight.w500,
-                    height: 0.09,
+                    height: 16 / 12,
                     letterSpacing: 0.15,
                   ),
                 ),
@@ -650,7 +743,7 @@ class _HomeState extends State<Home> {
     Map<String, Map> menuOptions,
     String menuTime,
     HomeBloc homeBloc,
-    BuildContext context,
+    BuildContext parentContext,
   ) {
     List<String> listOfMealTypes = menuOptions.keys.toList();
     return showModalBottomSheet(
@@ -658,39 +751,17 @@ class _HomeState extends State<Home> {
       builder: (context) {
         return Container(
           decoration: BoxDecoration(
-            color: const Color(0xffffffff),
+            color: const Color(0xfffffcef),
             borderRadius: BorderRadius.circular(12),
-          ),
-          constraints: BoxConstraints(
-            minHeight: MediaQuery.sizeOf(context).height * 0.3,
           ),
           width: MediaQuery.sizeOf(context).width,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-            child: Column(
-              children: [
-                Text(
-                  "Choose $menuTime Type",
-                  style: const TextStyle(
-                    color: Color(0xFF121212),
-                    fontSize: 16,
-                    fontFamily: 'Roboto',
-                    fontWeight: FontWeight.w500,
-                    height: 24 / 16,
-                    letterSpacing: 0.15,
-                  ),
-                ),
-                const Divider(
-                  height: 1,
-                  thickness: 1,
-                ),
-                SingleChildScrollView(
-                  child: Column(
-                    children: listOfButtons(
-                        menuTime, listOfMealTypes, homeBloc, menuOptions),
-                  ),
-                )
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                children: listOfMealTypeOptions(
+                    menuTime, listOfMealTypes, homeBloc, menuOptions),
+              ),
             ),
           ),
         );
@@ -698,28 +769,130 @@ class _HomeState extends State<Home> {
     );
   }
 
-  List<Widget> listOfButtons(String mealTime, List<String> listOfMealTypes,
-      HomeBloc homeBloc, Map<String, Map> menuOptions) {
+  List<Widget> listOfMealTypeOptions(
+      String mealTime,
+      List<String> listOfMealTypes,
+      HomeBloc homeBloc,
+      Map<String, Map> menuOptions) {
     List<Widget> listOfMealOptions = [];
     for (var element in listOfMealTypes) {
-      listOfMealOptions.add(
-        OutlinedButton(
-          onPressed: () {
-            homeBloc.add(
-                HomePageAddTocartEvent(mealTime: mealTime, mealType: element));
-            Navigator.pop(context);
-          },
-          child: Row(
-            children: [
-              Text(element),
-              const Spacer(),
-              Text(menuOptions[element]?["price"].toString() ?? "0"),
-            ],
-          ),
-        ),
-      );
+      MenuDataModel menuData =
+          MenuDataModel.fromJson(menuOptions[element]! as Map<String, dynamic>);
+      listOfMealOptions.addAll(
+          // OutlinedButton(
+          //   onPressed: () {
+          //     homeBloc.add(
+          //         HomePageAddTocartEvent(mealTime: mealTime, mealType: element));
+          //     Navigator.pop(context);
+          //   },
+          //   child: Row(
+          //     children: [
+          //       Text(element),
+          //       const Spacer(),
+          //       Text(menuOptions[element]?["price"].toString() ?? "0"),
+          //     ],
+          //   ),
+          // ),
+          [
+            mealTypeChoserCard(homeBloc, element, mealTime, menuData),
+            const SizedBox(height: 10),
+            dashedDivider(context),
+            const SizedBox(height: 24)
+          ]);
     }
     return listOfMealOptions;
+  }
+
+  Widget mealTypeChoserCard(HomeBloc homeBloc, String mealType, String mealTime,
+      MenuDataModel menuData) {
+    return SizedBox(
+      width: MediaQuery.sizeOf(context).width - 20,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              mealTimeTag(mealType),
+              const SizedBox(height: 12),
+              mealCardBoldText("₹${menuData.price}/-"),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: (MediaQuery.sizeOf(context).width * 0.55) - 20,
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        menuData.description, //TODO: change this to price
+                        style: const TextStyle(
+                          color: Color(0xff121212),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          height: 16 / 12,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          menuImageForBottomSheet(
+              menuData.mealTime, menuData.mealType, homeBloc)
+        ],
+      ),
+    );
+  }
+
+  Widget menuImageForBottomSheet(
+      String mealTime, String mealType, HomeBloc homeBloc) {
+    double width = MediaQuery.sizeOf(context).width;
+    return SizedBox(
+      width: width * 0.35,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          Image.asset(
+            'assets/images/vectors/thali_full.png',
+            fit: BoxFit.contain,
+            width: width * 0.3,
+          ),
+          InkWell(
+            onTap: () {
+              homeBloc.add(HomePageAddTocartEvent(
+                  mealTime: mealTime, mealType: mealType));
+              Navigator.pop(context);
+            },
+            borderRadius: BorderRadius.circular(6),
+            child: Container(
+              height: 28,
+              width: 76,
+              decoration: BoxDecoration(
+                color: const Color(0xffcbffb3),
+                border: Border.all(width: 1, color: const Color(0xff6aa64f)),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: const Center(
+                child: Text(
+                  "Add",
+                  style: TextStyle(
+                    color: Color(0xFF6AA64F),
+                    fontSize: 12,
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w500,
+                    height: 16 / 11,
+                    letterSpacing: 0.15,
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Future<dynamic> showAddressBottomSheet(HomeBloc homeBloc) {

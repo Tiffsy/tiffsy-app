@@ -591,12 +591,12 @@ class _HomeState extends State<Home> {
               const SizedBox(height: 12),
               SizedBox(
                 width: (MediaQuery.sizeOf(context).width * 0.45) - 20,
-                child: Flexible(
-                  child: Row(
-                    children: [
-                      mealCardBoldText(menuData.title),
-                    ],
-                  ),
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: mealCardBoldText(menuData.title),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 6),
@@ -1138,7 +1138,7 @@ Widget orderNowButton(VoidCallback onpress) {
           fontWeight: FontWeight.w500,
           fontSize: 16,
           color: Color(0xff121212),
-          height: 1.5,
+          height: 24 / 16,
         ),
       ),
       Spacer()

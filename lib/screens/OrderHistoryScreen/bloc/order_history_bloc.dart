@@ -30,7 +30,6 @@ class OrderHistoryBloc extends Bloc<OrderHistoryEvent, OrderHistoryState> {
         ),
       );
     } catch (e) {
-      print(e.toString());
       emit(OrderHistoryErrorState());
     }
   }

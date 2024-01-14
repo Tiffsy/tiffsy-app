@@ -17,12 +17,11 @@ class SubscriptionHomePageBloc
   FutureOr<void> subcriptionInitialFetchEvent(
       SubcriptionInitialFetchEvent event,
       Emitter<SubscriptionHomePageState> emit) async {
-    print("inter bloc");
     emit(SubscriptionPageLoadingState());
 
     Result<List<SubscriptionDataModel>> subcription =
         await SubscriptionPageRepo.fetchSubscriptionList();
-    print(subcription.isSuccess);
+
     if (subcription.isSuccess) {
       List<SubscriptionDataModel> subcriptionList = subcription.data!;
       emit(SubscriptionFetchSuccessState(subcriptionList: subcriptionList));

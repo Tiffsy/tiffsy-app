@@ -10,8 +10,6 @@ class RefundPolicyScreen extends StatefulWidget {
 class _RefundPolicyScreenState extends State<RefundPolicyScreen> {
   void contactUsOnPress() {
     // What to do when user presses contact us!
-
-    print("object");
   }
 
   List<String> getPolicyPoints() {

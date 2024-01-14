@@ -19,7 +19,6 @@ class SubscriptionPageRepo {
       var response = await http.post(Uri.parse('$apiJsURL/get-subcription'),body: params, headers: {'Authorization': 'Bearer $token'});
       Map<String, dynamic> res = jsonDecode(response.body);
       List result = res["data"];
-      print(result);
       for (int i = 0; i < result.length; i++) {
         SubscriptionDataModel subscription =
             SubscriptionDataModel.fromJson(result[i]);

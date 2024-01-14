@@ -45,13 +45,9 @@ class CalendarRepo{
         "bc": bc.toString(),
         "dc": dc.toString()
       };
-      print(params);
-      print(token);
       var response = await http
           .post(Uri.parse('$apiJsURL/cancel-order-date'), body: params, headers: {'Authorization': 'Bearer $token'});
       Map<String, dynamic> res = jsonDecode(response.body);
-      print(response.body);
-      print(res);
       String result = res["result"];
       return Result(data: result, error: null);
     } catch (err) {

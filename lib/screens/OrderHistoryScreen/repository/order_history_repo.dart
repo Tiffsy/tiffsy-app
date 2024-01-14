@@ -16,13 +16,11 @@ class OrderHistoryRepo {
       http.Response response = await http
           .post(Uri.parse('$apiJsURL/get-order-history'),body: params);
       List responseItems = jsonDecode(response.body);
-      print(responseItems);
       for (var element in responseItems) {
         orderHistory.add(OrderHistoryModel.fromJson(element));
       }
       return orderHistory;
     } catch (e) {
-      print(e.toString());
       return [];
     }
   }

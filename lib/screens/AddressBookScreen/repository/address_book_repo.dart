@@ -9,7 +9,6 @@ import '../../../Helpers/result.dart';
 
 class AddressBookRepo{
   static Future<Result<List<AddressDataModel>>> fetchAddressList() async {
-    var client = http.Client();
     try{
       String cst_id = Hive.box('customer_box').get('cst_id');
       List<AddressDataModel> addressList = [];

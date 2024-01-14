@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/LoginScreen/bloc/login_bloc.dart';
@@ -18,8 +17,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
-    // TODO: implement initState
-
+   
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.top]);
@@ -67,7 +65,7 @@ class _contentState extends State<content> {
 
   @override
   void initState() {
-    // TODO: implement initState
+
     super.initState();
     countryCode.text = "+91";
   }
@@ -76,7 +74,6 @@ class _contentState extends State<content> {
   void dispose() {
     countryCode.dispose();
     phoneController.dispose();
-    // TODO: implement dispose
     super.dispose();
   }
 

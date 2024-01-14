@@ -91,6 +91,7 @@ class _CartScreenState extends State<CartScreen> {
                         const SizedBox(height: 12),
                         proceedButton(
                           () {
+                            Hive.box("cart_box").put("subType", noOfDaysForSubscription);
                             cartBloc.add(
                               CartScreenOnProcedButtonPressEvent(cost: price),
                             );

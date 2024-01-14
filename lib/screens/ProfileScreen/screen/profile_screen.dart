@@ -335,7 +335,7 @@ Widget userCard(User user) {
                     : Container(
                         height: 64,
                         width: 64,
-                        color: Colors.teal[100],
+                        color: Colors.amber[50],
                         child: Center(
                           child: Text(
                             Hive.box('customer_box')
@@ -353,7 +353,9 @@ Widget userCard(User user) {
             ),
             const SizedBox(width: 18),
             Text(
-              user.displayName ?? "User",
+             capitalizeEachWord(user.displayName.toString()) ?? capitalizeEachWord(Hive.box('customer_box')
+                                .get('cst_name')
+                                .toString()),
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 color: Color(0xFF121212),
@@ -521,4 +523,15 @@ Widget logoutButton({required VoidCallback onPressed, required Widget icon}) {
       ),
     );
   });
+}
+String capitalizeEachWord(String input) {
+  List<String> words = input.split(' ');
+
+  for (int i = 0; i < words.length; i++) {
+    if (words[i].isNotEmpty) {
+      words[i] = words[i][0].toUpperCase() + words[i].substring(1);
+    }
+  }
+
+  return words.join(' ');
 }

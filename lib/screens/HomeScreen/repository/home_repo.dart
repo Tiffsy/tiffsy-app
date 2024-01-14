@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:tiffsy_app/Constants/network_contants.dart';
 import 'package:tiffsy_app/Helpers/result.dart';
 import 'package:tiffsy_app/screens/HomeScreen/model/home_model.dart';
@@ -10,12 +11,12 @@ class HomeRepo {
   static Future<Result<List<MenuDataModel>>> fetchMenu() async {
     List<MenuDataModel> menu = [];
     try {
+      DateTime now = DateTime.now();
+      String formattedDate = DateFormat('yyyy-MM-dd').format(now);
       Map<String, dynamic> params = {
-        "dt": "2024-01-09T15:07:59.004Z"
+        "dt": formattedDate
       };
       var response = await http.post(Uri.parse('$apiJsURL/today-menu'), body: params);
-      print(response.body);
-      print('$apiJsURL/today-menu');
       List result = jsonDecode(response.body);
       for (int i = 0; i < result.length; i++) {
         MenuDataModel menuItem = MenuDataModel.fromJson(result[i]);
@@ -95,7 +96,6 @@ class HomeRepo {
       };
       var response =  await http.post(Uri.parse('$apiJsURL/get-token'), body: params);
       Map<String, dynamic> result = jsonDecode(response.body);
-      print(result);
       return Result(data: result['token'], error: null);
     }
     catch(err){

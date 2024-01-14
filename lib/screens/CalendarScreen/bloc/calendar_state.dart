@@ -18,6 +18,7 @@ final class CalendarFetchSuccessState extends CalendarState {
 }
 
 final class OrderCancelSuccessState extends CalendarState {}
+
 final class CalendarAlertErrorState extends CalendarState {
   final String error;
   CalendarAlertErrorState({required this.error});
@@ -27,3 +28,5 @@ final class CancelSuccessState extends CalendarState {
   final String msg;
   CancelSuccessState({required this.msg});
 }
+
+final class RefreshCalendarState extends CalendarState {}

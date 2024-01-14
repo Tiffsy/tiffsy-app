@@ -62,14 +62,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             customerBox.putAll(cstDetails);
             Result<String> token = await HomeRepo.getToken(cstDetails["cst_mail"], cstDetails["cst_id"], cstDetails["cst_contact"]);
             if(token.isSuccess){
-              print(token.data);
                 customerBox.put("token", token.data!);
             }
             else{
               emit(HomeErrorState(error: token.error.toString()));
             }
           } else {
-            print(result.error);
+            
             emit(HomeErrorState(error: result.error.toString()));
           }
         }

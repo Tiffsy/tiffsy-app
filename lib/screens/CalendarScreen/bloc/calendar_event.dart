@@ -24,3 +24,13 @@ final class CancelOrderClicked extends CalendarEvent {
 
   CancelOrderClicked({required this.cst_id, required this.ordr_id});
 }
+
+final class CancelButtonClickedEvent extends CalendarEvent {
+  final String ordr_id;
+  final int bc;
+  final int lc;
+  final int dc;
+  final String dt;
+  CancelButtonClickedEvent(
+      {required this.ordr_id, required this.bc, required this.lc, required this.dc, required this.dt});
+}

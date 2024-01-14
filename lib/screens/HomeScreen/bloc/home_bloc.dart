@@ -30,24 +30,46 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         if (loginMethod) {
           String cstPhone = HomeRepo.getUserInfo();
           cstPhone = cstPhone.substring(3);
+
           Result<Map<String, dynamic>> result =
               await HomeRepo.getCustomerIdByPhone(cstPhone);
+              print(result.error);
           if (result.isSuccess) {
             Map<String, dynamic> cstDetails = result.data!;
             Box customerBox = await Hive.openBox("customer_box");
             customerBox.putAll(cstDetails);
+            Result<String> token = await HomeRepo.getToken(cstDetails["cst_mail"], cstDetails["cst_id"], cstDetails["cst_contact"]);
+            if(token.isSuccess){
+              print(token.data);
+                customerBox.put("token", token.data);
+            }
+            else{
+              emit(HomeErrorState(error: token.error.toString()));
+            }
           } else {
             emit(HomeErrorState(error: result.error.toString()));
           }
         } else {
           String cstMail = HomeRepo.getUserInfo();
+          print(cstMail);
           Result<Map<String, dynamic>> result =
               await HomeRepo.getCustomerIdByMail(cstMail);
+            print(result.data);
           if (result.isSuccess) {
+            print(result.data);
             Map<String, dynamic> cstDetails = result.data!;
             Box customerBox = await Hive.openBox("customer_box");
             customerBox.putAll(cstDetails);
+            Result<String> token = await HomeRepo.getToken(cstDetails["cst_mail"], cstDetails["cst_id"], cstDetails["cst_contact"]);
+            if(token.isSuccess){
+              print(token.data);
+                customerBox.put("token", token.data!);
+            }
+            else{
+              emit(HomeErrorState(error: token.error.toString()));
+            }
           } else {
+            print(result.error);
             emit(HomeErrorState(error: result.error.toString()));
           }
         }
@@ -83,6 +105,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         cartBox.put('menu', menuData);
         emit(HomeFetchSuccessfulState(menu: menuList));
       } else {
+        print(menu.error.toString());
         emit(HomeErrorState(error: menu.error.toString()));
       }
     } else {

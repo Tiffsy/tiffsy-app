@@ -4,78 +4,79 @@
 
 import 'dart:convert';
 
-CalendarDataModel calendarDataModelFromJson(String str) =>
-    CalendarDataModel.fromJson(json.decode(str));
+CalendarDataModel calendarDataModelFromJson(String str) => CalendarDataModel.fromJson(json.decode(str));
 
-String calendarDataModelToJson(CalendarDataModel data) =>
-    json.encode(data.toJson());
+String calendarDataModelToJson(CalendarDataModel data) => json.encode(data.toJson());
 
 class CalendarDataModel {
-  String cst;
-  String subId;
-  String ordrId;
-  String dt;
-  String status;
-  int bc;
-  int lc;
-  int dc;
-  String cntct;
-  String addr;
-  String brkMealType;
-  String lchMealType;
-  String dinMealType;
+    int dc;
+    int bc;
+    String cntct;
+    String addr;
+    String sbcrId;
+    String brkMealType;
+    String addrId;
+    String dt;
+    String cstId;
+    int lc;
+    String dinMealType;
+    String ordrId;
+    String lchMealType;
 
-  CalendarDataModel({
-    required this.cst,
-    required this.subId,
-    required this.ordrId,
-    required this.dt,
-    required this.status,
-    required this.bc,
-    required this.lc,
-    required this.dc,
-    required this.cntct,
-    required this.addr,
-    required this.brkMealType,
-    required this.lchMealType,
-    required this.dinMealType,
-  });
+    CalendarDataModel({
+        required this.dc,
+        required this.bc,
+        required this.cntct,
+        required this.addr,
+        required this.sbcrId,
+        required this.brkMealType,
+        required this.addrId,
+        required this.dt,
+        required this.cstId,
+        required this.lc,
+        required this.dinMealType,
+        required this.ordrId,
+        required this.lchMealType,
+    });
 
-  factory CalendarDataModel.fromJson(Map<String, dynamic> json) =>
-      CalendarDataModel(
-        cst: json["cst"],
-        subId: json["subId"],
-        ordrId: json["ordr_id"],
-        dt: json["dt"],
-        status: json["status"],
-        bc: json["bc"],
-        lc: json["lc"],
+    factory CalendarDataModel.fromJson(Map<String, dynamic> json) => CalendarDataModel(
         dc: json["dc"],
+        bc: json["bc"],
         cntct: json["cntct"],
         addr: json["addr"],
+        sbcrId: json["sbcr_id"],
         brkMealType: json["brkMealType"],
-        lchMealType: json["lchMealType"],
+        addrId: json["addr_id"],
+        dt: json["dt"],
+        cstId: json["cst_id"],
+        lc: json["lc"],
         dinMealType: json["dinMealType"],
-      );
+        ordrId: json["ordr_id"],
+        lchMealType: json["lchMealType"],
+    );
 
-  @override
+    Map<String, dynamic> toJson() => {
+        "dc": dc,
+        "bc": bc,
+        "cntct": cntct,
+        "addr": addr,
+        "sbcr_id": sbcrId,
+        "brkMealType": brkMealType,
+        "addr_id": addrId,
+        "dt": dt,
+        "cst_id": cstId,
+        "lc": lc,
+        "dinMealType": dinMealType,
+        "ordr_id": ordrId,
+        "lchMealType": lchMealType,
+    };
+
+    @override
   String toString() {
     return toJson().toString();
   }
 
-  Map<String, dynamic> toJson() => {
-        "cst": cst,
-        "subId": subId,
-        "ordr_id": ordrId,
-        "dt": dt,
-        "status": status,
-        "bc": bc,
-        "lc": lc,
-        "dc": dc,
-        "cntct": cntct,
-        "addr": addr,
-        "brkMealType": brkMealType,
-        "lchMealType": lchMealType,
-        "dinMealType": dinMealType,
-      };
+  bool hasNoOrders() {
+    return (lc + bc + dc == 0);
+  }
 }

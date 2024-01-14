@@ -9,73 +9,77 @@ SubscriptionDataModel subscriptionDataModelFromJson(String str) => SubscriptionD
 String subscriptionDataModelToJson(SubscriptionDataModel data) => json.encode(data.toJson());
 
 class SubscriptionDataModel {
-    String cstId;
-    String subId;
+    int dc;
+    String ts;
+    int bc;
+    String cntct;
     String strDt;
     String endDt;
-    String addrLine;
-    String ts;
     int subtype;
-    int bill;
-    int bc;
-    int lc;
-    int dc;
-    String cntct;
+    String sbcrId;
     String brkMealType;
-    String lchMealType;
+    String addrId;
+    String addrLine;
+    int bill;
+    String cstId;
+    int lc;
     String dinMealType;
+    String lchMealType;
 
     SubscriptionDataModel({
-        required this.cstId,
-        required this.subId,
+        required this.dc,
+        required this.ts,
+        required this.bc,
+        required this.cntct,
         required this.strDt,
         required this.endDt,
-        required this.addrLine,
-        required this.ts,
         required this.subtype,
-        required this.bill,
-        required this.bc,
-        required this.lc,
-        required this.dc,
-        required this.cntct,
+        required this.sbcrId,
         required this.brkMealType,
-        required this.lchMealType,
+        required this.addrId,
+        required this.addrLine,
+        required this.bill,
+        required this.cstId,
+        required this.lc,
         required this.dinMealType,
+        required this.lchMealType,
     });
 
     factory SubscriptionDataModel.fromJson(Map<String, dynamic> json) => SubscriptionDataModel(
-        cstId: json["cst_id"],
-        subId: json["subId"],
+        dc: json["dc"],
+        ts: json["ts"],
+        bc: json["bc"],
+        cntct: json["cntct"],
         strDt: json["str_dt"],
         endDt: json["end_dt"],
-        addrLine: json["addr_line"],
-        ts: json["ts"],
         subtype: json["subtype"],
-        bill: json["bill"],
-        bc: json["bc"],
-        lc: json["lc"],
-        dc: json["dc"],
-        cntct: json["cntct"],
+        sbcrId: json["sbcr_id"],
         brkMealType: json["brkMealType"],
-        lchMealType: json["lchMealType"],
+        addrId: json["addr_id"],
+        addrLine: json["addr_line"],
+        bill: json["bill"],
+        cstId: json["cst_id"],
+        lc: json["lc"],
         dinMealType: json["dinMealType"],
+        lchMealType: json["lchMealType"],
     );
 
     Map<String, dynamic> toJson() => {
-        "cst_id": cstId,
-        "subId": subId,
+        "dc": dc,
+        "ts": ts,
+        "bc": bc,
+        "cntct": cntct,
         "str_dt": strDt,
         "end_dt": endDt,
-        "addr_line": addrLine,
-        "ts": ts,
         "subtype": subtype,
-        "bill": bill,
-        "bc": bc,
-        "lc": lc,
-        "dc": dc,
-        "cntct": cntct,
+        "sbcr_id": sbcrId,
         "brkMealType": brkMealType,
-        "lchMealType": lchMealType,
+        "addr_id": addrId,
+        "addr_line": addrLine,
+        "bill": bill,
+        "cst_id": cstId,
+        "lc": lc,
         "dinMealType": dinMealType,
+        "lchMealType": lchMealType,
     };
 }

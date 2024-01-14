@@ -4,39 +4,42 @@
 
 import 'dart:convert';
 
-MenuDataModel menuDataModelFromJson(String str) =>
-    MenuDataModel.fromJson(json.decode(str));
+MenuDataModel menuDataModelFromJson(String str) => MenuDataModel.fromJson(json.decode(str));
 
 String menuDataModelToJson(MenuDataModel data) => json.encode(data.toJson());
 
 class MenuDataModel {
-  String title;
-  int price;
-  String description;
-  String mealType;
-  String mealTime;
+    String mealType;
+    String mealTime;
+    String description;
+    int price;
+    DateTime datestmp;
+    String title;
 
-  MenuDataModel({
-    required this.title,
-    required this.price,
-    required this.description,
-    required this.mealType,
-    required this.mealTime,
-  });
+    MenuDataModel({
+        required this.mealType,
+        required this.mealTime,
+        required this.description,
+        required this.price,
+        required this.datestmp,
+        required this.title,
+    });
 
-  factory MenuDataModel.fromJson(Map<String, dynamic> json) => MenuDataModel(
-        title: json["title"],
-        price: json["price"],
-        description: json["description"],
+    factory MenuDataModel.fromJson(Map<String, dynamic> json) => MenuDataModel(
         mealType: json["mealType"],
         mealTime: json["mealTime"],
-      );
+        description: json["description"],
+        price: json["price"],
+        datestmp: DateTime.parse(json["datestmp"]),
+        title: json["title"],
+    );
 
-  Map<String, dynamic> toJson() => {
-        "title": title,
-        "price": price,
-        "description": description,
+    Map<String, dynamic> toJson() => {
         "mealType": mealType,
-        "mealTime": mealTime
-      };
+        "mealTime": mealTime,
+        "description": description,
+        "price": price,
+        "datestmp": datestmp.toIso8601String(),
+        "title": title,
+    };
 }

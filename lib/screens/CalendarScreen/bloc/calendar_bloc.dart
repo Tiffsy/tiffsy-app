@@ -12,7 +12,7 @@ part 'calendar_state.dart';
 class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
   CalendarBloc() : super(CalendarInitial()) {
     on<CalendarInitialFetchEvent>(calendarInitialFetchEvent);
-    on<CancelOrderClicked>(cancelOrderClickedEvent);
+    on<CancelButtonClickedEvent>(cancelOrderClickedEvent);
   }
 
   FutureOr<void> calendarInitialFetchEvent(
@@ -20,7 +20,6 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     emit(CalendarLoadingState());
     String cstId = event.cstId;
     String subsId = event.subsId;
-    print("testing debug");
     Result<List<CalendarDataModel>> calendarDates =
         await CalendarRepo.fetchCalendarDates(cstId, subsId); // cst_id, subs_id
     if (calendarDates.isSuccess) {
@@ -35,6 +34,13 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
   FutureOr<void> cancelClickedEvent(
       CancelClickedEvent event, Emitter<CalendarState> emit) async {}
 
-  FutureOr<void> cancelOrderClickedEvent(
-      CancelOrderClicked event, Emitter<CalendarState> emit) {}
+  FutureOr<void> cancelOrderClickedEvent(CancelButtonClickedEvent event, Emitter<CalendarState> emit) async {
+    print("afjbfjsdbfjhasjkdhgjkasdkgjnbas");
+    Result<String> result = await CalendarRepo.cancelOrder(event.ordr_id, event.dt, event.lc, event.bc, event.dc);
+    if (result.isSuccess) {
+      emit(CancelSuccessState(msg: result.data!));
+    } else {
+      emit(CalendarAlertErrorState(error: result.error.toString()));
+    }
+  }
 }

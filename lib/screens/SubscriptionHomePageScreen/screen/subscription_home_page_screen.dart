@@ -68,7 +68,7 @@ class _SubscriptionHomePageScreenState
                 Navigator.push(
                     context,
                     SlideTransitionRouter.toNextPage(
-                        CalendarScreen(cstId: "1", subsId: "2")));
+                        CalendarScreen(cstId: subcriptionList[index].cstId, subsId: subcriptionList[index].sbcrId)));
               }, subcriptionList[index].endDt, subcriptionList[index].addrLine,
                   subcriptionList[index].strDt));
             }

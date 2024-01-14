@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:tiffsy_app/Constants/network_contants.dart';
 part 'add_address_screen_dart_event.dart';
@@ -38,8 +39,12 @@ class AddAddressScreenDartBloc
         "contact": contact,
         "addr_type": addr_type
       };
+
+      Box customer_box = Hive.box("customer_box");
+      String token = customer_box.get("token");
+      
       var response =
-          await http.post(Uri.parse('$apiJsURL/add-address'), body: params);
+          await http.post(Uri.parse('$apiJsURL/add-address'), body: params, headers: {'Authorization': 'Bearer $token'});
       if (response.statusCode == 200) {
         emit(AddAddressSuccessState());
       } else {

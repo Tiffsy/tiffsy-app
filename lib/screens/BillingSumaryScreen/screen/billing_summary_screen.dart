@@ -19,7 +19,7 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
     // as the value. Also all te values will be added up later so if they need to be
     // substracted then they should be negative, when displaying the sign will be
     // ignored.
-    return {"Subtotal": 2983, "Discount": 0, "Shipping": 0, "GST": 0.18};
+    return {"Subtotal": 0, "Discount": 0, "Shipping": 0, "GST 5%": 0};
   }
 
   double calculateTotal(Map<String, double> summaryBreakdown) {

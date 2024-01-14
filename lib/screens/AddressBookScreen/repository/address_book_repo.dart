@@ -16,7 +16,10 @@ class AddressBookRepo{
       Map<String, dynamic> params = {
           "cst_id": cst_id
       };
-      var response = await http.post(Uri.parse('$apiJsURL/address-list'), body: params);
+
+      Box customer_box = Hive.box("customer_box");
+      String token = customer_box.get("token");
+      var response = await http.post(Uri.parse('$apiJsURL/address-list'), body: params, headers: {'Authorization': 'Bearer $token'});
       List result = jsonDecode(response.body);
       for(int i = 0; i < result.length; i++){
         AddressDataModel address = AddressDataModel.fromJson(result[i]);

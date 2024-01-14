@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tiffsy_app/Constants/network_contants.dart';
 import 'package:tiffsy_app/Helpers/result.dart';
@@ -9,7 +10,12 @@ class HomeRepo {
   static Future<Result<List<MenuDataModel>>> fetchMenu() async {
     List<MenuDataModel> menu = [];
     try {
-      var response = await http.get(Uri.parse('$apiJsURL/today-menu'));
+      Map<String, dynamic> params = {
+        "dt": "2024-01-09T15:07:59.004Z"
+      };
+      var response = await http.post(Uri.parse('$apiJsURL/today-menu'), body: params);
+      print(response.body);
+      print('$apiJsURL/today-menu');
       List result = jsonDecode(response.body);
       for (int i = 0; i < result.length; i++) {
         MenuDataModel menuItem = MenuDataModel.fromJson(result[i]);
@@ -79,4 +85,22 @@ class HomeRepo {
     }
     return "";
   }
+
+  static Future<Result<String>> getToken(String mailId, String cst_id, String nmbr) async {
+    try{
+      Map<String,dynamic> params = {
+        "cst_id": cst_id,
+        "cst_nmbr": nmbr,
+        "cst_mail": mailId
+      };
+      var response =  await http.post(Uri.parse('$apiJsURL/get-token'), body: params);
+      Map<String, dynamic> result = jsonDecode(response.body);
+      print(result);
+      return Result(data: result['token'], error: null);
+    }
+    catch(err){
+      return Result(data: null, error: err.toString());
+    }
+  }
+
 }

@@ -60,8 +60,8 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    HomeBloc homeBloc = HomeBloc();
 
+    HomeBloc homeBloc = HomeBloc();
     if (menuState.menu.isEmpty) {
       homeBloc.add(HomeInitialFetchEvent(isCached: false));
     } else {
@@ -71,7 +71,14 @@ class _HomeState extends State<Home> {
     return BlocProvider(
       create: (context) => homeBloc,
       child: BlocConsumer<HomeBloc, HomeState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if(state is HomeErrorState){
+            const SnackBar(
+              content: Text("Error"),
+            );
+          }
+
+        },
         builder: (context, state) {
           if (state is HomeLoadingState) {
             return Container(
@@ -90,10 +97,6 @@ class _HomeState extends State<Home> {
             }
             defaultAddress = AddressDataModel.fromJsonAllowNull(
               tempTwo,
-            );
-          } else if (state is HomeErrorState) {
-            return const SnackBar(
-              content: Text("Error"),
             );
           } else if (state is HomePageCartQuantityChangeState) {
           } else if (state is HomeFetchSuccessfulIsCachedState) {}

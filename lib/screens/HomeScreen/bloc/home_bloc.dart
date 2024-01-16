@@ -16,12 +16,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeInitial()) {
     on<HomeInitialFetchEvent>(homeInitialFetch);
     on<SubscriptionInitialFetchEvent>(subscriptionInitialFetchEvent);
-    on<HomePageAddTocartEvent>(homePageCartQuantityChangeEvent);
+    on<HomePageAddToCartEvent>(homePageCartQuantityChangeEvent);
     on<HomePageRemoveFromCartEvent>(homePageRemoveFromCartEvent);
   }
 
-  FutureOr<void> homeInitialFetch(
-      HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
+  FutureOr<void> homeInitialFetch(HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
     emit(HomeLoadingState());
     if (!event.isCached) {
       Result<List<MenuDataModel>> menu = await HomeRepo.fetchMenu();
@@ -31,19 +30,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           String cstPhone = HomeRepo.getUserInfo();
           cstPhone = cstPhone.substring(3);
 
-          Result<Map<String, dynamic>> result =
-              await HomeRepo.getCustomerIdByPhone(cstPhone);
-              print(result.error);
+          Result<Map<String, dynamic>> result = await HomeRepo.getCustomerIdByPhone(cstPhone);
+          print(result.error);
           if (result.isSuccess) {
             Map<String, dynamic> cstDetails = result.data!;
             Box customerBox = await Hive.openBox("customer_box");
             customerBox.putAll(cstDetails);
-            Result<String> token = await HomeRepo.getToken(cstDetails["cst_mail"], cstDetails["cst_id"], cstDetails["cst_contact"]);
-            if(token.isSuccess){
+            Result<String> token =
+                await HomeRepo.getToken(cstDetails["cst_mail"], cstDetails["cst_id"], cstDetails["cst_contact"]);
+            if (token.isSuccess) {
               print(token.data);
-                customerBox.put("token", token.data);
-            }
-            else{
+              customerBox.put("token", token.data);
+            } else {
               emit(HomeErrorState(error: token.error.toString()));
             }
           } else {
@@ -52,23 +50,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         } else {
           String cstMail = HomeRepo.getUserInfo();
           print(cstMail);
-          Result<Map<String, dynamic>> result =
-              await HomeRepo.getCustomerIdByMail(cstMail);
-            print(result.data);
+          Result<Map<String, dynamic>> result = await HomeRepo.getCustomerIdByMail(cstMail);
+          print(result.data);
           if (result.isSuccess) {
             print(result.data);
             Map<String, dynamic> cstDetails = result.data!;
             Box customerBox = await Hive.openBox("customer_box");
             customerBox.putAll(cstDetails);
-            Result<String> token = await HomeRepo.getToken(cstDetails["cst_mail"], cstDetails["cst_id"], cstDetails["cst_contact"]);
-            if(token.isSuccess){
-                customerBox.put("token", token.data!);
-            }
-            else{
+            Result<String> token =
+                await HomeRepo.getToken(cstDetails["cst_mail"], cstDetails["cst_id"], cstDetails["cst_contact"]);
+            if (token.isSuccess) {
+              customerBox.put("token", token.data!);
+            } else {
               emit(HomeErrorState(error: token.error.toString()));
             }
           } else {
-            
             emit(HomeErrorState(error: result.error.toString()));
           }
         }
@@ -85,11 +81,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
         // getting the address part starts here.
         Box addressBox = Hive.box('address_box');
-        Map defaultAddress =
-            addressBox.get("default_address", defaultValue: {});
+        Map defaultAddress = addressBox.get("default_address", defaultValue: {});
         if (defaultAddress.isEmpty) {
-          Result<List<AddressDataModel>> addressResult =
-              await AddressBookRepo.fetchAddressList();
+          Result<List<AddressDataModel>> addressResult = await AddressBookRepo.fetchAddressList();
           if (addressResult.isSuccess && addressResult.data!.isNotEmpty) {
             Map<String, dynamic> firstAddress = addressResult.data![0].toJson();
             addressBox.put("default_address", firstAddress);
@@ -112,13 +106,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  FutureOr<void> subscriptionInitialFetchEvent(
-      SubscriptionInitialFetchEvent event, Emitter<HomeState> emit) {
+  FutureOr<void> subscriptionInitialFetchEvent(SubscriptionInitialFetchEvent event, Emitter<HomeState> emit) {
     emit(SubscriptionLoadingState());
   }
 
-  FutureOr<void> homePageCartQuantityChangeEvent(
-      HomePageAddTocartEvent event, Emitter<HomeState> emit) {
+  FutureOr<void> homePageCartQuantityChangeEvent(HomePageAddToCartEvent event, Emitter<HomeState> emit) {
     Box cartBox = Hive.box("cart_box");
     Map menu = cartBox.get("menu");
     var menuAddedToCart = menu[event.mealTime][event.mealType];
@@ -130,9 +122,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     for (var element in cart) {
       if (element["mealTime"] == event.mealTime) {
         emit(HomePageCartQuantityChangeState());
-        Fluttertoast.showToast(
-            msg: "Can't add the same item twice",
-            toastLength: Toast.LENGTH_LONG);
+        Fluttertoast.showToast(msg: "Can't add the same item twice", toastLength: Toast.LENGTH_LONG);
         alreadyExists = true;
         break;
       }
@@ -143,16 +133,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       cartBox.put("cart", cart);
       emit(HomePageCartQuantityChangeState());
       Fluttertoast.showToast(
-          msg:
-              "${toSentenceCase(event.mealType)} ${toSentenceCase(event.mealTime)} added to cart!",
+          msg: "${toSentenceCase(event.mealType)} ${toSentenceCase(event.mealTime)} added to cart!",
           toastLength: Toast.LENGTH_SHORT);
     }
     emit(HomeFetchSuccessfulIsCachedState());
   }
 }
 
-FutureOr<void> homePageRemoveFromCartEvent(
-    HomePageRemoveFromCartEvent event, Emitter<HomeState> emit) async {
+FutureOr<void> homePageRemoveFromCartEvent(HomePageRemoveFromCartEvent event, Emitter<HomeState> emit) async {
   Box cartBox = Hive.box('cart_box');
   List currentCart = cartBox.get("cart");
   List newCart = [];

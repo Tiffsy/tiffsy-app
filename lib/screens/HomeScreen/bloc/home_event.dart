@@ -13,11 +13,11 @@ final class SubscriptionInitialFetchEvent extends HomeEvent {}
 
 class HomeProfileButtonOnTapEvent extends HomeEvent {}
 
-class HomePageAddTocartEvent extends HomeEvent {
+class HomePageAddToCartEvent extends HomeEvent {
   final String mealTime;
   final String mealType;
 
-  HomePageAddTocartEvent({required this.mealTime, required this.mealType});
+  HomePageAddToCartEvent({required this.mealTime, required this.mealType});
 }
 
 class HomePageRemoveFromCartEvent extends HomeEvent {

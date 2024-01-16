@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_svg/svg.dart";
+import "package:tiffsy_app/Helpers/loading_animation.dart";
 import "package:tiffsy_app/Helpers/page_router.dart";
 import "package:tiffsy_app/screens/AddAddressScreen/screen/add_address_screen.dart";
 import "package:tiffsy_app/screens/AddressBookScreen/bloc/address_book_bloc.dart";
@@ -49,9 +50,8 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
         body: BlocConsumer<AddressBookBloc, AddressBookState>(
           listener: (context, state) {
             if (state is AddressBookErrorState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.error)),
-              );
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(state.error)));
             } else if (state is AddAddressButtonClickedState) {
               Navigator.push(context,
                   SlideTransitionRouter.toNextPage(AddAddressScreen()));
@@ -60,7 +60,9 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
           builder: (context, state) {
             if (state is AddressListFetchSuccessState) {
               addressListState = state.addressList;
+              isEmpty = false;
             } else if (state is NoAddressAddedState) {
+              isEmpty = true;
             } else if (state is AddressBookLoadingState) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -71,7 +73,11 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
                       .add(AddressBookAddAdresssButtonClickedEvent());
                 }),
                 isEmpty
-                    ? Text("No address found")
+                    ? SizedBox(height: MediaQuery.sizeOf(context).width * 0.4)
+                    : const SizedBox(),
+                isEmpty
+                    ? LoadingAnimation.emptyDataAnimation(
+                        context, "No Addresses Found")
                     : listOfAddressCards(addressListState),
               ],
             );

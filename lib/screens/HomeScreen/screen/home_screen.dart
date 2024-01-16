@@ -72,12 +72,11 @@ class _HomeState extends State<Home> {
       create: (context) => homeBloc,
       child: BlocConsumer<HomeBloc, HomeState>(
         listener: (context, state) {
-          if(state is HomeErrorState){
+          if (state is HomeErrorState) {
             const SnackBar(
               content: Text("Error"),
             );
           }
-
         },
         builder: (context, state) {
           if (state is HomeLoadingState) {
@@ -216,18 +215,28 @@ class _HomeState extends State<Home> {
                 });
               },
               selectedIndex: currentPageIndex,
-              destinations: const <Widget>[
-                NavigationDestination(
+              destinations: <Widget>[
+                const NavigationDestination(
                   selectedIcon: Icon(Icons.restaurant_menu),
                   icon: Icon(Icons.restaurant_menu_outlined),
                   label: 'Menu',
                 ),
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.shopping_cart),
-                  icon: Icon(Icons.shopping_cart_outlined),
-                  label: 'Cart',
+                BlocBuilder<HomeBloc, HomeState>(
+                  builder: (context, state) {
+                    int cartCount = 0;
+                    if (state is HomeFetchSuccessfulIsCachedState) {
+                      cartCount = cartBox.get("cart", defaultValue: []).length;
+                    } else if (state is HomeFetchSuccessfulState) {
+                      cartCount = cartBox.get("cart", defaultValue: []).length;
+                    }
+                    return NavigationDestination(
+                      selectedIcon: navigationBarCartItem(true, cartCount),
+                      icon: navigationBarCartItem(false, cartCount),
+                      label: 'Cart',
+                    );
+                  },
                 ),
-                NavigationDestination(
+                const NavigationDestination(
                   selectedIcon: Icon(Icons.food_bank),
                   icon: Icon(Icons.food_bank_outlined),
                   label: 'Subscription',
@@ -503,7 +512,7 @@ class _HomeState extends State<Home> {
                     const SizedBox(height: 7),
                     SizedBox(height: 41, child: SvgPicture.asset(imageAsset)),
                     Text(
-                      menuTime,
+                      toSentenceCase(menuTime),
                       style: const TextStyle(
                         color: Color(0xFF121212),
                         fontSize: 12,
@@ -865,9 +874,10 @@ class _HomeState extends State<Home> {
           ),
           InkWell(
             onTap: () {
-              homeBloc.add(HomePageAddTocartEvent(
+              homeBloc.add(HomePageAddToCartEvent(
                   mealTime: mealTime, mealType: mealType));
               Navigator.pop(context);
+              setState(() {});
             },
             borderRadius: BorderRadius.circular(6),
             child: Container(
@@ -1198,4 +1208,34 @@ String toSentenceCase(String input) {
   return '${input[0].toUpperCase()}${input.substring(1).toLowerCase()}';
 }
 
-//Widget navigationBarCartItem(bool isSelected, int count) {}
+Widget navigationBarCartItem(bool isSelected, int count) {
+  return Stack(
+    alignment: Alignment.topRight,
+    children: [
+      SizedBox(
+          height: 32,
+          child: isSelected
+              ? const Icon(Icons.shopping_cart)
+              : const Icon(Icons.shopping_cart_outlined)),
+      (count > 0)
+          ? Container(
+              width: 15,
+              height: 15,
+              decoration: BoxDecoration(
+                  color: Colors.red.shade400,
+                  borderRadius: BorderRadius.circular(7.5)),
+              child: Center(
+                child: Text(
+                  count.toString(),
+                  style: const TextStyle(
+                    height: 1,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            )
+          : const SizedBox()
+    ],
+  );
+}

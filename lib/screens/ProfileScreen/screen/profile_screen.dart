@@ -322,40 +322,37 @@ Widget userCard(User user) {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(width: 20),
-            IconButton(
-              onPressed: () => {},
-              icon: ClipOval(
-                child: (user.photoURL != null)
-                    ? Image.network(
-                        '${user.photoURL}',
-                        fit: BoxFit.cover,
-                        height: 64,
-                        width: 64,
-                      )
-                    : Container(
-                        height: 64,
-                        width: 64,
-                        color: Colors.amber[50],
-                        child: Center(
-                          child: Text(
-                            Hive.box('customer_box')
-                                .get('cst_name')[0]
-                                .toString()
-                                .toUpperCase(),
-                            style: const TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.w600,
-                            ),
+            ClipOval(
+              child: (user.photoURL != null)
+                  ? Image.network(
+                      '${user.photoURL}',
+                      fit: BoxFit.cover,
+                      height: 64,
+                      width: 64,
+                    )
+                  : Container(
+                      height: 64,
+                      width: 64,
+                      color: Colors.amber[50],
+                      child: Center(
+                        child: Text(
+                          Hive.box('customer_box')
+                              .get('cst_name')[0]
+                              .toString()
+                              .toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-              ),
+                    ),
             ),
             const SizedBox(width: 18),
             Text(
-             capitalizeEachWord(user.displayName.toString()) ?? capitalizeEachWord(Hive.box('customer_box')
-                                .get('cst_name')
-                                .toString()),
+              capitalizeEachWord(user.displayName.toString()) ??
+                  capitalizeEachWord(
+                      Hive.box('customer_box').get('cst_name').toString()),
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 color: Color(0xFF121212),
@@ -524,6 +521,7 @@ Widget logoutButton({required VoidCallback onPressed, required Widget icon}) {
     );
   });
 }
+
 String capitalizeEachWord(String input) {
   List<String> words = input.split(' ');
 

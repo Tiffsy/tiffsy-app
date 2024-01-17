@@ -199,10 +199,26 @@ class _HomeState extends State<Home> {
                       );
                     },
                     icon: ClipOval(
-                      child: Image.asset(
-                        'assets/images/logo/tiffsy.png',
-                        fit: BoxFit.contain,
-                      ),
+                      child: (user.photoURL != null)
+                          ? Image.network(
+                              '${user.photoURL}',
+                              fit: BoxFit.cover,
+                            )
+                          : Container(
+                              color: const Color(0xffFFFCEF),
+                              child: Center(
+                                child: Text(
+                                  Hive.box('customer_box')
+                                      .get('cst_name')[0]
+                                      .toString()
+                                      .toUpperCase(),
+                                  style: const TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
                     ), // TODO: Bio Pic
                   ),
                 ),

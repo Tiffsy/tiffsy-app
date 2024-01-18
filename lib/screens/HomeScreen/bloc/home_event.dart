@@ -16,8 +16,12 @@ class HomeProfileButtonOnTapEvent extends HomeEvent {}
 class HomePageAddToCartEvent extends HomeEvent {
   final String mealTime;
   final String mealType;
+  final bool isSubscription;
 
-  HomePageAddToCartEvent({required this.mealTime, required this.mealType});
+  HomePageAddToCartEvent(
+      {required this.isSubscription,
+      required this.mealTime,
+      required this.mealType});
 }
 
 class HomePageRemoveFromCartEvent extends HomeEvent {

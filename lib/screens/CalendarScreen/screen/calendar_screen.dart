@@ -7,7 +7,8 @@ import 'package:tiffsy_app/screens/CalendarScreen/model/calendar_date_model.dart
 class CalendarScreen extends StatefulWidget {
   final String cstId;
   final String subsId;
-  const CalendarScreen({Key? key, required this.cstId, required this.subsId}) : super(key: key);
+  const CalendarScreen({Key? key, required this.cstId, required this.subsId})
+      : super(key: key);
 
   @override
   State<CalendarScreen> createState() => _CalendarScreenState();
@@ -18,7 +19,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
   late DateTime _focusedDay;
 
   bool compareDates(DateTime date1, DateTime date2) {
-    return date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
   }
 
   @override
@@ -33,7 +36,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
     CalendarBloc calendarBloc = CalendarBloc();
     List<CalendarDataModel> calendarData = [];
     return BlocProvider(
-      create: (context) => calendarBloc..add(CalendarInitialFetchEvent(cstId: widget.cstId, subsId: widget.subsId)),
+      create: (context) => calendarBloc
+        ..add(CalendarInitialFetchEvent(
+            cstId: widget.cstId, subsId: widget.subsId)),
       child: Scaffold(
         backgroundColor: const Color(0xffffffff),
         appBar: AppBar(
@@ -67,7 +72,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 SnackBar(content: Text(state.error)),
               );
             } else if (state is RefreshCalendarState) {
-              calendarBloc.add(CalendarInitialFetchEvent(cstId: widget.cstId, subsId: widget.subsId));
+              calendarBloc.add(CalendarInitialFetchEvent(
+                  cstId: widget.cstId, subsId: widget.subsId));
             }
           },
           builder: (context, state) {
@@ -85,15 +91,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   Container(
                     width: MediaQuery.sizeOf(context).width - 40,
                     child: TableCalendar(
-                      firstDay: DateTime.now().subtract(const Duration(days: 45)),
+                      firstDay:
+                          DateTime.now().subtract(const Duration(days: 45)),
                       lastDay: DateTime.now().add(const Duration(days: 45)),
                       focusedDay: DateTime.now(),
-                      selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                      selectedDayPredicate: (day) =>
+                          isSameDay(_selectedDay, day),
                       onDaySelected: (selectedDay, focusedDay) async {
-                        if (selectedDay.millisecondsSinceEpoch > DateTime.now().millisecondsSinceEpoch - 86400000) {
+                        if (selectedDay.millisecondsSinceEpoch >
+                            DateTime.now().millisecondsSinceEpoch - 86400000) {
                           for (CalendarDataModel element in calendarData) {
-                            if (compareDates(selectedDay, DateTime.parse(element.dt.substring(0, 10)))) {
-                              await showCancellationSheet(element, calendarBloc);
+                            if (compareDates(selectedDay,
+                                DateTime.parse(element.dt.substring(0, 10)))) {
+                              await showCancellationSheet(
+                                  element, calendarBloc);
                             }
                           }
                         }
@@ -102,12 +113,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         defaultBuilder: (context, day, focusedDay) {
                           for (int i = 0; i < calendarData.length; i++) {
                             CalendarDataModel data = calendarData[i];
-                            DateTime dt = DateTime.parse(data.dt.substring(0, 10));
+                            DateTime dt =
+                                DateTime.parse(data.dt.substring(0, 10));
                             if (compareDates(dt, day) &&
-                                day.millisecondsSinceEpoch < focusedDay.millisecondsSinceEpoch) {
+                                day.millisecondsSinceEpoch <
+                                    focusedDay.millisecondsSinceEpoch) {
                               return dateBox(day, true, data.hasNoOrders());
                             } else if (compareDates(dt, day) &&
-                                day.millisecondsSinceEpoch > focusedDay.millisecondsSinceEpoch) {
+                                day.millisecondsSinceEpoch >
+                                    focusedDay.millisecondsSinceEpoch) {
                               return dateBox(day, false, data.hasNoOrders());
                             } else if (compareDates(day, focusedDay)) {}
                           }
@@ -125,7 +139,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  showCancellationSheet(CalendarDataModel calendarData, CalendarBloc calendarBloc) {
+  showCancellationSheet(
+      CalendarDataModel calendarData, CalendarBloc calendarBloc) {
     return showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -141,7 +156,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
 class CalendarCancelSheet extends StatefulWidget {
   const CalendarCancelSheet(
-      {super.key, required this.calendarData, required this.calendarBloc, required this.parentContext});
+      {super.key,
+      required this.calendarData,
+      required this.calendarBloc,
+      required this.parentContext});
 
   final CalendarDataModel calendarData;
   final CalendarBloc calendarBloc;
@@ -174,7 +192,9 @@ class _CalendarCancelSheetState extends State<CalendarCancelSheet> {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.sizeOf(context).width,
-      decoration: BoxDecoration(color: const Color(0xffFFFCEF), borderRadius: BorderRadius.circular(36)),
+      decoration: BoxDecoration(
+          color: const Color(0xffFFFCEF),
+          borderRadius: BorderRadius.circular(36)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Column(
@@ -226,7 +246,8 @@ class _CalendarCancelSheetState extends State<CalendarCancelSheet> {
                         value: mealsTakenModified[1],
                         onChanged: (newBreakfastValue) {
                           setState(() {
-                            mealsTakenModified[1] = newBreakfastValue ?? mealsTakenInitial[1];
+                            mealsTakenModified[1] =
+                                newBreakfastValue ?? mealsTakenInitial[1];
                           });
                         },
                       )
@@ -253,7 +274,8 @@ class _CalendarCancelSheetState extends State<CalendarCancelSheet> {
                         value: mealsTakenModified[2],
                         onChanged: (newBreakfastValue) {
                           setState(() {
-                            mealsTakenModified[2] = newBreakfastValue ?? mealsTakenInitial[2];
+                            mealsTakenModified[2] =
+                                newBreakfastValue ?? mealsTakenInitial[2];
                           });
                         },
                       )
@@ -316,13 +338,24 @@ Widget dateBox(
   return Center(
     child: Container(
       decoration: ShapeDecoration(
-          shape: const CircleBorder(),
-          color: isCancelled ? const Color(0xffF84545) : (isPast ? const Color(0xffFFBE1D) : const Color(0xffCBFFB3))),
+          shape: CircleBorder(
+              side: BorderSide(
+                  width: 2,
+                  color: isCancelled
+                      ? const Color(0xffF84545)
+                      : (isPast
+                          ? const Color(0xffFFBE1D)
+                          : const Color(0xff329C00)))),
+          color: isCancelled
+              ? const Color(0xffFFDDDD)
+              : (isPast ? const Color(0xfffffcef) : const Color(0xffCBFFB3))),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Text(
           date.day.toString(),
-          style: TextStyle(color: isPast ? const Color(0xffffffff) : const Color(0xff121212)),
+          style: TextStyle(
+              color:
+                  isPast ? const Color(0xffffffff) : const Color(0xff121212)),
         ),
       ),
     ),

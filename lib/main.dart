@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:tiffsy_app/firebase_options.dart';
+import 'package:tiffsy_app/screens/CalendarScreen/screen/calendar_screen.dart';
+import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/LoginScreen/repository/user_repo.dart';
 import 'package:flutter/services.dart';
+import 'package:tiffsy_app/screens/SubscriptionScreen/screen/subscription_screen.dart';
 import 'package:tiffsy_app/screens/splash_screen.dart';
 
 Future<void> main() async {
@@ -39,6 +42,13 @@ class MyApp extends StatelessWidget {
 
 ThemeData getTheme() {
   return ThemeData(
+    datePickerTheme: const DatePickerThemeData(
+        backgroundColor: Color(0xfffffcef),
+        surfaceTintColor: Color(0xfffffcef),
+        rangePickerSurfaceTintColor: Color(0xffCBFFB3),
+        rangePickerBackgroundColor: Color(0xffCBFFB3),
+        todayBorder: BorderSide(color: Color(0xffCBFFB3)),
+        rangeSelectionBackgroundColor: Color(0xffCBFFB3)),
     appBarTheme: const AppBarTheme(
         titleSpacing: 0,
         backgroundColor: Color(0xffffffff),
@@ -53,8 +63,11 @@ ThemeData getTheme() {
       backgroundColor: Color(0xfffffcef),
       surfaceTintColor: Color(0xfffffcef),
       indicatorColor: Color(0xffffe5a3),
-      iconTheme:
-          MaterialStatePropertyAll(IconThemeData(color: Color(0xff323232))),
+      iconTheme: MaterialStatePropertyAll(
+        IconThemeData(
+          color: Color(0xff323232),
+        ),
+      ),
     ),
     dropdownMenuTheme: DropdownMenuThemeData(
       menuStyle: MenuStyle(
@@ -104,3 +117,5 @@ ThemeData getTheme() {
     useMaterial3: true,
   );
 }
+
+// 1. Internet connectivity

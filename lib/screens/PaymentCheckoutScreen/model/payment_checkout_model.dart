@@ -30,8 +30,9 @@ class PaymentCheckoutOptions {
     }
   }
 
-  static Future<Result<String>> _handlePaymentSuccess(PaymentSuccessResponse response) async {
-    try{
+  static Future<Result<String>> _handlePaymentSuccess(
+      PaymentSuccessResponse response) async {
+    try {
       String cst_id = Hive.box('customer_box').get('cst_id');
       String token = Hive.box('customer_box').get('token');
       String addr_line = Hive.box("addr_box").get("addr");
@@ -49,56 +50,53 @@ class PaymentCheckoutOptions {
       int subType = Hive.box("cart_box").get("subType");
       int bill = 0;
       print(cart);
-      for(var element in cart){
-        if(element["mealTime"] == "lunch"){
+      for (var element in cart) {
+        if (element["mealTime"] == "lunch") {
           lc = 1;
           lchMealType = element["mealType"];
-          bill+=int.parse(element["price"].toString());
-        }
-        else if(element["mealTime"] == "dinner"){
+          bill += int.parse(element["price"].toString());
+        } else if (element["mealTime"] == "dinner") {
           dc = 1;
           dinMealType = element["mealType"];
-          bill+=int.parse(element["price"].toString());
-        }
-        else if(element["mealTime"] == "breakfast"){
+          bill += int.parse(element["price"].toString());
+        } else if (element["mealTime"] == "breakfast") {
           bc = 1;
           brkMealType = element["mealType"];
-          bill+=int.parse(element["price"].toString());
+          bill += int.parse(element["price"].toString());
         }
       }
 
-      bill=(bill*subType);
+      bill = (bill * subType);
       Map<String, dynamic> params = {
-         "cst_id": cst_id, 
-        "str_dt": strdt, 
-        "end_dt": enddt, 
-        "bc": bc, 
-        "lc": lc, 
-        "dc": dc, 
-        "brkMealType": brkMealType, 
-        "lchMealType": lchMealType, 
-        "dinMealType": dinMealType, 
-        "cntct": cntct, 
-        "bill": bill, 
-        "ts": DateTime.now().toString(), 
-        "addr_line": addr_line, 
-        "addr_id": addr_id, 
-        "subtype": subType 
+        "cst_id": cst_id,
+        "str_dt": strdt,
+        "end_dt": enddt,
+        "bc": bc,
+        "lc": lc,
+        "dc": dc,
+        "brkMealType": brkMealType,
+        "lchMealType": lchMealType,
+        "dinMealType": dinMealType,
+        "cntct": cntct,
+        "bill": bill,
+        "ts": DateTime.now().toString(),
+        "addr_line": addr_line,
+        "addr_id": addr_id,
+        "subtype": subType
       };
-      var res = await http.post(Uri.parse('$apiJsURL/add-subscription'), body: params, headers: {'Authorization': 'Bearer $token'});
-      if(res.statusCode == 200){
+      var res = await http.post(Uri.parse('$apiJsURL/add-subscription'),
+          body: params, headers: {'Authorization': 'Bearer $token'});
+      if (res.statusCode == 200) {
         print("Success");
         Map<String, dynamic> payParams = {
           "pay_id": response.paymentId,
           "cst_id": cst_id
         };
         return Result(data: "SUCCESS", error: null);
+      } else {
+        return Result(data: null, error: null); // Add error string
       }
-      else{
-       return Result(data: null, error: null); // Add error string
-      }
-    } 
-    catch(err){
+    } catch (err) {
       return Result(data: null, error: err.toString());
     }
   }
@@ -108,7 +106,5 @@ class PaymentCheckoutOptions {
     print("failed");
   }
 
-  void _handleExternalWallet(ExternalWalletResponse response) {
-   
-  }
+  void _handleExternalWallet(ExternalWalletResponse response) {}
 }

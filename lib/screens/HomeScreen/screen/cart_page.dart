@@ -5,6 +5,7 @@ import "package:tiffsy_app/Helpers/page_router.dart";
 import "package:tiffsy_app/screens/CartScreen/screen/cart_screen.dart";
 import "package:tiffsy_app/screens/HomeScreen/bloc/home_bloc.dart";
 import "package:tiffsy_app/screens/HomeScreen/model/home_model.dart";
+import "package:tiffsy_app/screens/SubscriptionScreen/screen/subscription_screen.dart";
 
 class CartScreenHomePage extends StatefulWidget {
   const CartScreenHomePage({super.key, required this.homeBloc});
@@ -17,15 +18,22 @@ class CartScreenHomePage extends StatefulWidget {
 class _CartScreenHomePageState extends State<CartScreenHomePage> {
   Box cartBox = Hive.box("cart_box");
   List<Widget> listOfCards = [];
-  void onDeletion() {
+  void onListEmpty() {
     setState(() {
-      listOfCards = listOfCartCards(context, widget.homeBloc);
+      listOfCards = [];
+      print(listOfCards);
     });
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    listOfCards = listOfCartCards(HomeBloc());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    List<Widget> listOfCards = listOfCartCards(context, widget.homeBloc);
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -58,8 +66,16 @@ class _CartScreenHomePageState extends State<CartScreenHomePage> {
           listOfCards.isEmpty
               ? const SizedBox()
               : orderNowButton(() {
-                  Navigator.push(context,
-                      SlideTransitionRouter.toNextPage(const CartScreen()));
+                  if (cartBox.get("is_subscription")) {
+                    Navigator.push(context,
+                        SlideTransitionRouter.toNextPage(const CartScreen()));
+                  } else {
+                    cartBox.put("subType", 1);
+                    Navigator.push(
+                        context,
+                        SlideTransitionRouter.toNextPage(
+                            const SubscriptionScreen(noOfDays: 1)));
+                  }
                 }),
           const SizedBox(height: 10),
         ],
@@ -67,20 +83,18 @@ class _CartScreenHomePageState extends State<CartScreenHomePage> {
     );
   }
 
-  List<Widget> listOfCartCards(BuildContext context, HomeBloc homeBloc) {
+  List<Widget> listOfCartCards(HomeBloc homeBloc) {
     List<Widget> listOfMenuCards = [];
     List cartItems = cartBox.get("cart", defaultValue: []);
 
     for (var element in cartItems) {
-      listOfMenuCards.addAll([
+      listOfMenuCards.add(
         CustomeCartCard(
-          menuPage: element[0],
-          quantity: element[1],
+          cartItem: element,
           homeBloc: homeBloc,
-          onDeletion: onDeletion,
+          onListEmpty: onListEmpty,
         ),
-        const SizedBox(height: 16)
-      ]);
+      );
     }
     return listOfMenuCards;
   }
@@ -89,14 +103,12 @@ class _CartScreenHomePageState extends State<CartScreenHomePage> {
 class CustomeCartCard extends StatefulWidget {
   const CustomeCartCard(
       {super.key,
-      required this.menuPage,
-      required this.quantity,
+      required this.cartItem,
       required this.homeBloc,
-      required this.onDeletion});
-  final Map menuPage;
-  final int quantity;
+      required this.onListEmpty});
+  final List cartItem;
   final HomeBloc homeBloc;
-  final Function onDeletion;
+  final Function onListEmpty;
 
   @override
   State<CustomeCartCard> createState() => _CustomeCartCardState();
@@ -106,12 +118,36 @@ class _CustomeCartCardState extends State<CustomeCartCard> {
   Box cartBox = Hive.box("cart_box");
   bool isDeleted = false;
 
+  late int quantity;
+
+  void onQuanitiyChange(int newQuantity) async {
+    setState(() {
+      quantity = newQuantity;
+    });
+    if (quantity < 1) {
+      setState(() {
+        isDeleted = true;
+      });
+      await Future.delayed(const Duration(milliseconds: 250));
+    }
+    if (cartBox.get("cart", defaultValue: []).isEmpty) {
+      widget.onListEmpty();
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    quantity = widget.cartItem[1];
+  }
+
   @override
   Widget build(BuildContext context) {
     Map menu = cartBox.get('menu');
     bool cartType = cartBox.get("is_subscription", defaultValue: false);
     Map menuObject =
-        menu[widget.menuPage["mealTime"]][widget.menuPage["mealType"]];
+        menu[widget.cartItem[0]["mealTime"]][widget.cartItem[0]["mealType"]];
     Map<String, dynamic> menuObjectCasted = {};
     menuObject.forEach((key, value) {
       menuObjectCasted[key.toString()] = value;
@@ -121,7 +157,7 @@ class _CustomeCartCardState extends State<CustomeCartCard> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
       curve: Curves.ease,
-      height: isDeleted ? 0 : 155,
+      height: isDeleted ? 0 : 170,
       width: MediaQuery.sizeOf(context).width - 20,
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -191,21 +227,25 @@ class _CustomeCartCardState extends State<CustomeCartCard> {
                 ),
                 cartType
                     ? cartImageForSubscriptionEntries(
-                        widget.homeBloc, menuData, context, widget.onDeletion)
-                    : cartImageForOrderNowEntries(widget.homeBloc, menuData,
-                        widget.quantity, context, widget.onDeletion)
+                        widget.homeBloc, menuData, context)
+                    : cartImageForOrderNowEntries(
+                        widget.homeBloc, menuData, quantity, context)
               ],
             ),
-            SizedBox(height: 16),
-            dashedDivider(context)
+            const SizedBox(height: 16),
+            dashedDivider(context),
+            const SizedBox(height: 15)
           ],
         ),
       ),
     );
   }
 
-  Widget cartImageForSubscriptionEntries(HomeBloc homeBloc,
-      MenuDataModel menuPage, BuildContext context, Function onDeletion) {
+  Widget cartImageForSubscriptionEntries(
+    HomeBloc homeBloc,
+    MenuDataModel menuPage,
+    BuildContext context,
+  ) {
     double width = MediaQuery.sizeOf(context).width;
     return SizedBox(
       width: width * 0.35,
@@ -225,11 +265,9 @@ class _CustomeCartCardState extends State<CustomeCartCard> {
                   mealType: menuPage.mealType,
                 ),
               );
-              setState(() {
-                isDeleted = true;
-              });
-              await Future.delayed(const Duration(milliseconds: 250));
-              onDeletion();
+
+              await Future.delayed(const Duration(milliseconds: 255));
+              onQuanitiyChange(0);
             },
             borderRadius: BorderRadius.circular(6),
             child: Container(
@@ -260,8 +298,12 @@ class _CustomeCartCardState extends State<CustomeCartCard> {
     );
   }
 
-  Widget cartImageForOrderNowEntries(HomeBloc homeBloc, MenuDataModel menuPage,
-      int quantity, BuildContext context, Function onDeletion) {
+  Widget cartImageForOrderNowEntries(
+    HomeBloc homeBloc,
+    MenuDataModel menuPage,
+    int quantity,
+    BuildContext context,
+  ) {
     double width = MediaQuery.sizeOf(context).width;
     return SizedBox(
       width: width * 0.35,
@@ -297,13 +339,8 @@ class _CustomeCartCardState extends State<CustomeCartCard> {
                         mealType: menuPage.mealType,
                       ),
                     );
-                    if (quantity == 1) {
-                      setState(() {
-                        isDeleted = true;
-                      });
-                      await Future.delayed(const Duration(milliseconds: 250));
-                    }
-                    onDeletion();
+
+                    onQuanitiyChange(quantity - 1);
                   },
                   child: const Icon(
                     Icons.remove_rounded,
@@ -331,7 +368,7 @@ class _CustomeCartCardState extends State<CustomeCartCard> {
                         isSubscription: false,
                         mealTime: menuPage.mealTime,
                         mealType: menuPage.mealType));
-                    onDeletion();
+                    onQuanitiyChange(quantity + 1);
                   },
                   child: const Icon(
                     Icons.add_rounded,

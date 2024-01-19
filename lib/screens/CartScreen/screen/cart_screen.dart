@@ -15,7 +15,6 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
   Map<String, bool> selectedList = {
-    "Order Now": false,
     "Weekly Subscription": false,
     "15-Day Subscription": false,
     "Monthly Subscription": false
@@ -31,7 +30,7 @@ class _CartScreenState extends State<CartScreen> {
     super.initState();
     List cart = Hive.box("cart_box").get("cart");
     for (var element in cart) {
-      price = price + element["price"];
+      price = price + element[0]["price"];
     }
   }
 
@@ -86,12 +85,11 @@ class _CartScreenState extends State<CartScreen> {
                     duration: const Duration(milliseconds: 200),
                     child: Column(
                       children: [
-                        cartPriceMessageBox(
-                            "Your Total: ₹${(price * noOfDaysForSubscription).toStringAsFixed(2)}"),
                         const SizedBox(height: 12),
                         proceedButton(
                           () {
-                            Hive.box("cart_box").put("subType", noOfDaysForSubscription);
+                            Hive.box("cart_box")
+                                .put("subType", noOfDaysForSubscription);
                             cartBloc.add(
                               CartScreenOnProcedButtonPressEvent(cost: price),
                             );
@@ -125,32 +123,26 @@ class _CartScreenState extends State<CartScreen> {
           Row(
             children: [
               subscriptionContainer(
-                "Order Now",
-                "assets/images/vectors/cart_screen/order_now_subs.svg",
-                1,
-                widthAdjustedForPadding / 2,
-              ),
-              subscriptionContainer(
                 "Weekly Subscription",
                 "assets/images/vectors/cart_screen/weekly_subs.svg",
                 7,
                 widthAdjustedForPadding / 2,
-              )
-            ],
-          ),
-          Row(
-            children: [
+              ),
               subscriptionContainer(
                 "15-Day Subscription",
                 "assets/images/vectors/cart_screen/fifteen_day_subs.svg",
                 15,
                 widthAdjustedForPadding / 2,
               ),
+            ],
+          ),
+          Row(
+            children: [
               subscriptionContainer(
                 "Monthly Subscription",
                 "assets/images/vectors/cart_screen/monthly_subs.svg",
                 30,
-                widthAdjustedForPadding / 2,
+                widthAdjustedForPadding,
               )
             ],
           )

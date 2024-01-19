@@ -32,6 +32,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   }
 
   Box cartBox = Hive.box("cart_box");
+  TextEditingController subscriptionNameController = TextEditingController();
+  TextEditingController instructionController = TextEditingController();
 
   TextEditingController startDateController = TextEditingController();
   TextEditingController endDateController = TextEditingController();
@@ -42,6 +44,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     int breakfastCount = cartBox.get("Breakfast", defaultValue: 0);
     int lunchCount = cartBox.get("Lunch", defaultValue: 0);
     int dinnerCount = cartBox.get("Dinner", defaultValue: 0);
+    bool isSubscription = cartBox.get("is_subscription");
 
     return Scaffold(
       backgroundColor: const Color(0xffffffff),
@@ -68,154 +71,195 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            const SizedBox(height: 10),
-            Container(
-              height: 154,
-              width: MediaQuery.sizeOf(context).width - 40,
-              decoration: ShapeDecoration(
-                color: const Color(0xFFFFFCEF),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+              Container(
+                height: 154,
+                width: MediaQuery.sizeOf(context).width - 40,
+                decoration: ShapeDecoration(
+                  color: const Color(0xFFFFFCEF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 24, top: 16, bottom: 8),
+                      child: Text(
+                        'Time Period',
+                        style: TextStyle(
+                          color: Color(0xFF121212),
+                          fontSize: 14,
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w500,
+                          height: 20 / 14,
+                          letterSpacing: 0.10,
+                        ),
+                      ),
+                    ),
+                    const Divider(height: 0, thickness: 1),
+                    const SizedBox(height: 18),
+                    Row(
+                      children: [
+                        const SizedBox(width: 24),
+                        Flexible(
+                          child: GestureDetector(
+                            onTap: () async {
+                              startDate = await showDatePicker(
+                                context: context,
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime.now().add(
+                                  const Duration(days: 100),
+                                ),
+                              );
+                              if (startDate != null) {
+                                endDate = startDate!
+                                    .add(Duration(days: widget.noOfDays));
+                                String startDateText =
+                                    DateFormat('dd/MM/yyyy').format(startDate!);
+                                String endDateText =
+                                    DateFormat('dd/MM/yyyy').format(endDate!);
+                                setState(() {
+                                  startDateController.text = startDateText;
+                                  endDateController.text = endDateText;
+                                });
+                              }
+                            },
+                            child: AbsorbPointer(
+                              child: dateEntryBox(
+                                isSubscription ? "Start Date" : "Delivery Date",
+                                startDateController,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: isSubscription ? 12 : 0),
+                        isSubscription
+                            ? Flexible(
+                                child: GestureDetector(
+                                  child: AbsorbPointer(
+                                    child: dateEntryBox(
+                                      "End date",
+                                      endDateController,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : const SizedBox(),
+                        const SizedBox(width: 24),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 24, top: 16, bottom: 8),
-                    child: Text(
-                      'Time Period',
+              const SizedBox(height: 20),
+              Container(
+                alignment: Alignment.topCenter,
+                height: 270,
+                width: MediaQuery.sizeOf(context).width - 40,
+                decoration: ShapeDecoration(
+                  color: const Color(0xFFFFFCEF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16),
+                    const Icon(Icons.food_bank, size: 24),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Time corresponding to the meal is tentative.',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color(0xFF121212),
                         fontSize: 14,
                         fontFamily: 'Roboto',
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w400,
                         height: 20 / 14,
-                        letterSpacing: 0.10,
+                        letterSpacing: 0.25,
                       ),
                     ),
-                  ),
-                  const Divider(height: 0, thickness: 1),
-                  const SizedBox(height: 18),
-                  Row(
-                    children: [
-                      const SizedBox(width: 24),
-                      Flexible(
-                        child: GestureDetector(
-                          onTap: () async {
-                            startDate = await showDatePicker(
-                              context: context,
-                              firstDate: DateTime.now(),
-                              lastDate: DateTime.now().add(
-                                const Duration(days: 100),
-                              ),
-                            );
-                            if (startDate != null) {
-                              endDate = startDate!
-                                  .add(Duration(days: widget.noOfDays));
-                              String startDateText =
-                                  DateFormat('dd/MM/yyyy').format(startDate!);
-                              String endDateText =
-                                  DateFormat('dd/MM/yyyy').format(endDate!);
-                              setState(() {
-                                startDateController.text = startDateText;
-                                endDateController.text = endDateText;
-                              });
-                            }
-                          },
-                          child: AbsorbPointer(
-                            child: dateEntryBox(
-                              "Start Date",
-                              startDateController,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Flexible(
-                        child: GestureDetector(
-                          child: AbsorbPointer(
-                            child: dateEntryBox(
-                              "End date",
-                              endDateController,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 24),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              alignment: Alignment.topCenter,
-              height: 362,
-              width: MediaQuery.sizeOf(context).width - 40,
-              decoration: ShapeDecoration(
-                color: const Color(0xFFFFFCEF),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                    const SizedBox(height: 16),
+                    cartSummaryList(
+                      breakfastCount,
+                      lunchCount,
+                      dinnerCount,
+                      context,
+                    ),
+                  ],
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 24),
-                  const Icon(Icons.food_bank, size: 24),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Select Meals per day',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFF121212),
-                      fontSize: 24,
-                      fontFamily: 'Roboto',
-                      fontWeight: FontWeight.w400,
-                      height: 32 / 24,
+              const SizedBox(height: 20),
+              Container(
+                width: MediaQuery.sizeOf(context).width - 40,
+                decoration: ShapeDecoration(
+                  color: const Color(0xFFFFFCEF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 24, top: 16, bottom: 8),
+                      child: Text(
+                        'Add Nore Details (Optional)',
+                        style: TextStyle(
+                          color: Color(0xFF121212),
+                          fontSize: 14,
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w500,
+                          height: 20 / 14,
+                          letterSpacing: 0.10,
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Time corresponding to the meal is tentative.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFF121212),
-                      fontSize: 14,
-                      fontFamily: 'Roboto',
-                      fontWeight: FontWeight.w400,
-                      height: 20 / 14,
-                      letterSpacing: 0.25,
+                    const Divider(thickness: 1, height: 0),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: entryBox(subscriptionNameController,
+                          "Subscription name", null),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  cartSummaryList(
-                    breakfastCount,
-                    lunchCount,
-                    dinnerCount,
-                    context,
-                  ),
-                ],
+                    const SizedBox(height: 16),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child:
+                          entryBox(instructionController, "Instructions", null),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 32),
-            proceedToCheckOutButton(() async {
-              if (startDate != null && endDate != null) {
-                cartBox.putAll({"start_date": startDate, 'end_date': endDate});
-                Navigator.push(context,
-                    SlideTransitionRouter.toNextPage(BillingSummaryScreen()));
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Please choose start date")));
-              }
-            }),
-          ],
+              const SizedBox(height: 24),
+              proceedToCheckOutButton(
+                () async {
+                  if (startDate != null && endDate != null) {
+                    cartBox
+                        .putAll({"start_date": startDate, 'end_date': endDate});
+                    Navigator.push(
+                        context,
+                        SlideTransitionRouter.toNextPage(
+                            BillingSummaryScreen()));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text("Please choose start date")));
+                  }
+                },
+              ),
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );
@@ -313,29 +357,58 @@ Widget cartSummaryEntry(String mealType, String time, int quantity) {
         ),
       ),
       const SizedBox(width: 15),
-      Container(
-        width: 18,
-        height: 18,
-        decoration: ShapeDecoration(
-          color: const Color(0xFF6AA64F),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-        ),
-        child: Center(
-          child: Text(
-            quantity.toString(),
-            textAlign: TextAlign.right,
-            style: const TextStyle(
-              color: Color(0xFFffffff),
-              fontSize: 11,
-              fontFamily: 'Roboto',
-              fontWeight: FontWeight.w700,
-              height: 16 / 11,
-              letterSpacing: 0.50,
-            ),
-          ),
-        ),
-      ),
+      // Container(
+      //   width: 18,
+      //   height: 18,
+      //   decoration: ShapeDecoration(
+      //     color: const Color(0xFF6AA64F),
+      //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      //   ),
+      //   child: Center(
+      //     child: Text(
+      //       quantity.toString(),
+      //       textAlign: TextAlign.right,
+      //       style: const TextStyle(
+      //         color: Color(0xFFffffff),
+      //         fontSize: 11,
+      //         fontFamily: 'Roboto',
+      //         fontWeight: FontWeight.w700,
+      //         height: 16 / 11,
+      //         letterSpacing: 0.50,
+      //       ),
+      //     ),
+      //   ),
+      // ),
     ],
+  );
+}
+
+Widget entryBox(
+    TextEditingController controller, String label, String? autofillHints) {
+  Iterable<String>? autoFill = autofillHints == null ? {} : {autofillHints};
+  return TextFormField(
+    autofillHints: autoFill,
+    controller: controller,
+    style: const TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0.5,
+      height: 24 / 16,
+    ),
+    decoration: InputDecoration(
+      focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xffFFBE1D)),
+          borderRadius: BorderRadius.all(Radius.circular(12))),
+      border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12))),
+      labelText: label,
+      labelStyle: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        color: Color(0x66121212),
+        height: 24 / 16,
+      ),
+    ),
   );
 }
 

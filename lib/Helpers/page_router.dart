@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class SlideTransitionRouter {
   static Route toNextPage(Widget nextPage) {
     return PageRouteBuilder(
-      transitionDuration: const Duration(milliseconds: 300),
-      reverseTransitionDuration: const Duration(milliseconds: 300),
+      transitionDuration: const Duration(milliseconds: 350),
+      reverseTransitionDuration: const Duration(milliseconds: 350),
       pageBuilder: (context, animation, secondaryAnimation) => nextPage,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(1.0, 0.0);
         const end = Offset.zero;
-        var curve = Easing.standard;
+        var curve = Curves.ease;
 
         var tween =
             Tween(begin: begin, end: end).chain(CurveTween(curve: curve));

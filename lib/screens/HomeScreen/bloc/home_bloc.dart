@@ -23,6 +23,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   FutureOr<void> homeInitialFetch(
       HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
     emit(HomeLoadingState());
+    Box cartBox = Hive.box("cart_box");
     if (!event.isCached) {
       Result<List<MenuDataModel>> menu = await HomeRepo.fetchMenu();
       if (menu.isSuccess) {
@@ -75,7 +76,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             emit(HomeErrorState(error: result.error.toString()));
           }
         }
-        Box cartBox = Hive.box("cart_box");
+
         List<MenuDataModel> menuList = menu.data!;
         Map<String, Map<String, Map<String, dynamic>>> menuData = {};
         for (MenuDataModel element in menuList) {
@@ -111,6 +112,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(HomeErrorState(error: menu.error.toString()));
       }
     } else {
+      cartBox.get("menu");
       emit(HomeFetchSuccessfulIsCachedState());
     }
   }

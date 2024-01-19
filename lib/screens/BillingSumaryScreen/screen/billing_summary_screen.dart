@@ -43,21 +43,23 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
   void initState() {
     super.initState();
     summaryBreakdown = getSummaryBreakdown();
-    int bill = 0;
+    double bill = 0;
     List cart = Hive.box("cart_box").get("cart");
     for (var element in cart) {
-      if (element["mealTime"] == "lunch") {
-        bill += int.parse(element["price"].toString());
-      } else if (element["mealTime"] == "dinner") {
-        bill += int.parse(element["price"].toString());
-      } else if (element["mealTime"] == "breakfast") {
-        bill += int.parse(element["price"].toString());
-      }
+      bill += element[0]["price"] * element[1];
+      print(bill);
+      // if (element[0]["mealTime"] == "lunch") {
+      //   bill += int.parse(element[0]["price"].toString());
+      // } else if (element[0]["mealTime"] == "dinner") {
+      //   bill += int.parse(element[0]["price"].toString());
+      // } else if (element[0]["mealTime"] == "breakfast") {
+      //   bill += int.parse(element[0]["price"].toString());
+      // }
     }
     int subType = Hive.box("cart_box").get("subType");
-    bill=bill*subType;
-    summaryBreakdown["Subtotal"] = bill*1.0;
-    summaryBreakdown["GST 5%"] = (bill*5.0)/100;
+    bill = bill * subType;
+    summaryBreakdown["Subtotal"] = bill * 1.0;
+    summaryBreakdown["GST 5%"] = (bill * 5.0) / 100;
     grandTotal = calculateTotal(summaryBreakdown);
   }
 

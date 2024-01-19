@@ -568,41 +568,49 @@ class _NavigationBarCartItemState extends State<NavigationBarCartItem> {
   @override
   Widget build(BuildContext context) {
     int count = 0;
-    return BlocBuilder<HomeBloc, HomeState>(
-      builder: (context, state) {
-        if (state is HomePageCartQuantityChangeState) {
-          count = Hive.box("cart_box").get("cart", defaultValue: []).length;
-        }
-        return Stack(
-          alignment: Alignment.topRight,
-          children: [
-            SizedBox(
-                height: 32,
-                child: widget.isSelected
-                    ? const Icon(Icons.shopping_cart)
-                    : const Icon(Icons.shopping_cart_outlined)),
-            (count > 0)
-                ? Container(
-                    width: 15,
-                    height: 15,
-                    decoration: BoxDecoration(
-                        color: Colors.red.shade400,
-                        borderRadius: BorderRadius.circular(7.5)),
-                    child: Center(
-                      child: Text(
-                        count.toString(),
-                        style: const TextStyle(
-                          height: 1,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
+    return BlocProvider(
+      create: (context) => HomeBloc(),
+      child: BlocConsumer<HomeBloc, HomeState>(
+        listener: (context, state) {
+          if (state is HomePageCartQuantityChangeState) {
+            setState(() {
+              count = Hive.box("cart_box").get("cart", defaultValue: []).length;
+            });
+            print(count);
+          }
+        },
+        builder: (context, state) {
+          return Stack(
+            alignment: Alignment.topRight,
+            children: [
+              SizedBox(
+                  height: 32,
+                  child: widget.isSelected
+                      ? const Icon(Icons.shopping_cart)
+                      : const Icon(Icons.shopping_cart_outlined)),
+              (count > 0)
+                  ? Container(
+                      width: 15,
+                      height: 15,
+                      decoration: BoxDecoration(
+                          color: Colors.red.shade400,
+                          borderRadius: BorderRadius.circular(7.5)),
+                      child: Center(
+                        child: Text(
+                          count.toString(),
+                          style: const TextStyle(
+                            height: 1,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                  )
-                : const SizedBox()
-          ],
-        );
-      },
+                    )
+                  : const SizedBox()
+            ],
+          );
+        },
+      ),
     );
   }
 }

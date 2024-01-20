@@ -109,7 +109,7 @@ class _HomeState extends State<Home> {
                         ? Navigator.push(
                             context,
                             SlideTransitionRouter.toNextPage(
-                              const AddAddressScreen(),
+                              AddAddressScreen(onAdd: () {}),
                             ),
                           )
                         : await showAddressBottomSheet(homeBloc);
@@ -271,7 +271,7 @@ class _HomeState extends State<Home> {
                         ? Navigator.push(
                             context,
                             SlideTransitionRouter.toNextPage(
-                              const AddAddressScreen(),
+                              AddAddressScreen(onAdd: () {}),
                             ),
                           )
                         : await showAddressBottomSheet(homeBloc);

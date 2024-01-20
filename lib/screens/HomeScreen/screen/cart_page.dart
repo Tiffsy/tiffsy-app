@@ -34,53 +34,54 @@ class _CartScreenHomePageState extends State<CartScreenHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 24),
-          const Text(
-            "Your Cart",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              height: 24 / 16,
-              letterSpacing: 0.15,
-              color: Color(0xff121212),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Column(
-            // list of menu cards
-            children: listOfCards,
-          ),
-          listOfCards.isEmpty
-              ? LoadingAnimation.emptyDataAnimation(
-                  context, "Add items from menu")
-              : emptyCartMessageBox(
+    return listOfCards.isEmpty
+        ? LoadingAnimation.emptyDataAnimation(context, "Cart Is Empty")
+        : SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 24),
+                const Text(
+                  "Your Cart",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    height: 24 / 16,
+                    letterSpacing: 0.15,
+                    color: Color(0xff121212),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Column(
+                  // list of menu cards
+                  children: listOfCards,
+                ),
+                emptyCartMessageBox(
                   context,
                   "Choose delivery address on top",
                 ),
-          const SizedBox(height: 10),
-          listOfCards.isEmpty
-              ? const SizedBox()
-              : orderNowButton(() {
-                  if (cartBox.get("is_subscription")) {
-                    Navigator.push(context,
-                        SlideTransitionRouter.toNextPage(const CartScreen()));
-                  } else {
-                    cartBox.put("subType", 1);
-                    Navigator.push(
-                        context,
-                        SlideTransitionRouter.toNextPage(
-                            const SubscriptionScreen(noOfDays: 1)));
-                  }
-                }),
-          const SizedBox(height: 10),
-        ],
-      ),
-    );
+                const SizedBox(height: 10),
+                listOfCards.isEmpty
+                    ? const SizedBox()
+                    : orderNowButton(() {
+                        if (cartBox.get("is_subscription")) {
+                          Navigator.push(
+                              context,
+                              SlideTransitionRouter.toNextPage(
+                                  const CartScreen()));
+                        } else {
+                          cartBox.put("subType", 1);
+                          Navigator.push(
+                              context,
+                              SlideTransitionRouter.toNextPage(
+                                  const SubscriptionScreen(noOfDays: 1)));
+                        }
+                      }),
+                const SizedBox(height: 10),
+              ],
+            ),
+          );
   }
 
   List<Widget> listOfCartCards(HomeBloc homeBloc) {
@@ -328,7 +329,7 @@ class _CustomeCartCardState extends State<CustomeCartCard> {
               ),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 InkWell(
@@ -348,7 +349,6 @@ class _CustomeCartCardState extends State<CustomeCartCard> {
                     color: Color(0xFF329C00),
                   ),
                 ),
-                const SizedBox(width: 10),
                 Text(
                   quantity.toString(),
                   textAlign: TextAlign.center,
@@ -361,7 +361,6 @@ class _CustomeCartCardState extends State<CustomeCartCard> {
                     letterSpacing: 0.15,
                   ),
                 ),
-                const SizedBox(width: 10),
                 InkWell(
                   onTap: () {
                     homeBloc.add(HomePageAddToCartEvent(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:tiffsy_app/Helpers/loading_animation.dart';
 import 'package:tiffsy_app/Helpers/page_router.dart';
 import 'package:tiffsy_app/screens/CalendarScreen/screen/calendar_screen.dart';
 import 'package:tiffsy_app/screens/SubscriptionHomePageScreen/bloc/subscription_home_page_bloc.dart';
@@ -67,33 +68,37 @@ class _SubscriptionHomePageScreenState
               subsCard.add(subscriptionCard(subcriptionList[index].subtype, () {
                 Navigator.push(
                     context,
-                    SlideTransitionRouter.toNextPage(
-                        CalendarScreen(cstId: subcriptionList[index].cstId, subsId: subcriptionList[index].sbcrId)));
+                    SlideTransitionRouter.toNextPage(CalendarScreen(
+                        cstId: subcriptionList[index].cstId,
+                        subsId: subcriptionList[index].sbcrId)));
               }, subcriptionList[index].endDt, subcriptionList[index].addrLine,
                   subcriptionList[index].strDt));
             }
           }
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                    const SizedBox(height: 23),
-                    const Text(
-                      'Current Subscription',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xFF121212),
-                        fontSize: 16,
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.w500,
-                        height: 24 / 16,
-                        letterSpacing: 0.15,
-                      ),
-                    )
-                  ] +
-                  subsCard,
-            ),
-          );
+          return (subsCard.isEmpty)
+              ? LoadingAnimation.subscriptionEmptyAnimation(
+                  context, "No Active Subscription!")
+              : SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                          const SizedBox(height: 23),
+                          const Text(
+                            'Current Subscription',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xFF121212),
+                              fontSize: 16,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w500,
+                              height: 24 / 16,
+                              letterSpacing: 0.15,
+                            ),
+                          )
+                        ] +
+                        subsCard,
+                  ),
+                );
         },
       ),
     );

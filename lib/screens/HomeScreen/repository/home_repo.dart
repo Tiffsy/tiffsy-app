@@ -49,9 +49,8 @@ class HomeRepo {
       Map<String, dynamic> params = {
         "cst_contact": phoneNumber,
       };
-      String token = "";
       var response = await http.post(Uri.parse('$apiJsURL/get-cst-phone'),
-          body: params, headers: {'Authorization': 'Bearer $token'});
+          body: params);
       Map<String, dynamic> result = jsonDecode(response.body);
       return Result(data: result, error: null);
     } catch (err) {

@@ -59,12 +59,12 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     HomeBloc homeBloc = HomeBloc();
+
     if (menuState.menu.isEmpty) {
       homeBloc.add(HomeInitialFetchEvent(isCached: false));
     } else {
       homeBloc.add(HomeInitialFetchEvent(isCached: true));
     }
-    cartBox.put("addr", "A1, Leiure Town");
     return BlocProvider(
       create: (context) => homeBloc,
       child: BlocConsumer<HomeBloc, HomeState>(
@@ -84,6 +84,7 @@ class _HomeState extends State<Home> {
               ),
             );
           } else if (state is HomeFetchSuccessfulState) {
+
             menuState = state;
             Map? temp = addressBox.get("default_address");
             Map<String, dynamic>? tempTwo;
@@ -94,168 +95,335 @@ class _HomeState extends State<Home> {
             defaultAddress = AddressDataModel.fromJsonAllowNull(
               tempTwo,
             );
-          } else if (state is HomeFetchSuccessfulIsCachedState) {}
-          return Scaffold(
-            backgroundColor: const Color(0xffffffff),
-            appBar: AppBar(
-              leadingWidth: 60,
-              leading: const Icon(
-                Icons.location_on,
-                size: 36,
-                color: Color(0xffffbe1d),
-              ),
-              title: GestureDetector(
-                onTap: () async {
-                  (defaultAddress == null)
-                      ? Navigator.push(
+            return Scaffold(
+              backgroundColor: const Color(0xffffffff),
+              appBar: AppBar(
+                leadingWidth: 60,
+                leading: const Icon(
+                  Icons.location_on,
+                  size: 36,
+                  color: Color(0xffffbe1d),
+                ),
+                title: GestureDetector(
+                  onTap: () async {
+                    (defaultAddress == null)
+                        ? Navigator.push(
+                            context,
+                            SlideTransitionRouter.toNextPage(
+                              const AddAddressScreen(),
+                            ),
+                          )
+                        : await showAddressBottomSheet(homeBloc);
+                  },
+                  child: SizedBox(
+                    width: MediaQuery.sizeOf(context).width * 0.4 + 32,
+                    child: (defaultAddress == null)
+                        ? const Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Add Address",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF121212),
+                                  fontSize: 16,
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.w500,
+                                  height: 24 / 16,
+                                  letterSpacing: 0.15,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    constraints: BoxConstraints(
+                                        maxWidth:
+                                            MediaQuery.sizeOf(context).width *
+                                                0.4),
+                                    child: Text(
+                                      defaultAddress!.houseNum,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: Color(0xFF121212),
+                                        fontSize: 16,
+                                        fontFamily: 'Roboto',
+                                        fontWeight: FontWeight.w500,
+                                        height: 24 / 16,
+                                        letterSpacing: 0.15,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    size: 24,
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                (defaultAddress != null)
+                                    ? defaultAddress!.addrLine
+                                    : "",
+                                style: const TextStyle(
+                                  color: Color(0xFF121212),
+                                  fontSize: 12,
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.w400,
+                                  height: 16 / 12,
+                                ),
+                              )
+                            ],
+                          ),
+                  ),
+                ),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 17),
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.push(
                           context,
                           SlideTransitionRouter.toNextPage(
-                            const AddAddressScreen(),
+                            const ProfileScreen(),
                           ),
-                        )
-                      : await showAddressBottomSheet(homeBloc);
-                },
-                child: SizedBox(
-                  width: MediaQuery.sizeOf(context).width * 0.4 + 32,
-                  child: (defaultAddress == null)
-                      ? const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Add Address",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFF121212),
-                                fontSize: 16,
-                                fontFamily: 'Roboto',
-                                fontWeight: FontWeight.w500,
-                                height: 24 / 16,
-                                letterSpacing: 0.15,
-                              ),
-                            ),
-                          ],
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  constraints: BoxConstraints(
-                                      maxWidth:
-                                          MediaQuery.sizeOf(context).width *
-                                              0.4),
+                        );
+                      },
+                      icon: ClipOval(
+                        child: (user.photoURL != null)
+                            ? Image.network(
+                                '${user.photoURL}',
+                                fit: BoxFit.cover,
+                              )
+                            : Container(
+                                color: const Color(0xffFFFCEF),
+                                child: Center(
                                   child: Text(
-                                    defaultAddress!.houseNum,
-                                    textAlign: TextAlign.center,
+                                    Hive.box('customer_box')
+                                        .get('cst_name', defaultValue: "0")[0]
+                                        .toString()
+                                        .toUpperCase(),
                                     style: const TextStyle(
-                                      color: Color(0xFF121212),
-                                      fontSize: 16,
-                                      fontFamily: 'Roboto',
-                                      fontWeight: FontWeight.w500,
-                                      height: 24 / 16,
-                                      letterSpacing: 0.15,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 8),
-                                const Icon(
-                                  Icons.keyboard_arrow_down_rounded,
-                                  size: 24,
-                                ),
-                              ],
-                            ),
-                            Text(
-                              (defaultAddress != null)
-                                  ? defaultAddress!.addrLine
-                                  : "",
-                              style: const TextStyle(
-                                color: Color(0xFF121212),
-                                fontSize: 12,
-                                fontFamily: 'Roboto',
-                                fontWeight: FontWeight.w400,
-                                height: 16 / 12,
                               ),
-                            )
-                          ],
-                        ),
-                ),
+                      ), // TODO: Bio Pic
+                    ),
+                  ),
+                ],
               ),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 17),
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        SlideTransitionRouter.toNextPage(
-                          const ProfileScreen(),
-                        ),
-                      );
-                    },
-                    icon: ClipOval(
-                      child: (user.photoURL != null)
-                          ? Image.network(
-                              '${user.photoURL}',
-                              fit: BoxFit.cover,
-                            )
-                          : Container(
-                              color: const Color(0xffFFFCEF),
-                              child: Center(
-                                child: Text(
-                                  Hive.box('customer_box')
-                                      .get('cst_name')[0]
-                                      .toString()
-                                      .toUpperCase(),
-                                  style: const TextStyle(
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.w600,
+              bottomNavigationBar: NavigationBar(
+                onDestinationSelected: (int index) {
+                  setState(() {
+                    currentPageIndex = index;
+                  });
+                },
+                selectedIndex: currentPageIndex,
+                destinations: const <Widget>[
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.restaurant_menu),
+                    icon: Icon(Icons.restaurant_menu_outlined),
+                    label: 'Menu',
+                  ),
+                  NavigationDestination(
+                    selectedIcon: NavigationBarCartItem(isSelected: true),
+                    icon: NavigationBarCartItem(isSelected: false),
+                    label: 'Cart',
+                  ),
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.food_bank),
+                    icon: Icon(Icons.food_bank_outlined),
+                    label: 'Subscription',
+                  )
+                ],
+              ),
+              body: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                ),
+                child: <Widget>[
+                  MenuScreenHomePage(homeBloc: homeBloc),
+                  CartScreenHomePage(homeBloc: homeBloc),
+                  SubscriptionHomePageScreen()
+                ][currentPageIndex],
+              ),
+            );
+          
+          } else if (state is HomeFetchSuccessfulIsCachedState) {
+            return Scaffold(
+              backgroundColor: const Color(0xffffffff),
+              appBar: AppBar(
+                leadingWidth: 60,
+                leading: const Icon(
+                  Icons.location_on,
+                  size: 36,
+                  color: Color(0xffffbe1d),
+                ),
+                title: GestureDetector(
+                  onTap: () async {
+                    (defaultAddress == null)
+                        ? Navigator.push(
+                            context,
+                            SlideTransitionRouter.toNextPage(
+                              const AddAddressScreen(),
+                            ),
+                          )
+                        : await showAddressBottomSheet(homeBloc);
+                  },
+                  child: SizedBox(
+                    width: MediaQuery.sizeOf(context).width * 0.4 + 32,
+                    child: (defaultAddress == null)
+                        ? const Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Add Address",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF121212),
+                                  fontSize: 16,
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.w500,
+                                  height: 24 / 16,
+                                  letterSpacing: 0.15,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    constraints: BoxConstraints(
+                                        maxWidth:
+                                            MediaQuery.sizeOf(context).width *
+                                                0.4),
+                                    child: Text(
+                                      defaultAddress!.houseNum,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: Color(0xFF121212),
+                                        fontSize: 16,
+                                        fontFamily: 'Roboto',
+                                        fontWeight: FontWeight.w500,
+                                        height: 24 / 16,
+                                        letterSpacing: 0.15,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    size: 24,
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                (defaultAddress != null)
+                                    ? defaultAddress!.addrLine
+                                    : "",
+                                style: const TextStyle(
+                                  color: Color(0xFF121212),
+                                  fontSize: 12,
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.w400,
+                                  height: 16 / 12,
+                                ),
+                              )
+                            ],
+                          ),
+                  ),
+                ),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 17),
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          SlideTransitionRouter.toNextPage(
+                            const ProfileScreen(),
+                          ),
+                        );
+                      },
+                      icon: ClipOval(
+                        child: (user.photoURL != null)
+                            ? Image.network(
+                                '${user.photoURL}',
+                                fit: BoxFit.cover,
+                              )
+                            : Container(
+                                color: const Color(0xffFFFCEF),
+                                child: Center(
+                                  child: Text(
+                                    Hive.box('customer_box')
+                                        .get('cst_name')[0]
+                                        .toString()
+                                        .toUpperCase(),
+                                    style: const TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                    ), // TODO: Bio Pic
+                      ), // TODO: Bio Pic
+                    ),
                   ),
-                ),
-              ],
-            ),
-            bottomNavigationBar: NavigationBar(
-              onDestinationSelected: (int index) {
-                setState(() {
-                  currentPageIndex = index;
-                });
-              },
-              selectedIndex: currentPageIndex,
-              destinations: const <Widget>[
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.restaurant_menu),
-                  icon: Icon(Icons.restaurant_menu_outlined),
-                  label: 'Menu',
-                ),
-                NavigationDestination(
-                  selectedIcon: NavigationBarCartItem(isSelected: true),
-                  icon: NavigationBarCartItem(isSelected: false),
-                  label: 'Cart',
-                ),
-                NavigationDestination(
-                  selectedIcon: Icon(Icons.food_bank),
-                  icon: Icon(Icons.food_bank_outlined),
-                  label: 'Subscription',
-                )
-              ],
-            ),
-            body: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
+                ],
               ),
-              child: <Widget>[
-                MenuScreenHomePage(homeBloc: homeBloc),
-                CartScreenHomePage(homeBloc: homeBloc),
-                SubscriptionHomePageScreen()
-              ][currentPageIndex],
-            ),
-          );
+              bottomNavigationBar: NavigationBar(
+                onDestinationSelected: (int index) {
+                  setState(() {
+                    currentPageIndex = index;
+                  });
+                },
+                selectedIndex: currentPageIndex,
+                destinations: const <Widget>[
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.restaurant_menu),
+                    icon: Icon(Icons.restaurant_menu_outlined),
+                    label: 'Menu',
+                  ),
+                  NavigationDestination(
+                    selectedIcon: NavigationBarCartItem(isSelected: true),
+                    icon: NavigationBarCartItem(isSelected: false),
+                    label: 'Cart',
+                  ),
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.food_bank),
+                    icon: Icon(Icons.food_bank_outlined),
+                    label: 'Subscription',
+                  )
+                ],
+              ),
+              body: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                ),
+                child: <Widget>[
+                  MenuScreenHomePage(homeBloc: homeBloc),
+                  CartScreenHomePage(homeBloc: homeBloc),
+                  SubscriptionHomePageScreen()
+                ][currentPageIndex],
+              ),
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
         },
       ),
     );

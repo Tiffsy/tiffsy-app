@@ -24,7 +24,5 @@ class ProfilePageButtonPressState extends ProfileState {
 
 class ProfilePageLogoutButtonOnPressState extends ProfileState {}
 
-class ProfilePageLogoutLoadingState extends ProfileState {
-  final User user;
-  const ProfilePageLogoutLoadingState({required this.user});
-}
+
+class LogoutLoadingState extends ProfileState {}

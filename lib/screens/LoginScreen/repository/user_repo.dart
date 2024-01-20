@@ -25,6 +25,7 @@ class UserRepo {
 
   Future<void> storePhoneNumber({required String phoneNumber}) async {
     CollectionReference users = firestore.collection('users_phone');
+    
     await users.add({
       'phoneNumber': phoneNumber,
     });

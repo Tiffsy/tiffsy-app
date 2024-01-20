@@ -10,12 +10,14 @@ part 'login_event.dart';
 part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
+
   String loginResult = "";
   UserRepo userRepo = UserRepo();
   UserCredential? userCredential;
   late final GoogleSignIn _googleSignIn;
 
   LoginBloc(super.initialState) {
+
     on<SendOtpToPhoneEvent>((event, emit) async {
       emit(AuthLoadingState());
       try {
@@ -62,8 +64,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             .signInWithCredential(event.credential)
             .then((value) {
           final user = FirebaseAuth.instance.currentUser!;
+          String cstPhone = user.phoneNumber.toString();
+          cstPhone = cstPhone.substring(3);
+
+          print(user.phoneNumber);
           add(CheckPreviousPhoneEvent(
-              phoneNumber: user.phoneNumber.toString()));
+              phoneNumber: cstPhone));
           // emit(LoginScreenLoadedState());
         });
       } catch (err) {

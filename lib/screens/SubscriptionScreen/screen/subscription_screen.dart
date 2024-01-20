@@ -213,7 +213,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     const Padding(
                       padding: EdgeInsets.only(left: 24, top: 16, bottom: 8),
                       child: Text(
-                        'Add Nore Details (Optional)',
+                        'Add More Details (Optional)',
                         style: TextStyle(
                           color: Color(0xFF121212),
                           fontSize: 14,
@@ -244,6 +244,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               const SizedBox(height: 24),
               proceedToCheckOutButton(
                 () async {
+                  cartBox.putAll({
+                    "sub_name": subscriptionNameController.text,
+                    "sub_instructions": instructionController.text
+                  });
                   if (startDate != null && endDate != null) {
                     cartBox
                         .putAll({"start_date": startDate, 'end_date': endDate});

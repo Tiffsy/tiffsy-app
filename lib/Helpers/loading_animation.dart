@@ -7,7 +7,7 @@ class LoadingAnimation {
   static const String _animationTwo =
       "assets/loading_animations/tiffsy_loading_animation2.json";
   static const String _circularLoadingAnimation =
-      "assets/loading_animations/tiffsy_loading_animation1.json";
+      "assets/loading_animations/circular_loading_animation.json";
   static const String _emptyPageAnimation =
       "assets/loading_animations/empty_data_animations.json";
 

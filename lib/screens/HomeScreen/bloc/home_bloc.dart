@@ -22,30 +22,44 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   FutureOr<void> homeInitialFetch(
       HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
+
     emit(HomeLoadingState());
+    
     Box cartBox = Hive.box("cart_box");
+    
+    print(event.isCached);
+
     if (!event.isCached) {
+
       Result<List<MenuDataModel>> menu = await HomeRepo.fetchMenu();
+
       if (menu.isSuccess) {
         bool loginMethod = HomeRepo.checkUserAuthenticationMethod();
-        if (loginMethod) {
+        
+        if (loginMethod) { // login method true means phone login
+
           String cstPhone = HomeRepo.getUserInfo();
           cstPhone = cstPhone.substring(3);
-
+          print(cstPhone);
           Result<Map<String, dynamic>> result =
               await HomeRepo.getCustomerIdByPhone(cstPhone);
-          print(result.error);
+
+          print(result.data);
+
           if (result.isSuccess) {
             Map<String, dynamic> cstDetails = result.data!;
             Box customerBox = await Hive.openBox("customer_box");
             customerBox.putAll(cstDetails);
+
             Result<String> token = await HomeRepo.getToken(
                 cstDetails["cst_mail"],
                 cstDetails["cst_id"],
                 cstDetails["cst_contact"]);
             if (token.isSuccess) {
+
               print(token.data);
               customerBox.put("token", token.data);
+
             } else {
               emit(HomeErrorState(error: token.error.toString()));
             }
@@ -53,11 +67,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             emit(HomeErrorState(error: result.error.toString()));
           }
         } else {
+
           String cstMail = HomeRepo.getUserInfo();
           print(cstMail);
           Result<Map<String, dynamic>> result =
               await HomeRepo.getCustomerIdByMail(cstMail);
           print(result.data);
+
           if (result.isSuccess) {
             print(result.data);
             Map<String, dynamic> cstDetails = result.data!;
@@ -104,7 +120,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             addressBox.put("list_of_address", listOfAddress);
           }
         }
-
         cartBox.put('menu', menuData);
         emit(HomeFetchSuccessfulState(menu: menuList));
         // emit(UpdateCartBadge(quantity: cartCount()));
@@ -112,8 +127,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         print(menu.error.toString());
         emit(HomeErrorState(error: menu.error.toString()));
       }
-    } else {
+    } 
+    else { 
       cartBox.get("menu");
+
       emit(HomeFetchSuccessfulIsCachedState());
       // emit(UpdateCartBadge(quantity: cartCount()));
     }

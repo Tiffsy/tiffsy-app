@@ -109,17 +109,21 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
             );
-          }
-          if (state is ProfilePageButtonPressState) {
-            Navigator.push(
-                context, SlideTransitionRouter.toNextPage(state.newPage));
-            profileBloc.add(ProfileBlocInitialEvent());
-          }
-          if (state is ProfilePageLogoutButtonOnPressState) {
-            Navigator.pushAndRemoveUntil(
-                context,
-                SlideTransitionRouter.toNextPage(const LoginScreen()),
-                (route) => route.isFirst);
+          } else if (state is ProfilePageLogoutButtonOnPressState) {
+            NavigatorState navigatorState = Navigator.of(this.context);
+            while (navigatorState.canPop()) {
+              navigatorState.pop();
+            }
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (BuildContext context) {
+                return LoginScreen();
+              }),
+            );
+          } else if (state is LogoutLoadingState) {
+            Center(
+              child: CircularProgressIndicator(),
+            );
           }
         },
         builder: (context, state) {
@@ -183,9 +187,7 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
             );
-          }
-
-          if (state is ProfilePageLogoutLoadingState) {
+          } else {
             return Scaffold(
               backgroundColor: const Color(0xfffffcef),
               appBar: AppBar(
@@ -220,7 +222,7 @@ class _ProfileState extends State<Profile> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                          userCard(state.user),
+                          //userCard(state.user),
                           const SizedBox(height: 12),
                           listOfHorizontalCardButtons(
                               getHorizontalListButtonOptions(),
@@ -244,62 +246,6 @@ class _ProfileState extends State<Profile> {
               ),
             );
           }
-          return Scaffold(
-            backgroundColor: const Color(0xfffffcef),
-            appBar: AppBar(
-              backgroundColor: const Color(0xfffffcef),
-              leadingWidth: 64,
-              titleSpacing: 0,
-              leading: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_rounded,
-                  color: Color(0xff323232),
-                  size: 24,
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              title: const Text(
-                "Your Profile",
-                style: TextStyle(
-                  fontSize: 20,
-                  height: 28 / 20,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xff121212),
-                ),
-              ),
-            ),
-            body: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 5),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                        //userCard(state.user),
-                        const SizedBox(height: 12),
-                        listOfHorizontalCardButtons(
-                            getHorizontalListButtonOptions(),
-                            MediaQuery.sizeOf(context).width),
-                        const SizedBox(height: 12)
-                      ] +
-                      listOfVerticalOptions(getVerticalListButtonOptions()) +
-                      [
-                        logoutButton(
-                            onPressed: () {
-                              profileBloc
-                                  .add(ProfilePageLogoutButtonOnPressEvent());
-                            },
-                            icon: const SizedBox(
-                                height: 15,
-                                width: 15,
-                                child: CircularProgressIndicator()))
-                      ],
-                ),
-              ),
-            ),
-          );
         },
       ),
     );
@@ -350,8 +296,9 @@ Widget userCard(User user) {
             ),
             const SizedBox(width: 18),
             Text(
-              capitalizeEachWord(user.displayName.toString()) ??
-                  capitalizeEachWord(
+              user.displayName != null
+                  ? capitalizeEachWord(user.displayName.toString())
+                  : capitalizeEachWord(
                       Hive.box('customer_box').get('cst_name').toString()),
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(

@@ -24,3 +24,9 @@ final class SubscriptionLoadingState extends HomeState {}
 final class HomePageCartQuantityChangeState extends HomeState {}
 
 final class HomeFetchSuccessfulIsCachedState extends HomeState {}
+
+final class UpdateCartBadge extends HomeState {
+  final int quantity;
+
+  UpdateCartBadge({required this.quantity});
+}

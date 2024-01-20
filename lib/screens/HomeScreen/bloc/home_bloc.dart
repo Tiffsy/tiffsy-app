@@ -107,6 +107,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
         cartBox.put('menu', menuData);
         emit(HomeFetchSuccessfulState(menu: menuList));
+        // emit(UpdateCartBadge(quantity: cartCount()));
       } else {
         print(menu.error.toString());
         emit(HomeErrorState(error: menu.error.toString()));
@@ -114,6 +115,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     } else {
       cartBox.get("menu");
       emit(HomeFetchSuccessfulIsCachedState());
+      // emit(UpdateCartBadge(quantity: cartCount()));
     }
   }
 
@@ -138,6 +140,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         for (var element in cart) {
           if (element[0]["mealTime"] == event.mealTime) {
             emit(HomePageCartQuantityChangeState());
+            emit(UpdateCartBadge(quantity: cartCount()));
             Fluttertoast.showToast(
                 msg: "Can't add the same item twice",
                 toastLength: Toast.LENGTH_LONG);
@@ -149,6 +152,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           cart.add([menuAddedToCart, 1]);
           cartBox.put("cart", cart);
           emit(HomePageCartQuantityChangeState());
+          emit(UpdateCartBadge(quantity: cartCount()));
           Fluttertoast.showToast(
               msg:
                   "${toSentenceCase(event.mealType)} ${toSentenceCase(event.mealTime)} added to cart!",
@@ -201,6 +205,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       // }
     }
     emit(HomeFetchSuccessfulIsCachedState());
+    emit(UpdateCartBadge(quantity: cartCount()));
   }
 
   FutureOr<void> homePageRemoveFromCartEvent(
@@ -240,4 +245,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 String toSentenceCase(String input) {
   if (input.isEmpty) return '';
   return '${input[0].toUpperCase()}${input.substring(1).toLowerCase()}';
+}
+
+int cartCount() {
+  return Hive.box("cart_box").get("cart", defaultValue: []).length;
 }

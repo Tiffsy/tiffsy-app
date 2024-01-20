@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:tiffsy_app/Helpers/loading_animation.dart';
 import 'package:tiffsy_app/screens/AddAddressScreen/bloc/add_address_screen_dart_bloc.dart';
 import 'package:tiffsy_app/screens/AddressBookScreen/bloc/address_book_bloc.dart';
 
 class AddAddressScreen extends StatefulWidget {
-  const AddAddressScreen({super.key});
+  const AddAddressScreen({super.key, required this.onAdd});
+  final Function onAdd;
 
   @override
   State<AddAddressScreen> createState() => _AddAddressScreenState();
@@ -85,13 +87,13 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
               );
             } else if (state is AddAddressSuccessState) {
               Navigator.pop(context);
-              AddressBookBloc().add(AddressBookInitialFetchEvent());
+              widget.onAdd();
             }
           },
           builder: (context, state) {
             if (state is AddAddressLoadingState) {
-              return const Center(
-                child: CircularProgressIndicator(),
+              return Center(
+                child: LoadingAnimation.circularLoadingAnimation(context),
               );
             }
             return Padding(
@@ -211,6 +213,8 @@ Widget dropDownMenu(
       Icons.keyboard_arrow_down_rounded,
       size: 24,
     ),
+    enableSearch: true,
+    enableFilter: true,
     dropdownMenuEntries: dropDownMenuEntries,
     controller: controller,
     requestFocusOnTap: true,

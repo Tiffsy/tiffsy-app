@@ -19,6 +19,7 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
   Box cartBox = Hive.box("cart_box");
   bool orderNowButtonIsExpanded = false;
   bool subscriptionButtonIsExpanded = false;
+  ScrollController topButtonsHorizontalScrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeBloc, HomeState>(
@@ -35,9 +36,20 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 24),
-              orderNowExpandableButton(),
-              const SizedBox(height: 12),
-              subscriptionExpandableButton(),
+              SizedBox(
+                width: MediaQuery.sizeOf(context).width - 39,
+                child: SingleChildScrollView(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      orderNowExpandableButton(),
+                      subscriptionExpandableButton(),
+                    ],
+                  ),
+                ),
+              ),
               const SizedBox(height: 12),
               const Text(
                 // Today's Menu
@@ -73,13 +85,18 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
         });
       },
       child: AnimatedContainer(
-        height: orderNowButtonIsExpanded ? 160 : 42,
+        height: orderNowButtonIsExpanded ? 170 : 46,
+        width: subscriptionButtonIsExpanded
+            ? 0
+            : (orderNowButtonIsExpanded
+                ? (MediaQuery.sizeOf(context).width - 40)
+                : ((MediaQuery.sizeOf(context).width - 40) / 2) - 6),
         duration: const Duration(milliseconds: 300),
         curve: Curves.ease,
         decoration: ShapeDecoration(
           shape: RoundedRectangleBorder(
             borderRadius:
-                BorderRadius.circular(orderNowButtonIsExpanded ? 16 : 8),
+                BorderRadius.circular(orderNowButtonIsExpanded ? 20 : 12),
             side: BorderSide(
                 width: orderNowButtonIsExpanded ? 1.5 : 1,
                 color: const Color(0xffFFBE1D)),
@@ -90,23 +107,32 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
         ),
         child: SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
-              const Text(
-                "Order Now!",
-                style: TextStyle(
-                  color: Color(0xFF121212),
-                  fontSize: 16,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w500,
-                  height: 20 / 16,
-                  letterSpacing: 0.10,
+          child: SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 46,
+                  width: (MediaQuery.sizeOf(context).width - 40) / 2 - 6,
+                  child: const Center(
+                    child: Text(
+                      "Order Now!",
+                      style: TextStyle(
+                        color: Color(0xFF121212),
+                        fontSize: 16,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w500,
+                        height: 20 / 16,
+                        letterSpacing: 0.10,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              rowOfOrderNowCards(context, widget.homeBloc),
-            ],
+                rowOfOrderNowCards(context, widget.homeBloc),
+              ],
+            ),
           ),
         ),
       ),
@@ -122,13 +148,20 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
         });
       },
       child: AnimatedContainer(
-        height: subscriptionButtonIsExpanded ? 160 : 42,
+        height: subscriptionButtonIsExpanded ? 170 : 46,
+        width: orderNowButtonIsExpanded
+            ? 0
+            : orderNowButtonIsExpanded
+                ? 0
+                : (subscriptionButtonIsExpanded
+                    ? (MediaQuery.sizeOf(context).width - 40)
+                    : ((MediaQuery.sizeOf(context).width - 40) / 2) - 6),
         duration: const Duration(milliseconds: 300),
         curve: Curves.ease,
         decoration: ShapeDecoration(
           shape: RoundedRectangleBorder(
             borderRadius:
-                BorderRadius.circular(subscriptionButtonIsExpanded ? 16 : 8),
+                BorderRadius.circular(subscriptionButtonIsExpanded ? 20 : 12),
             side: BorderSide(
                 width: subscriptionButtonIsExpanded ? 1.5 : 1,
                 color: const Color(0xffFFBE1D)),
@@ -138,23 +171,33 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
               : const Color(0xffffbe1d),
         ),
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
-              const Text(
-                "Get a Subscription!",
-                style: TextStyle(
-                  color: Color(0xFF121212),
-                  fontSize: 16,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w500,
-                  height: 20 / 16,
-                  letterSpacing: 0.10,
+          physics: const NeverScrollableScrollPhysics(),
+          child: SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 46,
+                  width: (MediaQuery.sizeOf(context).width - 40) / 2 - 6,
+                  child: const Center(
+                    child: Text(
+                      "Get Subscription!",
+                      style: TextStyle(
+                        color: Color(0xFF121212),
+                        fontSize: 16,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w500,
+                        height: 20 / 16,
+                        letterSpacing: 0.10,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              rowOfSubscriptionCards(context, widget.homeBloc),
-            ],
+                rowOfSubscriptionCards(context, widget.homeBloc),
+              ],
+            ),
           ),
         ),
       ),
@@ -261,7 +304,7 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
 
   Widget rowOfOrderNowCards(BuildContext context, HomeBloc homeBloc) {
     return SizedBox(
-      //width: MediaQuery.sizeOf(context).width,
+      width: MediaQuery.sizeOf(context).width - 40,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -283,21 +326,38 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
   }
 
   Widget rowOfSubscriptionCards(BuildContext context, HomeBloc homeBloc) {
+    Map<String, bool> enabledButtons = {
+      "breakfast": true,
+      "lunch": true,
+      "dinner": true,
+    };
+    if (cartBox.get("is_subscription", defaultValue: true)) {
+      List cart = cartBox.get("cart");
+      cart.forEach((element) {
+        enabledButtons[element[0]["mealTime"]] = false;
+      });
+    }
     return SizedBox(
-      //width: MediaQuery.sizeOf(context).width,
+      width: MediaQuery.sizeOf(context).width - 40,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           orderSubscriptionButtons(
               context,
               "assets/images/vectors/home_screen/Brunch.svg",
+              enabledButtons["breakfast"] ?? true,
               "breakfast",
               homeBloc),
-          orderSubscriptionButtons(context,
-              "assets/images/vectors/home_screen/Ramen.svg", "lunch", homeBloc),
+          orderSubscriptionButtons(
+              context,
+              "assets/images/vectors/home_screen/Ramen.svg",
+              enabledButtons["lunch"] ?? true,
+              "lunch",
+              homeBloc),
           orderSubscriptionButtons(
               context,
               "assets/images/vectors/home_screen/Spaghetti.svg",
+              enabledButtons["dinner"] ?? true,
               "dinner",
               homeBloc),
         ],
@@ -350,8 +410,8 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
             },
             borderRadius: BorderRadius.circular(6),
             child: Container(
-              width: 76,
-              height: 28,
+              width: 86,
+              height: 30,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               clipBehavior: Clip.antiAlias,
               decoration: ShapeDecoration(
@@ -388,7 +448,7 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
   }
 
   Widget orderSubscriptionButtons(BuildContext context, String imageAsset,
-      String menuTime, HomeBloc homeBloc) {
+      bool isEnabled, String menuTime, HomeBloc homeBloc) {
     return SizedBox(
       child: Stack(
         alignment: Alignment.bottomCenter,
@@ -427,23 +487,31 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
           ),
           InkWell(
             onTap: () async {
-              Map<String, Map<String, Map>> menu = cartBox.get('menu');
-              showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
+              if (isEnabled) {
+                Map<String, Map<String, Map>> menu = cartBox.get('menu');
+                showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
+              }
             },
             borderRadius: BorderRadius.circular(6),
             child: Container(
-              width: 76,
-              height: 28,
+              width: 86,
+              height: 30,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               clipBehavior: Clip.antiAlias,
               decoration: ShapeDecoration(
-                color: const Color(0xffcbffb3),
+                color: isEnabled
+                    ? const Color(0xffcbffb3)
+                    : const Color(0xffdfdfdf),
                 shape: RoundedRectangleBorder(
-                  side: const BorderSide(width: 1, color: Color(0xFF6AA64F)),
+                  side: BorderSide(
+                      width: 1,
+                      color: isEnabled
+                          ? const Color(0xFF6AA64F)
+                          : const Color(0xff666666)),
                   borderRadius: BorderRadius.circular(6),
                 ),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -452,7 +520,9 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
                     'Add',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Color(0xFF6AA64F),
+                      color: isEnabled
+                          ? const Color(0xFF6AA64F)
+                          : const Color(0xff666666),
                       fontSize: 12,
                       fontFamily: 'Roboto',
                       fontWeight: FontWeight.w500,

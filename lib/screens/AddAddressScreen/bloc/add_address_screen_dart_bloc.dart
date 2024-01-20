@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:tiffsy_app/Constants/network_contants.dart';
+import 'package:tiffsy_app/screens/AddressBookScreen/model/address_data_model.dart';
 part 'add_address_screen_dart_event.dart';
 part 'add_address_screen_dart_state.dart';
 
@@ -42,10 +43,17 @@ class AddAddressScreenDartBloc
 
       Box customer_box = Hive.box("customer_box");
       String token = customer_box.get("token");
-      
-      var response =
-          await http.post(Uri.parse('$apiJsURL/add-address'), body: params, headers: {'Authorization': 'Bearer $token'});
+
+      var response = await http.post(Uri.parse('$apiJsURL/add-address'),
+          body: params, headers: {'Authorization': 'Bearer $token'});
       if (response.statusCode == 200) {
+        Box addressBox = Hive.box("address_box");
+        List listOfAddress = await addressBox.get("list_of_address");
+        Map defaultAddress = await addressBox.get("default_address");
+        listOfAddress.add(params);
+        await addressBox.putAll(
+            {"list_of_address": listOfAddress, "default_address": params});
+
         emit(AddAddressSuccessState());
       } else {
         emit(AddAddressErrorState(error: response.statusCode.toString()));

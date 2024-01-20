@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_svg/svg.dart";
+import "package:hive/hive.dart";
 import "package:tiffsy_app/Helpers/loading_animation.dart";
 import "package:tiffsy_app/Helpers/page_router.dart";
 import "package:tiffsy_app/screens/AddAddressScreen/screen/add_address_screen.dart";
@@ -17,6 +18,21 @@ class AddressBookScreen extends StatefulWidget {
 class _AddressBookScreenState extends State<AddressBookScreen> {
   bool isEmpty = true;
   List<AddressDataModel> addressListState = [];
+
+  void updateAddress() {
+    // AddressBookBloc().add(AddressBookInitialFetchEvent());
+    Box addressBox = Hive.box("address_box");
+    List listOfAddressJsons = addressBox.get("list_of_address");
+    addressListState = [];
+    for (var element in listOfAddressJsons) {
+      addressListState.add(AddressDataModel.fromJson(element));
+    }
+    print(addressListState);
+    setState(() {
+      addressListState = addressListState;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -53,8 +69,10 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text(state.error)));
             } else if (state is AddAddressButtonClickedState) {
-              Navigator.push(context,
-                  SlideTransitionRouter.toNextPage(AddAddressScreen()));
+              Navigator.push(
+                  context,
+                  SlideTransitionRouter.toNextPage(
+                      AddAddressScreen(onAdd: updateAddress)));
             }
           },
           builder: (context, state) {
@@ -64,7 +82,8 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
             } else if (state is NoAddressAddedState) {
               isEmpty = true;
             } else if (state is AddressBookLoadingState) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                  child: LoadingAnimation.circularLoadingAnimation(context));
             }
             return Column(
               children: [

@@ -1,6 +1,12 @@
 import "package:flutter/material.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
+import "package:fluttertoast/fluttertoast.dart";
 import "package:hive/hive.dart";
+import "package:razorpay_flutter/razorpay_flutter.dart";
 import "package:tiffsy_app/Helpers/page_router.dart";
+import "package:tiffsy_app/screens/BillingSumaryScreen/bloc/billing_summary_bloc.dart";
+import "package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart";
+import "package:tiffsy_app/screens/LoginScreen/screen/login_screen.dart";
 import "package:tiffsy_app/screens/PaymentCheckoutScreen/screen/payment_checkout_screen.dart";
 
 class BillingSummaryScreen extends StatefulWidget {
@@ -20,7 +26,7 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
     // as the value. Also all te values will be added up later so if they need to be
     // substracted then they should be negative, when displaying the sign will be
     // ignored.
-    return {"Subtotal": 0, "Discount": 0, "Shipping": 0, "GST 5%": 0};
+    return {"Subtotal": 1000, "Discount": 0, "Shipping": 0, "GST 5%": 0};
   }
 
   double calculateTotal(Map<String, double> summaryBreakdown) {
@@ -43,68 +49,117 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
   void initState() {
     super.initState();
     summaryBreakdown = getSummaryBreakdown();
-    double bill = 0;
-    List cart = Hive.box("cart_box").get("cart");
-    for (var element in cart) {
-      bill += element[0]["price"] * element[1];
-      print(bill);
-      // if (element[0]["mealTime"] == "lunch") {
-      //   bill += int.parse(element[0]["price"].toString());
-      // } else if (element[0]["mealTime"] == "dinner") {
-      //   bill += int.parse(element[0]["price"].toString());
-      // } else if (element[0]["mealTime"] == "breakfast") {
-      //   bill += int.parse(element[0]["price"].toString());
-      // }
-    }
-    int subType = Hive.box("cart_box").get("subType");
-    bill = bill * subType;
-    summaryBreakdown["Subtotal"] = bill * 1.0;
-    summaryBreakdown["GST 5%"] = (bill * 5.0) / 100;
+    
+    // double bill = 0;
+    // List cart = Hive.box("cart_box").get("cart");
+    // for (var element in cart) {
+    //   bill += element[0]["price"] * element[1];
+    //   print(bill);
+    //   // if (element[0]["mealTime"] == "lunch") {
+    //   //   bill += int.parse(element[0]["price"].toString());
+    //   // } else if (element[0]["mealTime"] == "dinner") {
+    //   //   bill += int.parse(element[0]["price"].toString());
+    //   // } else if (element[0]["mealTime"] == "breakfast") {
+    //   //   bill += int.parse(element[0]["price"].toString());
+    //   // }
+    // }
+    // int subType = Hive.box("cart_box").get("subType");
+    // bill = bill * subType;
+    // summaryBreakdown["Subtotal"] = bill * 1.0;
+    // summaryBreakdown["GST 5%"] = (bill * 5.0) / 100;
+
     grandTotal = calculateTotal(summaryBreakdown);
   }
 
   @override
+  void dispose() {
+   
+    super.dispose();
+  }
+
+
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xffffffff),
-      appBar: AppBar(
-        leadingWidth: 64,
-        titleSpacing: 0,
-        backgroundColor: const Color(0xffffffff),
-        surfaceTintColor: const Color(0xffffffff),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_rounded,
-            color: Color(0xff323232),
-            size: 24,
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text(
-          "Billing summary",
-          style: TextStyle(
-            fontSize: 20,
-            height: 28 / 20,
-            fontWeight: FontWeight.w400,
-            color: Color(0xff121212),
-          ),
-        ),
+    return BlocProvider(
+      create: (context) => BillingSummaryBloc(
+        onPaymentSuccess: () {
+          // Navigate to the home screen on successful payment
+          Navigator.push(
+                  context,
+                  SlideTransitionRouter.toNextPage(
+                      LoginScreen()));
+        },
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
-        child: SingleChildScrollView(
-          child: Column(
-              children: billingInformation(summaryBreakdown, grandTotal) +
-                  couponEntryBox(couponCodeController, getlistOfCoupons(),
-                      clearCouponButton) +
-                  proceedButton(() {
-                    Navigator.push(
-                        context,
-                        SlideTransitionRouter.toNextPage(
-                            PaymentCheckoutScreen(amount: grandTotal)));
-                  })),
+      child: Scaffold(
+        backgroundColor: const Color(0xffffffff),
+        appBar: AppBar(
+          leadingWidth: 64,
+          titleSpacing: 0,
+          backgroundColor: const Color(0xffffffff),
+          surfaceTintColor: const Color(0xffffffff),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_rounded,
+              color: Color(0xff323232),
+              size: 24,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: const Text(
+            "Billing summary",
+            style: TextStyle(
+              fontSize: 20,
+              height: 28 / 20,
+              fontWeight: FontWeight.w400,
+              color: Color(0xff121212),
+            ),
+          ),
+        ),
+        body: BlocConsumer<BillingSummaryBloc, BillingSummaryState>(
+          listener: (context, state) {
+            if(state is TransactionLoadingState){
+              Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+          builder: (context, state) {
+            if (state is RazorpayInProgress) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state is RazorpaySuccess) {
+              // No need to handle navigation here
+              return Container();
+            } else if (state is RazorpayFailure) {
+              return Center(
+                child: Text('Payment Failed: ${state.errorMessage}'),
+              );
+            } else {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+                child: SingleChildScrollView(
+                  child: Column(
+                      children:
+                          billingInformation(summaryBreakdown, grandTotal) +
+                              couponEntryBox(couponCodeController,
+                                  getlistOfCoupons(), clearCouponButton) +
+                              proceedButton(() {
+
+                                BlocProvider.of<BillingSummaryBloc>(context)
+                                    .initializePayment(grandTotal);
+                                // Navigator.push(
+                                //     context,
+                                //     SlideTransitionRouter.toNextPage(
+                                //         PaymentCheckoutScreen(amount: grandTotal)));
+                              })),
+                ),
+              );
+            }
+          },
         ),
       ),
     );

@@ -331,7 +331,12 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
       "lunch": true,
       "dinner": true,
     };
-    if (cartBox.get("is_subscription", defaultValue: true)) {}
+    if (cartBox.get("is_subscription", defaultValue: true)) {
+      List cart = cartBox.get("cart", defaultValue: []);
+      cart.forEach((element) {
+        enabledButtons[element[0]["mealTime"]] = false;
+      });
+    }
     return SizedBox(
       width: MediaQuery.sizeOf(context).width - 40,
       child: Row(

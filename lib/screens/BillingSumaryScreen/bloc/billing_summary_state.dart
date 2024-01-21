@@ -8,3 +8,15 @@ sealed class BillingSummaryState extends Equatable {
 }
 
 final class BillingSummaryInitial extends BillingSummaryState {}
+
+class TransactionLoadingState extends BillingSummaryState{}
+
+class RazorpayInProgress extends BillingSummaryState {}
+
+class RazorpaySuccess extends BillingSummaryState {}
+
+class RazorpayFailure extends BillingSummaryState {
+  final String errorMessage;
+  RazorpayFailure({required this.errorMessage});
+}
+

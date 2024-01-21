@@ -31,6 +31,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  
   final user = FirebaseAuth.instance.currentUser!;
 
   @override
@@ -418,8 +419,166 @@ class _HomeState extends State<Home> {
               ),
             );
           } else {
-            return Center(
-              child: CircularProgressIndicator(),
+            return Scaffold(
+              backgroundColor: const Color(0xffffffff),
+              appBar: AppBar(
+                leadingWidth: 60,
+                leading: const Icon(
+                  Icons.location_on,
+                  size: 36,
+                  color: Color(0xffffbe1d),
+                ),
+                title: GestureDetector(
+                  onTap: () async {
+                    (defaultAddress == null)
+                        ? Navigator.push(
+                            context,
+                            SlideTransitionRouter.toNextPage(
+                              AddAddressScreen(onAdd: () {}),
+                            ),
+                          )
+                        : await showAddressBottomSheet(homeBloc);
+                  },
+                  child: SizedBox(
+                    width: MediaQuery.sizeOf(context).width * 0.4 + 32,
+                    child: (defaultAddress == null)
+                        ? const Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Add Address",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFF121212),
+                                  fontSize: 16,
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.w500,
+                                  height: 24 / 16,
+                                  letterSpacing: 0.15,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    constraints: BoxConstraints(
+                                        maxWidth:
+                                            MediaQuery.sizeOf(context).width *
+                                                0.4),
+                                    child: Text(
+                                      defaultAddress!.houseNum,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        color: Color(0xFF121212),
+                                        fontSize: 16,
+                                        fontFamily: 'Roboto',
+                                        fontWeight: FontWeight.w500,
+                                        height: 24 / 16,
+                                        letterSpacing: 0.15,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    size: 24,
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                (defaultAddress != null)
+                                    ? defaultAddress!.addrLine
+                                    : "",
+                                style: const TextStyle(
+                                  color: Color(0xFF121212),
+                                  fontSize: 12,
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.w400,
+                                  height: 16 / 12,
+                                ),
+                              )
+                            ],
+                          ),
+                  ),
+                ),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 17),
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          SlideTransitionRouter.toNextPage(
+                            const ProfileScreen(),
+                          ),
+                        );
+                      },
+                      icon: ClipOval(
+                        child: (user.photoURL != null)
+                            ? Image.network(
+                                '${user.photoURL}',
+                                fit: BoxFit.cover,
+                              )
+                            : Container(
+                                color: const Color(0xffFFFCEF),
+                                child: Center(
+                                  child: Text(
+                                    Hive.box('customer_box')
+                                        .get('cst_name')[0]
+                                        .toString()
+                                        .toUpperCase(),
+                                    style: const TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                      ), // TODO: Bio Pic
+                    ),
+                  ),
+                ],
+              ),
+              bottomNavigationBar: NavigationBar(
+                onDestinationSelected: (int index) {
+                  setState(() {
+                    currentPageIndex = index;
+                  });
+                },
+                selectedIndex: currentPageIndex,
+                destinations: const <Widget>[
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.restaurant_menu),
+                    icon: Icon(Icons.restaurant_menu_outlined),
+                    label: 'Menu',
+                  ),
+                  NavigationDestination(
+                    selectedIcon: NavigationBarCartItem(isSelected: true),
+                    icon: NavigationBarCartItem(isSelected: false),
+                    label: 'Cart',
+                  ),
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.food_bank),
+                    icon: Icon(Icons.food_bank_outlined),
+                    label: 'Subscription',
+                  )
+                ],
+              ),
+              body: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                ),
+                child: <Widget>[
+                  MenuScreenHomePage(homeBloc: homeBloc),
+                  CartScreenHomePage(homeBloc: homeBloc),
+                  SubscriptionHomePageScreen()
+                ][currentPageIndex],
+              ),
             );
           }
         },

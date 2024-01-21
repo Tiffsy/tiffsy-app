@@ -332,7 +332,7 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
       "dinner": true,
     };
     if (cartBox.get("is_subscription", defaultValue: true)) {
-      List cart = cartBox.get("cart");
+      List cart = cartBox.get("cart",  defaultValue: []);
       cart.forEach((element) {
         enabledButtons[element[0]["mealTime"]] = false;
       });

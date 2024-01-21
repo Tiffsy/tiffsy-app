@@ -66,17 +66,19 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
               return state.listOfPaymentHistoryDataModel.isEmpty
                   ? LoadingAnimation.emptyDataAnimation(
                       context, "No Transactions Made Till Now!")
-                  : Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                              const SizedBox(height: 12),
-                            ] +
-                            listOfPaymentHistoryCards(
-                                context, state.listOfPaymentHistoryDataModel),
+                  : SingleChildScrollView(
+                    child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                                const SizedBox(height: 12),
+                              ] +
+                              listOfPaymentHistoryCards(
+                                  context, state.listOfPaymentHistoryDataModel),
+                        ),
                       ),
-                    );
+                  );
             }
             return LoadingAnimation.subscriptionEmptyAnimation(
                 context, "An Error Occured");
@@ -141,7 +143,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
             Row(
               children: [
                 const Text(
-                  "Subscription ID",
+                  "Amount",
                   style: TextStyle(
                     color: Color(0xFF121212),
                     fontSize: 12,
@@ -152,7 +154,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                 ),
                 Spacer(),
                 Text(
-                  data.subscriptionId,
+                  data.paymentAmount.toStringAsFixed(2),
                   style: const TextStyle(
                     color: Color(0xFF121212),
                     fontSize: 12,

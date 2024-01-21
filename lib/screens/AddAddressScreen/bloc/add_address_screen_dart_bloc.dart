@@ -48,8 +48,9 @@ class AddAddressScreenDartBloc
           body: params, headers: {'Authorization': 'Bearer $token'});
       if (response.statusCode == 200) {
         Box addressBox = Hive.box("address_box");
-        List listOfAddress = await addressBox.get("list_of_address", defaultValue: []);
-        Map defaultAddress = await addressBox.get("default_address");
+        List listOfAddress =
+            await addressBox.get("list_of_address", defaultValue: []);
+
         listOfAddress.add(params);
         await addressBox.putAll(
             {"list_of_address": listOfAddress, "default_address": params});

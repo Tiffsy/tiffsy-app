@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:hive/hive.dart";
 import "package:tiffsy_app/Helpers/loading_animation.dart";
 import "package:tiffsy_app/Helpers/page_router.dart";
+import "package:tiffsy_app/screens/AddAddressScreen/screen/add_address_screen.dart";
 import "package:tiffsy_app/screens/CartScreen/screen/cart_screen.dart";
 import "package:tiffsy_app/screens/HomeScreen/bloc/home_bloc.dart";
 import "package:tiffsy_app/screens/HomeScreen/model/home_model.dart";
@@ -65,7 +66,15 @@ class _CartScreenHomePageState extends State<CartScreenHomePage> {
                 listOfCards.isEmpty
                     ? const SizedBox()
                     : orderNowButton(() {
-                        if (cartBox.get("is_subscription")) {
+                        if (Hive.box("address_box")
+                            .get("default_address", defaultValue: {}).isEmpty) {
+                          Navigator.push(context,
+                              SlideTransitionRouter.toNextPage(AddAddressScreen(
+                            onAdd: () {
+                              setState(() {});
+                            },
+                          )));
+                        } else if (cartBox.get("is_subscription")) {
                           Navigator.push(
                               context,
                               SlideTransitionRouter.toNextPage(

@@ -34,8 +34,7 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
   FutureOr<void> cancelClickedEvent(CancelClickedEvent event, Emitter<CalendarState> emit) async {}
 
   FutureOr<void> cancelOrderClickedEvent(CancelButtonClickedEvent event, Emitter<CalendarState> emit) async {
-    print("afjbfjsdbfjhasjkdhgjkasdkgjnbas");
-    Result<String> result = await CalendarRepo.cancelOrder(event.ordr_id, event.dt, event.lc, event.bc, event.dc);
+    Result<String> result = await CalendarRepo.cancelOrder(event.ordr_id, event.dt, event.lc, event.bc, event.dc, event.sbcr_id);
     if (result.isSuccess) {
       emit(CancelSuccessState(msg: result.data!));
     } else {

@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:intl/intl.dart";
+import "package:tiffsy_app/Helpers/loading_animation.dart";
 import "package:tiffsy_app/screens/OrderHistoryScreen/bloc/order_history_bloc.dart";
 import "package:tiffsy_app/screens/OrderHistoryScreen/model/order_history_model.dart";
 
@@ -37,7 +38,6 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
               size: 24,
             ),
             onPressed: () {
-              // go back functionality, most likely using Navigator.pop()
               Navigator.pop(context);
             },
           ),
@@ -57,12 +57,16 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
           },
           builder: (context, state) {
             if (state is OrderHistoreLoadingState) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                  child: LoadingAnimation.circularLoadingAnimation(context));
             } else if (state is OrderHistoryFetchSuccessfulState) {
-              final List<OrderHistoryModel> orderhistoryState =
+              final List<OrderHistoryModel> orderHistoryState =
                   (state).orderHistory;
 
-              return orderHistoryPageBody(orderhistoryState);
+              return orderHistoryState.isEmpty
+                  ? LoadingAnimation.subscriptionEmptyAnimation(
+                      context, "No Orders Made Yet!")
+                  : orderHistoryPageBody(orderHistoryState);
             }
             return const Text("Error state");
           },

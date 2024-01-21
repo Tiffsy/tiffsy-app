@@ -8,6 +8,7 @@ import 'package:tiffsy_app/screens/FrequentlyAskedQuestionsScreen/screen/frequen
 import 'package:tiffsy_app/screens/HowItWorksScreen/screen/how_it_works_screen.dart';
 import 'package:tiffsy_app/screens/LoginScreen/screen/login_screen.dart';
 import 'package:tiffsy_app/screens/OrderHistoryScreen/screen/order_history_screen.dart';
+import 'package:tiffsy_app/screens/PaymentHistoryScreen/screen/payment_history_screen.dart';
 import 'package:tiffsy_app/screens/ProfileScreen/bloc/profile_bloc.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -85,7 +86,8 @@ class _ProfileState extends State<Profile> {
         "Payments": [
           Icons.credit_card,
           () {
-            print("Payments");
+            Navigator.push(context,
+                SlideTransitionRouter.toNextPage(PaymentHistoryScreen()));
           }
         ],
         "Settings": [
@@ -350,33 +352,39 @@ Widget customHorizontalCardButton({
 }) {
   width = (width - 48 - 24) / 3;
   double minWidth = 90;
-  return Container(
-    decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: const Color(0xffffffff)),
-    width: (width > minWidth) ? width : minWidth,
-    height: 80,
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        const SizedBox(height: 12),
-        Icon(
-          icon,
-          size: 34,
-          color: const Color(0xffffbe1d),
-        ),
-        const SizedBox(width: 4),
-        Text(
-          text,
-          style: const TextStyle(
-            color: Color(0xff121212),
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            height: 16 / 12,
-            letterSpacing: 0.5,
+  return InkWell(
+    onTap: () {
+      onPressed();
+    },
+    borderRadius: BorderRadius.circular(12),
+    child: Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: const Color(0xffffffff)),
+      width: (width > minWidth) ? width : minWidth,
+      height: 80,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const SizedBox(height: 12),
+          Icon(
+            icon,
+            size: 34,
+            color: const Color(0xffffbe1d),
           ),
-        ),
-      ],
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: const TextStyle(
+              color: Color(0xff121212),
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              height: 16 / 12,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }

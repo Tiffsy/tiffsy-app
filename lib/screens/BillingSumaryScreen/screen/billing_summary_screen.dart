@@ -1,7 +1,9 @@
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
+import "package:flutter_svg/svg.dart";
 import "package:fluttertoast/fluttertoast.dart";
 import "package:hive/hive.dart";
+import "package:lottie/lottie.dart";
 import "package:razorpay_flutter/razorpay_flutter.dart";
 import "package:tiffsy_app/Helpers/page_router.dart";
 import "package:tiffsy_app/screens/BillingSumaryScreen/bloc/billing_summary_bloc.dart";
@@ -73,15 +75,17 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
   void dispose() {
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => BillingSummaryBloc(
         onPaymentSuccess: () {
-          // Navigate to the home screen on successful payment
+          Hive.box("cart_box").put("cart", []);
           Navigator.push(
-              context, SlideTransitionRouter.toNextPage(LoginScreen()));
+            context,
+            MaterialPageRoute(builder: (context) => PaymentSuccessfulPopUp()),
+          );
         },
       ),
       child: Scaffold(
@@ -297,4 +301,73 @@ List<Widget> proceedButton(Function onPress) {
       ),
     )
   ];
+}
+
+class PaymentSuccessfulPopUp extends StatefulWidget {
+  const PaymentSuccessfulPopUp({super.key});
+
+  @override
+  State<PaymentSuccessfulPopUp> createState() => _PaymentSuccessfulPopUpState();
+}
+
+class _PaymentSuccessfulPopUpState extends State<PaymentSuccessfulPopUp> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(
+      const Duration(seconds: 4),
+      () {
+        Navigator.pushAndRemoveUntil(context,
+            SlideTransitionRouter.toNextPage(HomeScreen()), (route) => false);
+      },
+    );
+    Hive.box("cart_box").put("cart", []);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color(0x22222222),
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          Center(
+            child: Container(
+              height: 280,
+              decoration: BoxDecoration(
+                  color: Color(0xffffffff),
+                  borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    SvgPicture.asset(
+                      "assets/payment_successful/payment_successful_popup_bg.svg",
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      "Order Placed Successfully!",
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(height: 12)
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                LottieBuilder.asset(
+                  "assets/payment_successful/payment_successful_popup.json",
+                  fit: BoxFit.fitHeight,
+                  repeat: false,
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
 }

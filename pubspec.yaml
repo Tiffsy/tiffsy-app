@@ -47,3 +47,4 @@ flutter:
     - assets/images/vectors/home_screen/
     - assets/images/vectors/cart_screen/
     - assets/loading_animations/
+    - assets/payment_successful/

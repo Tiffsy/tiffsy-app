@@ -8,7 +8,7 @@ import 'package:uuid/uuid.dart';
 
 class BillingRepo {
 
-  static Future<Result<String>> addSubscription() async {
+  static Future<Result<Map<String, dynamic>>> addSubscription() async {
     try {
       Box customer_box = Hive.box("customer_box");
       Box address_box = Hive.box("address_box");
@@ -74,13 +74,16 @@ class BillingRepo {
           "subtype": subType.toString(),
           "remark": remark,
           "nickname": nickname,
-          "ordr_type": ordr_type
         };
 
         print(params);
         var res = await http.post(Uri.parse('$apiJsURL/add-subscription'), body: params, headers: {'Authorization': 'Bearer $token'});
         if(res.statusCode == 200){
-          return Result(data: sbcr_id, error: null); 
+          return Result(data: {
+            "bill": bill.toString(),
+            "sbcr_id": sbcr_id
+          }, 
+          error: null);
         }
         else{
           return Result(data: null, error: "ERROR");
@@ -103,8 +106,11 @@ class BillingRepo {
           tmp["count"] = element[1];
           ordr.add(tmp);
         }
-
+        var uuid = Uuid();
+        String sbcr_id = uuid.v4().toString();
+        
         Map<dynamic, dynamic> params = {
+          "sbcr_id": sbcr_id,
           "cst_id": cst_id,
           "str_dt": strdt,
           "cntct": cntct, 
@@ -113,12 +119,16 @@ class BillingRepo {
           "addr_line": addr_line,
           "addr_id": addr_id, 
           "remark": remark,
-          "ordr": jsonEncode(ordr).toString()
+          "ordr": jsonEncode(ordr).toString(),
+          
         };
         print(params);
         var res = await http.post(Uri.parse('$apiJsURL/today-order'), body: params, headers: {'Authorization': 'Bearer $token'});
         if(res.statusCode == 200){
-          return Result(data: "SUCCESS", error: null); 
+          return Result(data: {
+            "bill": bill.toString(),
+            "sbcr_id": sbcr_id
+          }, error: null); 
         }
         else{
           return Result(data: null, error: "ERROR");

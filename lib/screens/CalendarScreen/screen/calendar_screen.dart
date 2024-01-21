@@ -285,8 +285,8 @@ class _CalendarCancelSheetState extends State<CalendarCancelSheet> {
             const SizedBox(height: 12),
             confirmCancelButton(
               () {
-                //String cst_id = Hive.box("customer_box").get("cst_id");
                 widget.calendarBloc.add(CancelButtonClickedEvent(
+                  sbcr_id: widget.calendarData.sbcrId,
                   ordr_id: widget.calendarData.ordrId,
                   dt: widget.calendarData.dt,
                   bc: mealsTakenModified[0] ? 1 : 0,

@@ -49,36 +49,31 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
   void initState() {
     super.initState();
     summaryBreakdown = getSummaryBreakdown();
-    
-    // double bill = 0;
-    // List cart = Hive.box("cart_box").get("cart");
-    // for (var element in cart) {
-    //   bill += element[0]["price"] * element[1];
-    //   print(bill);
-    //   // if (element[0]["mealTime"] == "lunch") {
-    //   //   bill += int.parse(element[0]["price"].toString());
-    //   // } else if (element[0]["mealTime"] == "dinner") {
-    //   //   bill += int.parse(element[0]["price"].toString());
-    //   // } else if (element[0]["mealTime"] == "breakfast") {
-    //   //   bill += int.parse(element[0]["price"].toString());
-    //   // }
-    // }
-    // int subType = Hive.box("cart_box").get("subType");
-    // bill = bill * subType;
-    // summaryBreakdown["Subtotal"] = bill * 1.0;
+    double bill = 0;
+    Box cart_box = Hive.box("cart_box");
+    List cart = cart_box.get("cart");
+    if (cart_box.get("is_subscription")) {
+      for (var element in cart) {
+        bill += int.parse(element[0]["price"].toString());
+      }
+      int subType = cart_box.get("subType");
+      bill = bill * subType;
+    } else {
+      for (var element in cart) {
+        bill += int.parse(element[0]["price"].toString()) *
+            int.parse(element[1].toString());
+      }
+    }
+    summaryBreakdown["Subtotal"] = bill * 1.0;
     // summaryBreakdown["GST 5%"] = (bill * 5.0) / 100;
-
     grandTotal = calculateTotal(summaryBreakdown);
   }
 
   @override
   void dispose() {
-   
     super.dispose();
   }
-
-
-
+  
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -86,9 +81,7 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
         onPaymentSuccess: () {
           // Navigate to the home screen on successful payment
           Navigator.push(
-                  context,
-                  SlideTransitionRouter.toNextPage(
-                      LoginScreen()));
+              context, SlideTransitionRouter.toNextPage(LoginScreen()));
         },
       ),
       child: Scaffold(
@@ -120,7 +113,7 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
         ),
         body: BlocConsumer<BillingSummaryBloc, BillingSummaryState>(
           listener: (context, state) {
-            if(state is TransactionLoadingState){
+            if (state is TransactionLoadingState) {
               Center(
                 child: CircularProgressIndicator(),
               );
@@ -148,7 +141,6 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
                               couponEntryBox(couponCodeController,
                                   getlistOfCoupons(), clearCouponButton) +
                               proceedButton(() {
-
                                 BlocProvider.of<BillingSummaryBloc>(context)
                                     .initializePayment(grandTotal);
                                 // Navigator.push(

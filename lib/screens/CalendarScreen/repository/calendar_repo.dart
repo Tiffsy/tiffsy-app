@@ -32,7 +32,7 @@ class CalendarRepo {
   }
 
   static Future<Result<String>> cancelOrder(
-      String ordr_id, String dt, int lc, int bc, int dc) async {
+      String ordr_id, String dt, int lc, int bc, int dc, String sbcr_id) async {
     try {
       Box customer_box = Hive.box("customer_box");
       String token = customer_box.get("token");

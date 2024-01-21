@@ -31,6 +31,8 @@ final class CancelButtonClickedEvent extends CalendarEvent {
   final int lc;
   final int dc;
   final String dt;
+  final String sbcr_id;
+
   CancelButtonClickedEvent(
-      {required this.ordr_id, required this.bc, required this.lc, required this.dc, required this.dt});
+      {required this.ordr_id, required this.bc, required this.lc, required this.dc, required this.dt, required this.sbcr_id});
 }

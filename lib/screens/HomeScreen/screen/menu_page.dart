@@ -35,19 +35,19 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 16),
+              upgradeToDeluxCard(() {}),
               const SizedBox(height: 24),
               SizedBox(
                 width: MediaQuery.sizeOf(context).width - 39,
-                child: SingleChildScrollView(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      orderNowExpandableButton(),
-                      subscriptionExpandableButton(),
-                    ],
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    orderNowExpandableButton(),
+                    subscriptionExpandableButton(),
+                  ],
                 ),
               ),
               const SizedBox(height: 12),
@@ -760,4 +760,34 @@ Widget dashedDivider(BuildContext context) {
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: listOfDivider,
   );
+}
+
+Widget upgradeToDeluxCard(Function upgradeCardOnTap) {
+  return Builder(builder: (context) {
+    return GestureDetector(
+      onTap: () {
+        upgradeCardOnTap();
+      },
+      child: SizedBox(
+        width: (MediaQuery.sizeOf(context).width - 40),
+        height: (MediaQuery.sizeOf(context).width - 40) * (154 / 372),
+        child: Stack(
+          children: [
+            SvgPicture.asset(
+              'assets/images/vectors/home_banner.svg',
+              semanticsLabel: 'vector image',
+            ),
+            SizedBox(
+              width: MediaQuery.sizeOf(context).width,
+              child: Image.asset(
+                'assets/images/vectors/thali1 1.png',
+                fit: BoxFit.contain,
+                alignment: Alignment.bottomRight,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  });
 }

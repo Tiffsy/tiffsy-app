@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:tiffsy_app/Helpers/result.dart';
 import 'package:tiffsy_app/screens/PaymentHistoryScreen/model/payment_history_model.dart';
 import 'package:tiffsy_app/screens/PaymentHistoryScreen/repo/payment_history_repo.dart';
 
@@ -11,11 +12,17 @@ class PaymentHistoryBloc
   PaymentHistoryBloc() : super(PaymentHistoryInitial()) {
     on<PaymentHistoryInitialFetchEvent>((event, emit) async {
       emit(PaymentHistoryInitialFetchLoadingState());
-      await Future.delayed(Duration(seconds: 10));
-      List<PaymentHistoryDataModel> fetchedData =
-          PaymentHistoryRepo.fetchPaymentHistory();
-      emit(PaymentHistoryInitialFetchSuccessfulState(
-          listOfPaymentHistoryDataModel: fetchedData));
+      Result<List<PaymentHistoryDataModel>> fetchedData =
+         await PaymentHistoryRepo.fetchPaymentHistory();
+
+      if(fetchedData.isSuccess){
+        List<PaymentHistoryDataModel> paymentList = fetchedData.data!;
+        emit(PaymentHistoryInitialFetchSuccessfulState(
+          listOfPaymentHistoryDataModel: paymentList));
+      }
+      else{
+        emit(PaymentHistoryInitialFetchFailedState());
+      }
     });
   }
 }

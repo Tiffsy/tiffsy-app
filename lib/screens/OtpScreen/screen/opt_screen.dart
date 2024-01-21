@@ -12,15 +12,15 @@ import '../../HomeScreen/screen/home_screen.dart';
 class OtpScreen extends StatefulWidget {
   final String verificationId;
   final String phoneNumber;
-  const OtpScreen(
-      {Key? key, required this.verificationId, required this.phoneNumber})
-      : super(key: key);
+  const OtpScreen({Key? key, required this.verificationId, required this.phoneNumber}) : super(key: key);
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
 }
 
 class _OtpScreenState extends State<OtpScreen> {
+
+  
   @override
   void initState() {
     // TODO: implement initState
@@ -30,8 +30,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   void dispose() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
     super.dispose();
   }
 
@@ -62,16 +61,16 @@ class _OtpScreenState extends State<OtpScreen> {
 class content extends StatefulWidget {
   final String verificationId;
   final String phoneNumber;
-  const content(
-      {Key? key, required this.verificationId, required this.phoneNumber})
-      : super(key: key);
+  const content({Key? key, required this.verificationId, required this.phoneNumber}) : super(key: key);
 
   @override
   State<content> createState() => _contentState();
 }
 
 class _contentState extends State<content> {
-  int secondsRemaining = 25;
+  
+  bool isButtonEnabled = false;
+  int secondsRemaining = 50;
   bool enableResend = false;
   late Timer timer;
   TextEditingController otpController = TextEditingController();
@@ -96,7 +95,7 @@ class _contentState extends State<content> {
   void _resendCode() {
     //other code here
     setState(() {
-      secondsRemaining = 30;
+      secondsRemaining = 50;
       enableResend = false;
     });
   }
@@ -105,18 +104,14 @@ class _contentState extends State<content> {
   void dispose() {
     // TODO: implement dispose
     timer.cancel();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
     super.dispose();
   }
 
   final defaultPinTheme = PinTheme(
     width: 48,
     height: 48,
-    textStyle: const TextStyle(
-        fontSize: 20,
-        color: Color.fromRGBO(30, 60, 87, 1),
-        fontWeight: FontWeight.w600),
+    textStyle: const TextStyle(fontSize: 20, color: Color.fromRGBO(30, 60, 87, 1), fontWeight: FontWeight.w600),
     decoration: BoxDecoration(
       border: Border.all(color: Color(0xFFCDCDCD)),
       borderRadius: BorderRadius.circular(8),
@@ -145,11 +140,7 @@ class _contentState extends State<content> {
         if (state is LoginScreenLoadedState) {
           Navigator.popUntil(context, (route) => route.isFirst);
           Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => PersonalDetailsScreen(
-                      isPhoneAuth: true,
-                      phoneNumber: widget.phoneNumber.toString())));
+              context, MaterialPageRoute(builder: (_) => PersonalDetailsScreen(isPhoneAuth: true, phoneNumber: widget.phoneNumber.toString())));
         } else if (state is AuthErrorState) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(state.error),
@@ -157,8 +148,7 @@ class _contentState extends State<content> {
             duration: Duration(seconds: 10),
           ));
         } else if (state is LoadHomeScreenState) {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => HomeScreen()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
         }
       },
       builder: (context, state) {
@@ -166,7 +156,7 @@ class _contentState extends State<content> {
           return const Center(
             child: CircularProgressIndicator(),
           );
-        } else if (state is OTPScreenInitialState) {
+          } else {
           return SingleChildScrollView(
             child: Container(
               margin: EdgeInsets.only(left: 10, right: 10),
@@ -200,19 +190,14 @@ class _contentState extends State<content> {
                   ),
                   const SizedBox(width: double.infinity, height: 20),
                   Pinput(
-                    androidSmsAutofillMethod:
-                        AndroidSmsAutofillMethod.smsUserConsentApi,
+                    androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsUserConsentApi,
                     defaultPinTheme: defaultPinTheme,
                     focusedPinTheme: focusedPinTheme,
                     submittedPinTheme: submittedPinTheme,
                     length: 6,
                     pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
                     showCursor: true,
-                    onCompleted: (pin) {
-                      loginBloc.add(VerifySentOtp(
-                          optCode: pin.toString(),
-                          verificationId: widget.verificationId));
-                    },
+                    onChanged: (pin) => setState(() => isButtonEnabled = pin.length >= 6),
                     controller: otpController,
                   ),
                   const SizedBox(width: double.infinity, height: 20),
@@ -259,14 +244,39 @@ class _contentState extends State<content> {
                         ),
                       )
                     ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Visibility(
+                    visible: isButtonEnabled,
+                    child: SizedBox(
+                      height: _mediaQuery.size.height * 0.045,
+                      width: _mediaQuery.size.width * 0.84,
+                      child: OutlinedButton(
+                              onPressed: () {
+                                loginBloc.add(VerifySentOtp(optCode: otpController.text.toString(), verificationId: widget.verificationId));
+                              },
+                              style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(color: Color(0xffFAFAFA)),
+                                  backgroundColor: const Color(0xffF2B620),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  )),
+                              child: const Text(
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 0.10,
+                                      height: 0.08,
+                                      color: Colors.black),
+                                  'Continue'),
+                        ),
+                    ),
                   )
                 ],
               ),
             ),
-          );
-        } else {
-          return SizedBox(
-            child: Text("Code phat gya bhai"),
           );
         }
       },

@@ -2,7 +2,7 @@ class PaymentHistoryDataModel {
   String trnId;
   String subscriptionId;
   String paymentDate;
-  double paymentAmount;
+  int paymentAmount;
 
   PaymentHistoryDataModel({
     required this.trnId,
@@ -15,12 +15,8 @@ class PaymentHistoryDataModel {
       PaymentHistoryDataModel(
         trnId: json["trn_id"],
         subscriptionId: json["sbcr_id"],
-        paymentAmount: json["amt"],
+        paymentAmount: (json["amt"].runtimeType == String) ? int.parse(json["amt"]) : json["amt"],
         paymentDate: json["ts"],
       );
 }
-// trn_id: trn_id,
-// sbcr_id: sbcr_id,
-// amt: amt,
-// cst_id: cst_id,
-  // ts: ts
+

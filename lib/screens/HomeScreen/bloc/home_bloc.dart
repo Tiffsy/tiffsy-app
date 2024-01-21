@@ -41,6 +41,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           String cstPhone = HomeRepo.getUserInfo();
           cstPhone = cstPhone.substring(3);
           print(cstPhone);
+
           Result<Map<String, dynamic>> result =
               await HomeRepo.getCustomerIdByPhone(cstPhone);
 
@@ -49,7 +50,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           if (result.isSuccess) {
             Map<String, dynamic> cstDetails = result.data!;
             Box customerBox = await Hive.openBox("customer_box");
-            customerBox.putAll(cstDetails);
+            await customerBox.putAll(cstDetails);
 
             Result<String> token = await HomeRepo.getToken(
                 cstDetails["cst_mail"],
@@ -67,13 +68,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             emit(HomeErrorState(error: result.error.toString()));
           }
         } else {
-
           String cstMail = HomeRepo.getUserInfo();
           print(cstMail);
           Result<Map<String, dynamic>> result =
               await HomeRepo.getCustomerIdByMail(cstMail);
           print(result.data);
-
           if (result.isSuccess) {
             print(result.data);
             Map<String, dynamic> cstDetails = result.data!;

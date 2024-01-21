@@ -20,4 +20,6 @@ final class PaymentHistoryInitialFetchSuccessfulState
       {required this.listOfPaymentHistoryDataModel});
 }
 
-final class PaymentHistoryInitialFetchFailedState extends PaymentHistoryState {}
+final class PaymentHistoryInitialFetchFailedState extends PaymentHistoryState {
+  
+}

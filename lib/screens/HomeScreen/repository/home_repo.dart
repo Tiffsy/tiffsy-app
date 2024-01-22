@@ -14,7 +14,7 @@ class HomeRepo {
       DateTime now = DateTime.now();
       String formattedDate = DateFormat('yyyy-MM-dd').format(now);
       Map<String, dynamic> params = {
-        "dt": "2024-01-21"
+        "dt": formattedDate
       };
       var response = await http.post(Uri.parse('$apiJsURL/today-menu'), body: params);
       List result = jsonDecode(response.body);

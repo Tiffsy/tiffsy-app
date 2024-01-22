@@ -201,7 +201,7 @@ class _HomeState extends State<Home> {
                             : Container(
                                 height: 42,
                                 width: 42,
-                                color: const Color(0xffFFFCEF),
+                                color: Colors.amber[200],
                                 child: Center(
                                   child: Text(
                                     Hive.box('customer_box')
@@ -215,7 +215,7 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                               ),
-                      ), // TODO: Bio Pic
+                      ),
                     ),
                   ),
                 ],
@@ -363,21 +363,23 @@ class _HomeState extends State<Home> {
                                 fit: BoxFit.cover,
                               )
                             : Container(
-                                color: const Color(0xffFFFCEF),
+                                height: 42,
+                                width: 42,
+                                color: Colors.amber[200],
                                 child: Center(
                                   child: Text(
                                     Hive.box('customer_box')
-                                        .get('cst_name')[0]
+                                        .get('cst_name', defaultValue: "0")[0]
                                         .toString()
                                         .toUpperCase(),
                                     style: const TextStyle(
-                                      fontSize: 30,
+                                      fontSize: 25,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
                               ),
-                      ), // TODO: Bio Pic
+                      ),
                     ),
                   ),
                 ],

@@ -225,12 +225,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ),
                     ),
                     const Divider(thickness: 1, height: 0),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: entryBox(subscriptionNameController,
-                          "Subscription name", null),
-                    ),
+                    SizedBox(height: isSubscription ? 20 : 0),
+                    isSubscription
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: entryBox(subscriptionNameController,
+                                "Subscription name", null),
+                          )
+                        : SizedBox(),
                     const SizedBox(height: 16),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),

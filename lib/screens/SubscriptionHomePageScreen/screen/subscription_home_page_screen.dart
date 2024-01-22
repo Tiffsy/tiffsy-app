@@ -82,7 +82,7 @@ class _SubscriptionHomePageScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                          const SizedBox(height: 23),
+                          const SizedBox(height: 24),
                           const Text(
                             'Current Subscription',
                             textAlign: TextAlign.center,
@@ -106,114 +106,126 @@ class _SubscriptionHomePageScreenState
 
   Widget subscriptionCard(int subType, Function cancelOrder, String enddt,
       String addr, String strDt) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 8),
-        Container(
-          height: 99,
-          decoration: ShapeDecoration(
-            color: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+    return SizedBox(
+      width: MediaQuery.sizeOf(context).width - 40,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 8),
+          Container(
+            height: 99,
+            decoration: ShapeDecoration(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              shadows: const [
+                BoxShadow(
+                  color: Color(0x1EFFBE1D),
+                  blurRadius: 16,
+                  offset: Offset(0, 4),
+                  spreadRadius: 0,
+                )
+              ],
             ),
-            shadows: const [
-              BoxShadow(
-                color: Color(0x1EFFBE1D),
-                blurRadius: 16,
-                offset: Offset(0, 4),
-                spreadRadius: 0,
-              )
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 14),
-                  Text(
-                    getSubscriptionLength(subType.toString()),
-                    style: const TextStyle(
-                      color: Color(0xFF121212),
-                      fontSize: 14,
-                      fontFamily: 'Roboto',
-                      fontWeight: FontWeight.w500,
-                      height: 20 / 14,
-                      letterSpacing: 0.10,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    '$addr',
-                    style: const TextStyle(
-                      color: Color(0xFF323232),
-                      fontSize: 11,
-                      fontFamily: 'Roboto',
-                      fontWeight: FontWeight.w500,
-                      height: 16 / 11,
-                      letterSpacing: 0.50,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  InkWell(
-                    onTap: () {
-                      cancelOrder();
-                    },
-                    child: Container(
-                      height: 23,
-                      decoration: ShapeDecoration(
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(
-                              width: 1, color: Color(0xFFD39B0D)),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 14),
+                    Text(
+                      getSubscriptionLength(subType.toString()),
+                      style: const TextStyle(
+                        color: Color(0xFF121212),
+                        fontSize: 14,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w500,
+                        height: 20 / 14,
+                        letterSpacing: 0.10,
                       ),
-                      child: const Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                        child: Text(
-                          'Cancel upcoming orders',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Color(0xFFD39B0D),
-                            fontSize: 11,
-                            height: 1,
-                            fontFamily: 'Roboto',
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 0.50,
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      '$addr',
+                      style: const TextStyle(
+                        color: Color(0xFF323232),
+                        fontSize: 11,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w500,
+                        height: 16 / 11,
+                        letterSpacing: 0.50,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    InkWell(
+                      onTap: () {
+                        cancelOrder();
+                      },
+                      child: Container(
+                        height: 23,
+                        decoration: ShapeDecoration(
+                          shape: RoundedRectangleBorder(
+                            side: const BorderSide(
+                                width: 1, color: Color(0xFFD39B0D)),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                        child: const Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                          child: Text(
+                            'Cancel upcoming orders',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xFFD39B0D),
+                              fontSize: 11,
+                              height: 1,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.50,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  )
-                ],
-              ),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(top: 12, right: 13),
-                child: Text(
-                  getRemainingDaysQuantity(strDt, enddt) == -1
-                      ? "Subscription haven't started yet"
-                      : '${getRemainingDaysQuantity(strDt, enddt)} Days remaining',
-                  style: const TextStyle(
-                    color: Color(0xFFF84545),
-                    fontSize: 11,
-                    fontFamily: 'Roboto',
-                    fontWeight: FontWeight.w400,
-                    height: 16 / 11,
-                    letterSpacing: 0.50,
-                  ),
+                    )
+                  ],
                 ),
-              )
-            ],
+                const Spacer(),
+                SizedBox(
+                  width: MediaQuery.sizeOf(context).width * 0.4,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 12, right: 13),
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            getRemainingDaysQuantity(strDt, enddt) == -1
+                                ? "Subscription haven't started yet"
+                                : '${getRemainingDaysQuantity(strDt, enddt)} Days remaining',
+                            style: const TextStyle(
+                              color: Color(0xFFF84545),
+                              fontSize: 11,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w400,
+                              height: 16 / 11,
+                              letterSpacing: 0.50,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 12),
-      ],
+          const SizedBox(height: 12),
+        ],
+      ),
     );
   }
 }

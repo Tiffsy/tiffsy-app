@@ -83,7 +83,6 @@ class _HomeState extends State<Home> {
               ),
             );
           } else if (state is HomeFetchSuccessfulState) {
-
             menuState = state;
             Map? temp = addressBox.get("default_address");
             Map<String, dynamic>? tempTwo;
@@ -109,9 +108,7 @@ class _HomeState extends State<Home> {
                         ? Navigator.push(
                             context,
                             SlideTransitionRouter.toNextPage(
-                              AddAddressScreen(onAdd:(){
-
-                              }),
+                              AddAddressScreen(onAdd: () {}),
                             ),
                           )
                         : await showAddressBottomSheet(homeBloc);
@@ -202,6 +199,8 @@ class _HomeState extends State<Home> {
                                 fit: BoxFit.cover,
                               )
                             : Container(
+                                height: 42,
+                                width: 42,
                                 color: const Color(0xffFFFCEF),
                                 child: Center(
                                   child: Text(
@@ -210,7 +209,7 @@ class _HomeState extends State<Home> {
                                         .toString()
                                         .toUpperCase(),
                                     style: const TextStyle(
-                                      fontSize: 30,
+                                      fontSize: 25,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -257,7 +256,6 @@ class _HomeState extends State<Home> {
                 ][currentPageIndex],
               ),
             );
-          
           } else if (state is HomeFetchSuccessfulIsCachedState) {
             return Scaffold(
               backgroundColor: const Color(0xffffffff),
@@ -274,9 +272,7 @@ class _HomeState extends State<Home> {
                         ? Navigator.push(
                             context,
                             SlideTransitionRouter.toNextPage(
-                               AddAddressScreen(onAdd: () {
-
-                               }),
+                              AddAddressScreen(onAdd: () {}),
                             ),
                           )
                         : await showAddressBottomSheet(homeBloc);

@@ -517,7 +517,7 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Add',
+                    isEnabled ? 'Add' : "Added",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: isEnabled

@@ -49,11 +49,11 @@ class BillingSummaryBloc
         "currency": "INR",
         "name": "Tiffsy",
         "timeout": 300,
-        "order_id": "order_12345",
-        "prefill": {"contact": customer_box.get("cst_contact"), "email": customer_box.get("cst_mail")},
-        "theme": {
-          "color": "#FFBE1D"
-        }
+        "prefill": {
+          "contact": customer_box.get("cst_contact"),
+          "email": customer_box.get("cst_mail")
+        },
+        "theme": {"color": "#FFBE1D"}
       });
     } else if (event is PaymentSuccessEvent) {
       emit(TransactionLoadingState());
@@ -63,6 +63,7 @@ class BillingSummaryBloc
         Result<String> res = await BillingRepo.addTransaction(
             event.paymentId, int.parse(tmp["bill"]), tmp["sbcr_id"]);
         if (res.isSuccess) {
+          onPaymentSuccess();
           emit(RazorpaySuccess());
         } else {
           emit(RazorpayFailure(errorMessage: res.error.toString()));

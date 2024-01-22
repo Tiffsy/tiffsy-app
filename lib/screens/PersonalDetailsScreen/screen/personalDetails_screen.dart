@@ -22,8 +22,8 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    PersonalDetailsBloc personalDetailsBloc =
-        PersonalDetailsBloc(PersonalDetailsInitial(isPhoneAuth: widget.isPhoneAuth));
+    PersonalDetailsBloc personalDetailsBloc = PersonalDetailsBloc(
+        PersonalDetailsInitial(isPhoneAuth: widget.isPhoneAuth));
     return Scaffold(
       backgroundColor: const Color(0xffffffff),
       appBar: AppBar(
@@ -43,7 +43,8 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
             }
             if (state is ContinueButtonClickedSuccessState) {
               Navigator.popUntil(context, (route) => route.isFirst);
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (_) => const HomeScreen()));
             }
           },
           builder: (context, state) {
@@ -55,7 +56,8 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
               if (state.isPhoneAuth) {
                 return Center(
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 30, left: 30, bottom: 100),
+                    padding:
+                        const EdgeInsets.only(right: 30, left: 30, bottom: 100),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -66,12 +68,19 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                         const SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: () {
-                            BlocProvider.of<PersonalDetailsBloc>(context).add(
-                              ContinueButtonClickedForPhoneEvent(
-                                  name: name.text,
-                                  mailId: email.text,
-                                  number: widget.phoneNumber),
-                            );
+                            if (name.text.isNotEmpty &&
+                                email.text.contains("@")) {
+                              BlocProvider.of<PersonalDetailsBloc>(context).add(
+                                ContinueButtonClickedForEmailEvent(
+                                    name: name.text,
+                                    number: number.text,
+                                    mailId: user.email!),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text("Invalid data entered")));
+                            }
                           },
                           child: const Text(
                             "Continue",
@@ -85,23 +94,32 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
               } else {
                 return Center(
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 30, left: 30, bottom: 100),
+                    padding:
+                        const EdgeInsets.only(right: 30, left: 30, bottom: 100),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         entryBox(name, "Name", AutofillHints.name),
                         const SizedBox(height: 20),
-                        entryBox(number, "10-digit Phone Number", AutofillHints.telephoneNumber),
+                        entryBox(number, "10-digit Phone Number",
+                            AutofillHints.telephoneNumber),
                         const SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: () {
-                            BlocProvider.of<PersonalDetailsBloc>(context).add(
-                              ContinueButtonClickedForEmailEvent(
-                                  name: name.text,
-                                  number: number.text,
-                                  mailId: user.email!),
-                            );
+                            if (name.text.isNotEmpty &&
+                                number.text.length == 10) {
+                              BlocProvider.of<PersonalDetailsBloc>(context).add(
+                                ContinueButtonClickedForEmailEvent(
+                                    name: name.text,
+                                    number: number.text,
+                                    mailId: user.email!),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text("Invalid data entered")));
+                            }
                           },
                           child: const Text(
                             "Continue",
@@ -123,7 +141,8 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
   }
 }
 
-Widget entryBox(TextEditingController controller, String label, String? autofillHints) {
+Widget entryBox(
+    TextEditingController controller, String label, String? autofillHints) {
   Iterable<String>? autoFill = autofillHints == null ? {} : {autofillHints};
   return TextFormField(
     autofillHints: autoFill,

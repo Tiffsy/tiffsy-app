@@ -1,3 +1,5 @@
+import "dart:ui";
+
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_svg/svg.dart";
@@ -5,8 +7,10 @@ import "package:fluttertoast/fluttertoast.dart";
 import "package:hive/hive.dart";
 import "package:lottie/lottie.dart";
 import "package:razorpay_flutter/razorpay_flutter.dart";
+import "package:tiffsy_app/Helpers/loading_animation.dart";
 import "package:tiffsy_app/Helpers/page_router.dart";
 import "package:tiffsy_app/screens/BillingSumaryScreen/bloc/billing_summary_bloc.dart";
+import "package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart";
 import "package:tiffsy_app/screens/LoginScreen/screen/login_screen.dart";
 
 class BillingSummaryScreen extends StatefulWidget {
@@ -80,10 +84,7 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
       create: (context) => BillingSummaryBloc(
         onPaymentSuccess: () {
           Hive.box("cart_box").put("cart", []);
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => PaymentSuccessfulPopUp()),
-          );
+          Hive.box("cart_box").delete("is_subscription");
         },
       ),
       child: Scaffold(
@@ -128,10 +129,59 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
               );
             } else if (state is RazorpaySuccess) {
               // No need to handle navigation here
-              return Container();
+              return Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+                    child: SingleChildScrollView(
+                      child: Column(
+                          children:
+                              billingInformation(summaryBreakdown, grandTotal) +
+                                  couponEntryBox(couponCodeController,
+                                      getlistOfCoupons(), clearCouponButton) +
+                                  proceedButton(() {
+                                    BlocProvider.of<BillingSummaryBloc>(context)
+                                        .initializePayment(grandTotal);
+                                    // Navigator.push(
+                                    //     context,
+                                    //     SlideTransitionRouter.toNextPage(
+                                    //         PaymentCheckoutScreen(amount: grandTotal)));
+                                  })),
+                    ),
+                  ),
+                  LoadingAnimation.circularLoadingAnimation(context),
+                  // BackdropFilter(
+                  //   filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                  //   child: Container(
+                  //     decoration: BoxDecoration(
+                  //         shape: BoxShape.circle, color: Color(0x88000000)),
+                  //     height: MediaQuery.sizeOf(context).height,
+                  //     width: MediaQuery.sizeOf(context).width,
+                  //   ),
+                  // ),
+                  PaymentSuccessfulPopUp()
+                ],
+              );
             } else if (state is RazorpayFailure) {
-              return Center(
-                child: Text('Payment Failed: ${state.errorMessage}'),
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(state.errorMessage)));
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+                child: SingleChildScrollView(
+                  child: Column(
+                      children:
+                          billingInformation(summaryBreakdown, grandTotal) +
+                              couponEntryBox(couponCodeController,
+                                  getlistOfCoupons(), clearCouponButton) +
+                              proceedButton(() {
+                                BlocProvider.of<BillingSummaryBloc>(context)
+                                    .initializePayment(grandTotal);
+                                // Navigator.push(
+                                //     context,
+                                //     SlideTransitionRouter.toNextPage(
+                                //         PaymentCheckoutScreen(amount: grandTotal)));
+                              })),
+                ),
               );
             } else {
               return Padding(
@@ -313,7 +363,7 @@ class _PaymentSuccessfulPopUpState extends State<PaymentSuccessfulPopUp> {
   void initState() {
     super.initState();
     Future.delayed(
-      const Duration(seconds: 4),
+      const Duration(seconds: 6),
       () {
         Navigator.pushAndRemoveUntil(context,
             SlideTransitionRouter.toNextPage(HomeScreen()), (route) => false);
@@ -324,48 +374,52 @@ class _PaymentSuccessfulPopUpState extends State<PaymentSuccessfulPopUp> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0x22222222),
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          Center(
-            child: Container(
-              height: 280,
-              decoration: BoxDecoration(
-                  color: Color(0xffffffff),
-                  borderRadius: BorderRadius.circular(16)),
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  children: [
-                    SvgPicture.asset(
-                      "assets/payment_successful/payment_successful_popup_bg.svg",
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Center(
+          child: Container(
+            height: 280,
+            width: MediaQuery.sizeOf(context).width - 100,
+            decoration: BoxDecoration(
+                color: Color(0xffffffff),
+                borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                children: [
+                  SvgPicture.asset(
+                    "assets/payment_successful/payment_successful_popup_bg.svg",
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Order Placed Successfully!",
+                    style: TextStyle(
+                      color: const Color(0xff121212),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      height: 20 / 14,
+                      letterSpacing: 0.25,
                     ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      "Order Placed Successfully!",
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: 12)
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 12)
+                ],
               ),
             ),
           ),
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                LottieBuilder.asset(
-                  "assets/payment_successful/payment_successful_popup.json",
-                  fit: BoxFit.fitHeight,
-                  repeat: false,
-                )
-              ],
-            ),
-          )
-        ],
-      ),
+        ),
+        SingleChildScrollView(
+          child: Column(
+            children: [
+              LottieBuilder.asset(
+                "assets/payment_successful/payment_successful_popup.json",
+                fit: BoxFit.fitHeight,
+                repeat: false,
+              )
+            ],
+          ),
+        )
+      ],
     );
   }
 }

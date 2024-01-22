@@ -58,8 +58,8 @@ class _SubscriptionHomePageScreenState
         },
         builder: (context, state) {
           if (state is SubscriptionPageLoadingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return Center(
+              child: LoadingAnimation.circularLoadingAnimation(context),
             );
           } else if (state is SubscriptionFetchSuccessState) {
             subcriptionList = state.subcriptionList;

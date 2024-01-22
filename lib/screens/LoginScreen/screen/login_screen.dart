@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:tiffsy_app/repositories/user_repository.dart';
+import 'package:hive/hive.dart';
+import 'package:lottie/lottie.dart';
 import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/LoginScreen/bloc/login_bloc.dart';
 import 'package:tiffsy_app/screens/OtpScreen/screen/opt_screen.dart';
+import '../../PersonalDetailsScreen/screen/personalDetails_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,30 +18,37 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
-    // TODO: implement initState
-
+   
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: [SystemUiOverlay.top]);
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemNavigationBarColor: Color(0xfffafafa),
+        statusBarColor: Color(0xffF2B620),
+      ),
+    );
+    Box customerBox = Hive.box("customer_box");
+    customerBox.clear();
   }
 
   @override
   void dispose() {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: SystemUiOverlay.values);
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        systemNavigationBarColor: Color(0xfffafafa),
+        statusBarColor: Color(0xffF2B620),
+      ),
+    );
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => UserRepository(),
-      child: BlocProvider(
-        create: (context) => LoginBloc(userRepository: RepositoryProvider.of(context)),
-        child: Scaffold(
-          backgroundColor: const Color(0xffF2B620),
-          body: content(),
-        ),
-      ),
+    return const Scaffold(
+      body: content(),
     );
   }
 }
@@ -51,14 +60,14 @@ class content extends StatefulWidget {
 }
 
 class _contentState extends State<content> {
-
   final GlobalKey _tooltipKey = GlobalKey();
   TextEditingController countryCode = TextEditingController();
   TextEditingController phoneController = TextEditingController();
+  LoginBloc loginBloc = LoginBloc(LoginScreenInitialState());
 
   @override
   void initState() {
-    // TODO: implement initState
+
     super.initState();
     countryCode.text = "+91";
   }
@@ -66,7 +75,7 @@ class _contentState extends State<content> {
   @override
   void dispose() {
     countryCode.dispose();
-    // TODO: implement dispose
+    phoneController.dispose();
     super.dispose();
   }
 
@@ -78,41 +87,64 @@ class _contentState extends State<content> {
   @override
   Widget build(BuildContext context) {
     var _mediaQuery = MediaQuery.of(context);
-    return BlocConsumer<LoginBloc, LoginState>(
-      listener: (context, state) {
 
-        if(state is Authenticated){
-          Navigator.push<Type>(context,
-          MaterialPageRoute(builder: (_) => const HomeScreen())
+    return BlocConsumer<LoginBloc, LoginState>(
+      bloc: loginBloc,
+      listener: (context, state) {
+        if (state is AuthErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.error)),
           );
-        }
-        if(state is AuthCodeSentSate){
-          Navigator.push<Type>(context, MaterialPageRoute(builder: (_) => OtpScreen(phoneNumber: state.phoneNumber, verificationId: state.verificationId)));  
+        } else if (state is LoginScreenLoadedState) {
+          Navigator.popUntil(context, (route) => route.isFirst);
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const PersonalDetailsScreen(
+                        isPhoneAuth: false,
+                        phoneNumber: "0000000000",
+                      )));
+        } else if (state is PhoneAuthCodeSentSuccess) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => OtpScreen(
+                        verificationId: state.verificationId,
+                        phoneNumber: phoneController.text,
+                      )));
+        } else if (state is LoadHomeScreenState) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+            (route) => false,
+          );
         }
       },
       builder: (context, state) {
-        if(state is AuthLoggedInState){
-          return Center(
-            child: CircularProgressIndicator(),
+        if (state is AuthLoadingState) {
+          return  Center(
+            child: Container(
+              child: Lottie.asset('assets/Tiffsy1.json'),
+            ),
           );
-        }
-        return SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                height: _mediaQuery.size.height * 0.450,
-                decoration: const BoxDecoration(
-                  color: Color(0xffF2B620),
-                ),
-                child: Container(
-                  alignment: Alignment.center,
-                  child: SvgPicture.asset(
-                    'assets/images/vectors/foodpic.svg',
-                    semanticsLabel: 'vector image',
+        } else {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  height: _mediaQuery.size.height * 0.450,
+                  decoration: const BoxDecoration(
+                    color: Color(0xffF2B620),
+                  ),
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(
+                      'assets/images/vectors/foodpic.svg',
+                      semanticsLabel: 'vector image',
+                    ),
                   ),
                 ),
-              ),
-              Container(
+                Container(
                   height: _mediaQuery.size.height * 0.550,
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.only(
@@ -223,15 +255,14 @@ class _contentState extends State<content> {
                       ),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 0.01),
-                      Container(
+                      SizedBox(
                         height: _mediaQuery.size.height * 0.045,
                         width: _mediaQuery.size.width * 0.9,
                         child: OutlinedButton(
-                          onPressed: (){
-
+                          onPressed: () {
                             String phoneNumber = "+91${phoneController.text}";
-                            BlocProvider.of<LoginBloc>(context).add(SendOtp(phoneNumber: phoneNumber));
-
+                            loginBloc.add(
+                                SendOtpToPhoneEvent(phoneNumber: phoneNumber));
                           },
                           style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: Color(0xffFAFAFA)),
@@ -283,13 +314,8 @@ class _contentState extends State<content> {
                         height: _mediaQuery.size.height * 0.045,
                         width: _mediaQuery.size.width * 0.9,
                         child: OutlinedButton(
-                          onPressed: () => {
-                            // BlocListener.of<LoginBloc>(context).add(GoogleSignInRequested()),
-                            context.read<LoginBloc>().add(GoogleSignInRequested())
-                            // loginBloc.add(GoogleSignInRequested())
-                            // loginBloc.add(LoginContinueWithGoogleClickedEvent())
-                            // On press action
-                          },
+                          onPressed: () =>
+                              {loginBloc.add(SignInWithGooglePressedEvent())},
                           style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: Colors.black),
                               shape: RoundedRectangleBorder(
@@ -307,25 +333,28 @@ class _contentState extends State<content> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.038,
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: 0.10,
-                                      height: 0.10),
-                                  'Continue with Google Account'),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.038,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 0.10,
+                                    height: 0.10),
+                                'Continue with Google Account',
+                              ),
                             ],
                           ),
                         ),
                       ),
                     ],
-                  ))
-            ],
-          ),
-        );
+                  ),
+                )
+              ],
+            ),
+          );
+        }
       },
     );
   }

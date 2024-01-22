@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>663990303984-k1bqocm41ahll66s8ttot6k68l1d19hc.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.663990303984-k1bqocm41ahll66s8ttot6k68l1d19hc</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>663990303984-6voki6roim0i3e0u1p5loc86k1baror9.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCBeHl0wDrSzTCUfMWQKfp8wJY0KwuCDhQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>663990303984</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.tiffsyApp</string>
+	<key>PROJECT_ID</key>
+	<string>tiffsy-805bb</string>
+	<key>STORAGE_BUCKET</key>
+	<string>tiffsy-805bb.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:663990303984:ios:79c042b2f53ee5bedb9635</string>
+</dict>
+</plist>

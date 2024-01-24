@@ -84,49 +84,63 @@ class _CalendarScreenState extends State<CalendarScreen> {
               return const Center(child: CircularProgressIndicator());
             }
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: MediaQuery.sizeOf(context).width - 40,
-                    child: TableCalendar(
-                      firstDay:
-                          DateTime.now().subtract(const Duration(days: 45)),
-                      lastDay: DateTime.now().add(const Duration(days: 45)),
-                      focusedDay: DateTime.now(),
-                      selectedDayPredicate: (day) =>
-                          isSameDay(_selectedDay, day),
-                      onDaySelected: (selectedDay, focusedDay) async {
-                        if (selectedDay.millisecondsSinceEpoch >
-                            DateTime.now().millisecondsSinceEpoch - 86400000) {
-                          for (CalendarDataModel element in calendarData) {
-                            if (compareDates(selectedDay,
-                                DateTime.parse(element.dt.substring(0, 10)))) {
-                              await showCancellationSheet(
-                                  element, calendarBloc);
+                    decoration: BoxDecoration(
+                        color: Color(0xfffffcef),
+                        borderRadius: BorderRadius.circular(12)),
+                    width: MediaQuery.sizeOf(context).width - 30,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: TableCalendar(
+                        availableCalendarFormats: const {
+                          CalendarFormat.month: 'Month',
+                        },
+                        firstDay: DateTime.now()
+                            .subtract(Duration(days: calendarData.length)),
+                        lastDay: DateTime.now()
+                            .add(Duration(days: calendarData.length)),
+                        focusedDay: DateTime.now(),
+                        selectedDayPredicate: (day) =>
+                            isSameDay(_selectedDay, day),
+                        onDaySelected: (selectedDay, focusedDay) async {
+                          if (selectedDay.millisecondsSinceEpoch >
+                              DateTime.now().millisecondsSinceEpoch -
+                                  86400000) {
+                            for (CalendarDataModel element in calendarData) {
+                              if (compareDates(
+                                  selectedDay,
+                                  DateTime.parse(
+                                      element.dt.substring(0, 10)))) {
+                                await showCancellationSheet(
+                                    element, calendarBloc);
+                              }
                             }
                           }
-                        }
-                      },
-                      calendarBuilders: CalendarBuilders(
-                        defaultBuilder: (context, day, focusedDay) {
-                          for (int i = 0; i < calendarData.length; i++) {
-                            CalendarDataModel data = calendarData[i];
-                            DateTime dt =
-                                DateTime.parse(data.dt.substring(0, 10));
-                            if (compareDates(dt, day) &&
-                                day.millisecondsSinceEpoch <
-                                    focusedDay.millisecondsSinceEpoch) {
-                              return dateBox(day, true, data.hasNoOrders());
-                            } else if (compareDates(dt, day) &&
-                                day.millisecondsSinceEpoch >
-                                    focusedDay.millisecondsSinceEpoch) {
-                              return dateBox(day, false, data.hasNoOrders());
-                            } else if (compareDates(day, focusedDay)) {}
-                          }
-                          return null;
                         },
+                        calendarBuilders: CalendarBuilders(
+                          defaultBuilder: (context, day, focusedDay) {
+                            for (int i = 0; i < calendarData.length; i++) {
+                              CalendarDataModel data = calendarData[i];
+                              DateTime dt =
+                                  DateTime.parse(data.dt.substring(0, 10));
+
+                              if (compareDates(dt, day) &&
+                                  day.millisecondsSinceEpoch <
+                                      focusedDay.millisecondsSinceEpoch) {
+                                return dateBox(day, true, data.hasNoOrders());
+                              } else if (compareDates(dt, day) &&
+                                  day.millisecondsSinceEpoch >=
+                                      focusedDay.millisecondsSinceEpoch) {
+                                return dateBox(day, false, data.hasNoOrders());
+                              } else if (compareDates(day, focusedDay)) {}
+                            }
+                            return null;
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -330,32 +344,32 @@ Widget disabledMealChooser(String text) {
   );
 }
 
-Widget dateBox(
-  DateTime date,
-  bool isPast,
-  bool isCancelled,
-) {
-  return Center(
-    child: Container(
-      decoration: ShapeDecoration(
-          shape: CircleBorder(
-              side: BorderSide(
-                  width: 2,
-                  color: isCancelled
-                      ? const Color(0xffF84545)
-                      : (isPast
-                          ? const Color(0xffFFBE1D)
-                          : const Color(0xff329C00)))),
-          color: isCancelled
-              ? const Color(0xffFFDDDD)
-              : (isPast ? const Color(0xfffffcef) : const Color(0xffCBFFB3))),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Text(
-          date.day.toString(),
-          style: TextStyle(
-              color:
-                  isPast ? const Color(0xffffffff) : const Color(0xff121212)),
+Widget dateBox(DateTime date, bool isPast, bool isCancelled) {
+  return Padding(
+    padding: const EdgeInsets.all(4),
+    child: Center(
+      child: Container(
+        // height: size,
+        // width: size,
+        decoration: ShapeDecoration(
+            shape: CircleBorder(
+                side: BorderSide(
+                    width: 1.5,
+                    color: isCancelled
+                        ? const Color(0xffF84545)
+                        : (isPast
+                            ? const Color(0xffFFBE1D)
+                            : const Color(0xff329C00)))),
+            color: isCancelled
+                ? const Color(0xffFFDDDD)
+                : (isPast
+                    ? Color.fromARGB(255, 253, 245, 209)
+                    : const Color(0xffCBFFB3))),
+        child: Center(
+          child: Text(
+            date.day.toString(),
+            style: TextStyle(color: const Color(0xff121212)),
+          ),
         ),
       ),
     ),

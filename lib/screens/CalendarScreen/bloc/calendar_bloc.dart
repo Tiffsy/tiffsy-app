@@ -15,7 +15,8 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     on<CancelButtonClickedEvent>(cancelOrderClickedEvent);
   }
 
-  FutureOr<void> calendarInitialFetchEvent(CalendarInitialFetchEvent event, Emitter<CalendarState> emit) async {
+  FutureOr<void> calendarInitialFetchEvent(
+      CalendarInitialFetchEvent event, Emitter<CalendarState> emit) async {
     emit(CalendarLoadingState());
     String cstId = event.cstId;
     String subsId = event.subsId;
@@ -24,17 +25,21 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     //print(calendarDates.isSuccess);
     if (calendarDates.isSuccess) {
       List<CalendarDataModel> calendarData = calendarDates.data!;
-      print(calendarData);
+
       emit(CalendarFetchSuccessState(calendarData: calendarData));
     } else {
       emit(CalendarErrorState(error: calendarDates.error.toString()));
     }
   }
 
-  FutureOr<void> cancelClickedEvent(CancelClickedEvent event, Emitter<CalendarState> emit) async {}
+  FutureOr<void> cancelClickedEvent(
+      CancelClickedEvent event, Emitter<CalendarState> emit) async {}
 
-  FutureOr<void> cancelOrderClickedEvent(CancelButtonClickedEvent event, Emitter<CalendarState> emit) async {
-    Result<String> result = await CalendarRepo.cancelOrder(event.ordr_id, event.dt, event.lc, event.bc, event.dc, event.sbcr_id);
+  FutureOr<void> cancelOrderClickedEvent(
+      CancelButtonClickedEvent event, Emitter<CalendarState> emit) async {
+    emit(CalendarLoadingState());
+    Result<String> result = await CalendarRepo.cancelOrder(
+        event.ordr_id, event.dt, event.lc, event.bc, event.dc, event.sbcr_id);
     if (result.isSuccess) {
       emit(CancelSuccessState(msg: result.data!));
     } else {

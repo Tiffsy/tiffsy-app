@@ -65,14 +65,18 @@ class _SubscriptionHomePageScreenState
             subcriptionList = state.subcriptionList;
             subsCard = [];
             for (int index = 0; index < subcriptionList.length; index++) {
-              subsCard.add(subscriptionCard(subcriptionList[index].subtype, () {
-                Navigator.push(
-                    context,
-                    SlideTransitionRouter.toNextPage(CalendarScreen(
-                        cstId: subcriptionList[index].cstId,
-                        subsId: subcriptionList[index].sbcrId)));
-              }, subcriptionList[index].endDt, subcriptionList[index].addrLine,
-                  subcriptionList[index].strDt));
+              subsCard.add(
+                subscriptionCard(
+                  subcriptionList[index],
+                  () {
+                    Navigator.push(
+                        context,
+                        SlideTransitionRouter.toNextPage(CalendarScreen(
+                            cstId: subcriptionList[index].cstId,
+                            subsId: subcriptionList[index].sbcrId)));
+                  },
+                ),
+              );
             }
           }
           return (subsCard.isEmpty)
@@ -104,8 +108,142 @@ class _SubscriptionHomePageScreenState
     );
   }
 
-  Widget subscriptionCard(int subType, Function cancelOrder, String enddt,
-      String addr, String strDt) {
+  // Widget subscriptionCard(
+  //     SubscriptionDataModel subscriptionData, Function cancelOrder) {
+  //   return SizedBox(
+  //     width: MediaQuery.sizeOf(context).width - 40,
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         const SizedBox(height: 8),
+  //         Container(
+  //           height: 99,
+  //           decoration: ShapeDecoration(
+  //             color: Colors.white,
+  //             shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.circular(12),
+  //             ),
+  //             shadows: const [
+  //               BoxShadow(
+  //                 color: Color(0x1EFFBE1D),
+  //                 blurRadius: 16,
+  //                 offset: Offset(0, 4),
+  //                 spreadRadius: 0,
+  //               )
+  //             ],
+  //           ),
+  //           child: Row(
+  //             mainAxisAlignment: MainAxisAlignment.start,
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               const SizedBox(width: 12),
+  //               Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   const SizedBox(height: 14),
+  //                   Text(
+  //                     getSubscriptionLength(
+  //                         subscriptionData.subtype.toString()),
+  //                     style: const TextStyle(
+  //                       color: Color(0xFF121212),
+  //                       fontSize: 14,
+  //                       fontFamily: 'Roboto',
+  //                       fontWeight: FontWeight.w500,
+  //                       height: 20 / 14,
+  //                       letterSpacing: 0.10,
+  //                     ),
+  //                   ),
+  //                   const SizedBox(height: 5),
+  //                   Text(
+  //                     subscriptionData.addrLine,
+  //                     style: const TextStyle(
+  //                       color: Color(0xFF323232),
+  //                       fontSize: 11,
+  //                       fontFamily: 'Roboto',
+  //                       fontWeight: FontWeight.w500,
+  //                       height: 16 / 11,
+  //                       letterSpacing: 0.50,
+  //                     ),
+  //                   ),
+  //                   const SizedBox(height: 10),
+  //                   InkWell(
+  //                     onTap: () {
+  //                       cancelOrder();
+  //                     },
+  //                     child: Container(
+  //                       height: 23,
+  //                       decoration: ShapeDecoration(
+  //                         shape: RoundedRectangleBorder(
+  //                           side: const BorderSide(
+  //                               width: 1, color: Color(0xFFD39B0D)),
+  //                           borderRadius: BorderRadius.circular(6),
+  //                         ),
+  //                       ),
+  //                       child: const Padding(
+  //                         padding:
+  //                             EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+  //                         child: Text(
+  //                           'Cancel upcoming orders',
+  //                           textAlign: TextAlign.center,
+  //                           style: TextStyle(
+  //                             color: Color(0xFFD39B0D),
+  //                             fontSize: 11,
+  //                             height: 1,
+  //                             fontFamily: 'Roboto',
+  //                             fontWeight: FontWeight.w500,
+  //                             letterSpacing: 0.50,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   )
+  //                 ],
+  //               ),
+  //               const Spacer(),
+  //               Container(
+  //                 constraints: BoxConstraints(
+  //                   maxWidth: MediaQuery.sizeOf(context).width * 0.4,
+  //                 ),
+  //                 child: Padding(
+  //                   padding: const EdgeInsets.only(top: 12, right: 16),
+  //                   child: Row(
+  //                     mainAxisSize: MainAxisSize.min,
+  //                     children: [
+  //                       Flexible(
+  //                         child: Text(
+  //                           getRemainingDaysQuantity(subscriptionData.strDt,
+  //                                       subscriptionData.endDt) ==
+  //                                   -1
+  //                               ? "Subscription haven't started yet"
+  //                               : '${getRemainingDaysQuantity(subscriptionData.strDt, subscriptionData.endDt)} Days remaining',
+  //                           style: const TextStyle(
+  //                             color: Color(0xFFF84545),
+  //                             fontSize: 11,
+  //                             fontFamily: 'Roboto',
+  //                             fontWeight: FontWeight.w400,
+  //                             height: 16 / 11,
+  //                             letterSpacing: 0.50,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //         const SizedBox(height: 12),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  Widget subscriptionCard(
+      SubscriptionDataModel subscriptionData, Function cancelOrder) {
+    //subscriptionData.name = "name of sub";
+    bool hasName =
+        !(subscriptionData.name == "" || subscriptionData.name == null);
     return SizedBox(
       width: MediaQuery.sizeOf(context).width - 40,
       child: Column(
@@ -113,7 +251,7 @@ class _SubscriptionHomePageScreenState
         children: [
           const SizedBox(height: 8),
           Container(
-            height: 99,
+            height: hasName ? 100 : 80,
             decoration: ShapeDecoration(
               color: Colors.white,
               shape: RoundedRectangleBorder(
@@ -128,99 +266,130 @@ class _SubscriptionHomePageScreenState
                 )
               ],
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 14),
-                    Text(
-                      getSubscriptionLength(subType.toString()),
-                      style: const TextStyle(
-                        color: Color(0xFF121212),
-                        fontSize: 14,
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.w500,
-                        height: 20 / 14,
-                        letterSpacing: 0.10,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      '$addr',
-                      style: const TextStyle(
-                        color: Color(0xFF323232),
-                        fontSize: 11,
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.w500,
-                        height: 16 / 11,
-                        letterSpacing: 0.50,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    InkWell(
-                      onTap: () {
-                        cancelOrder();
-                      },
-                      child: Container(
-                        height: 23,
-                        decoration: ShapeDecoration(
-                          shape: RoundedRectangleBorder(
-                            side: const BorderSide(
-                                width: 1, color: Color(0xFFD39B0D)),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                        ),
-                        child: const Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                          child: Text(
-                            'Cancel upcoming orders',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Color(0xFFD39B0D),
-                              fontSize: 11,
-                              height: 1,
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 0.50,
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                const Spacer(),
-                SizedBox(
-                  width: MediaQuery.sizeOf(context).width * 0.4,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 12, right: 13),
-                    child: Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            getRemainingDaysQuantity(strDt, enddt) == -1
-                                ? "Subscription haven't started yet"
-                                : '${getRemainingDaysQuantity(strDt, enddt)} Days remaining',
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            hasName
+                                ? subscriptionData.name!
+                                : getSubscriptionLength(
+                                    subscriptionData.subtype.toString()),
                             style: const TextStyle(
-                              color: Color(0xFFF84545),
-                              fontSize: 11,
+                              color: Color(0xFF121212),
+                              fontSize: 14,
                               fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w400,
-                              height: 16 / 11,
-                              letterSpacing: 0.50,
+                              fontWeight: FontWeight.w600,
+                              height: 20 / 14,
+                              letterSpacing: 0.10,
+                            ),
+                          ),
+                          SizedBox(height: hasName ? 6 : 0),
+                          hasName
+                              ? Text(
+                                  getSubscriptionLength(
+                                      subscriptionData.subtype.toString()),
+                                  style: const TextStyle(
+                                    color: Color(0xFF121212),
+                                    fontSize: 12,
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.w500,
+                                    height: 20 / 12,
+                                    letterSpacing: 0.10,
+                                  ),
+                                )
+                              : const SizedBox(),
+                        ],
+                      ),
+                      const Spacer(),
+                      Container(
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.sizeOf(context).width * 0.4,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                getRemainingDaysQuantity(subscriptionData.strDt,
+                                            subscriptionData.endDt) ==
+                                        -1
+                                    ? "Subscription haven't started yet"
+                                    : '${getRemainingDaysQuantity(subscriptionData.strDt, subscriptionData.endDt)} Days remaining',
+                                style: const TextStyle(
+                                  color: Color(0xFFF84545),
+                                  fontSize: 11,
+                                  fontFamily: 'Roboto',
+                                  fontWeight: FontWeight.w400,
+                                  height: 16 / 11,
+                                  letterSpacing: 0.50,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        subscriptionData.addrLine,
+                        style: const TextStyle(
+                          color: Color(0xFF454545),
+                          fontSize: 11,
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w400,
+                          height: 16 / 11,
+                          letterSpacing: 0.50,
+                        ),
+                      ),
+                      const Spacer(),
+                      InkWell(
+                        onTap: () {
+                          cancelOrder();
+                        },
+                        child: Container(
+                          height: 23,
+                          decoration: ShapeDecoration(
+                            shape: RoundedRectangleBorder(
+                              side: const BorderSide(
+                                  width: 1, color: Color(0xFFD39B0D)),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 5),
+                            child: Text(
+                              'Cancel upcoming orders',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color(0xFFD39B0D),
+                                fontSize: 11,
+                                height: 1,
+                                fontFamily: 'Roboto',
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.50,
+                              ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                )
-              ],
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 12),

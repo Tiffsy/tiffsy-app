@@ -4,48 +4,54 @@
 
 import 'dart:convert';
 
-SubscriptionDataModel subscriptionDataModelFromJson(String str) => SubscriptionDataModel.fromJson(json.decode(str));
+SubscriptionDataModel subscriptionDataModelFromJson(String str) =>
+    SubscriptionDataModel.fromJson(json.decode(str));
 
-String subscriptionDataModelToJson(SubscriptionDataModel data) => json.encode(data.toJson());
+String subscriptionDataModelToJson(SubscriptionDataModel data) =>
+    json.encode(data.toJson());
 
 class SubscriptionDataModel {
-    int dc;
-    String ts;
-    int bc;
-    String cntct;
-    String strDt;
-    String endDt;
-    int subtype;
-    String sbcrId;
-    String brkMealType;
-    String addrId;
-    String addrLine;
-    int bill;
-    String cstId;
-    int lc;
-    String dinMealType;
-    String lchMealType;
+  String? name;
+  int dc;
+  String ts;
+  int bc;
+  String cntct;
+  String strDt;
+  String endDt;
+  int subtype;
+  String sbcrId;
+  String brkMealType;
+  String addrId;
+  String addrLine;
+  int bill;
+  String cstId;
+  int lc;
+  String dinMealType;
+  String lchMealType;
 
-    SubscriptionDataModel({
-        required this.dc,
-        required this.ts,
-        required this.bc,
-        required this.cntct,
-        required this.strDt,
-        required this.endDt,
-        required this.subtype,
-        required this.sbcrId,
-        required this.brkMealType,
-        required this.addrId,
-        required this.addrLine,
-        required this.bill,
-        required this.cstId,
-        required this.lc,
-        required this.dinMealType,
-        required this.lchMealType,
-    });
+  SubscriptionDataModel({
+    this.name,
+    required this.dc,
+    required this.ts,
+    required this.bc,
+    required this.cntct,
+    required this.strDt,
+    required this.endDt,
+    required this.subtype,
+    required this.sbcrId,
+    required this.brkMealType,
+    required this.addrId,
+    required this.addrLine,
+    required this.bill,
+    required this.cstId,
+    required this.lc,
+    required this.dinMealType,
+    required this.lchMealType,
+  });
 
-    factory SubscriptionDataModel.fromJson(Map<String, dynamic> json) => SubscriptionDataModel(
+  factory SubscriptionDataModel.fromJson(Map<String, dynamic> json) =>
+      SubscriptionDataModel(
+        name: json["name"],
         dc: json["dc"],
         ts: json["ts"],
         bc: json["bc"],
@@ -62,9 +68,10 @@ class SubscriptionDataModel {
         lc: json["lc"],
         dinMealType: json["dinMealType"],
         lchMealType: json["lchMealType"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
+        "name": name,
         "dc": dc,
         "ts": ts,
         "bc": bc,
@@ -81,5 +88,5 @@ class SubscriptionDataModel {
         "lc": lc,
         "dinMealType": dinMealType,
         "lchMealType": lchMealType,
-    };
+      };
 }

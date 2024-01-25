@@ -368,48 +368,47 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
   Widget orderNowButtons(BuildContext context, String imageAsset,
       String menuTime, HomeBloc homeBloc) {
     return SizedBox(
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          Column(
-            children: [
-              Container(
-                decoration: ShapeDecoration(
-                  color: const Color(0x00000000),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: () async {
+          Map<String, Map<String, Map>> menu = cartBox.get('menu');
+          showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
+        },
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Column(
+              children: [
+                Container(
+                  decoration: ShapeDecoration(
+                    color: const Color(0x00000000),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  height: 80,
+                  width: 86,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 7),
+                      SizedBox(height: 41, child: SvgPicture.asset(imageAsset)),
+                      Text(
+                        toSentenceCase(menuTime),
+                        style: const TextStyle(
+                          color: Color(0xFF121212),
+                          fontSize: 12,
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w500,
+                          height: 16 / 12,
+                          letterSpacing: 0.50,
+                        ),
+                      )
+                    ],
                   ),
                 ),
-                height: 80,
-                width: (MediaQuery.sizeOf(context).width - 72) / 3,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 7),
-                    SizedBox(height: 41, child: SvgPicture.asset(imageAsset)),
-                    Text(
-                      toSentenceCase(menuTime),
-                      style: const TextStyle(
-                        color: Color(0xFF121212),
-                        fontSize: 12,
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.w500,
-                        height: 16 / 12,
-                        letterSpacing: 0.50,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 18),
-            ],
-          ),
-          InkWell(
-            onTap: () async {
-              Map<String, Map<String, Map>> menu = cartBox.get('menu');
-              showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
-            },
-            borderRadius: BorderRadius.circular(6),
-            child: Container(
+                const SizedBox(height: 18),
+              ],
+            ),
+            Container(
               width: 86,
               height: 30,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -440,9 +439,9 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
                   ),
                 ],
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -450,50 +449,49 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
   Widget orderSubscriptionButtons(BuildContext context, String imageAsset,
       bool isEnabled, String menuTime, HomeBloc homeBloc) {
     return SizedBox(
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          Column(
-            children: [
-              Container(
-                decoration: ShapeDecoration(
-                  color: const Color(0x00000000),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: () async {
+          if (isEnabled) {
+            Map<String, Map<String, Map>> menu = cartBox.get('menu');
+            showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
+          }
+        },
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Column(
+              children: [
+                Container(
+                  decoration: ShapeDecoration(
+                    color: const Color(0x00000000),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  height: 80,
+                  width: 86,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 7),
+                      SizedBox(height: 41, child: SvgPicture.asset(imageAsset)),
+                      Text(
+                        toSentenceCase(menuTime),
+                        style: const TextStyle(
+                          color: Color(0xFF121212),
+                          fontSize: 12,
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w500,
+                          height: 16 / 12,
+                          letterSpacing: 0.50,
+                        ),
+                      )
+                    ],
                   ),
                 ),
-                height: 80,
-                width: (MediaQuery.sizeOf(context).width - 72) / 3,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 7),
-                    SizedBox(height: 41, child: SvgPicture.asset(imageAsset)),
-                    Text(
-                      toSentenceCase(menuTime),
-                      style: const TextStyle(
-                        color: Color(0xFF121212),
-                        fontSize: 12,
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.w500,
-                        height: 16 / 12,
-                        letterSpacing: 0.50,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 18),
-            ],
-          ),
-          InkWell(
-            onTap: () async {
-              if (isEnabled) {
-                Map<String, Map<String, Map>> menu = cartBox.get('menu');
-                showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
-              }
-            },
-            borderRadius: BorderRadius.circular(6),
-            child: Container(
+                const SizedBox(height: 18),
+              ],
+            ),
+            Container(
               width: 86,
               height: 30,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -532,9 +530,9 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
                   ),
                 ],
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

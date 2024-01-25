@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:tiffsy_app/screens/CalendarScreen/bloc/calendar_bloc.dart';
 import 'package:tiffsy_app/screens/CalendarScreen/model/calendar_date_model.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CalendarScreen extends StatefulWidget {
   final String cstId;
@@ -17,12 +18,6 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   late DateTime _selectedDay;
   late DateTime _focusedDay;
-
-  bool compareDates(DateTime date1, DateTime date2) {
-    return date1.year == date2.year &&
-        date1.month == date2.month &&
-        date1.day == date2.day;
-  }
 
   @override
   void initState() {
@@ -84,14 +79,25 @@ class _CalendarScreenState extends State<CalendarScreen> {
               return const Center(child: CircularProgressIndicator());
             }
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    decoration: BoxDecoration(
-                        color: Color(0xfffffcef),
-                        borderRadius: BorderRadius.circular(12)),
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      shadows: const [
+                        BoxShadow(
+                          color: Color(0x1EFFBE1D),
+                          blurRadius: 16,
+                          offset: Offset(0, 4),
+                          spreadRadius: 0,
+                        )
+                      ],
+                      color: const Color(0xfffffcef),
+                    ),
                     width: MediaQuery.sizeOf(context).width - 30,
                     child: Padding(
                       padding: const EdgeInsets.all(12),
@@ -188,7 +194,6 @@ class _CalendarCancelSheetState extends State<CalendarCancelSheet> {
   List<bool> mealsTakenModified = [];
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     mealsTakenInitial = [
       widget.calendarData.bc > 0,
@@ -202,118 +207,171 @@ class _CalendarCancelSheetState extends State<CalendarCancelSheet> {
     ];
   }
 
+  Map<String, bool> isPastCancellationDeadline = {
+    "breakfast": isPast(DateTime(1970, 1, 1, 7, 0, 0)),
+    "lunch": isPast(DateTime(1970, 1, 1, 11, 0, 0)),
+    "dinner": isPast(DateTime(1970, 1, 1, 6, 0, 0))
+  };
+
   @override
   Widget build(BuildContext context) {
+    bool isToday = compareDates(
+        DateTime.parse(widget.calendarData.dt.substring(0, 10)),
+        DateTime.now());
     return Container(
       width: MediaQuery.sizeOf(context).width,
-      decoration: BoxDecoration(
-          color: const Color(0xffFFFCEF),
-          borderRadius: BorderRadius.circular(36)),
+      decoration: const BoxDecoration(
+          color: Color(0xffFFFCEF),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(36), topRight: Radius.circular(36))),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 40),
             mealsTakenInitial[0]
-                ? Row(
-                    children: [
-                      const Text(
-                        "Breakfast",
-                        style: TextStyle(
-                          color: Color(0xFF000000),
-                          fontSize: 16,
-                          fontFamily: 'Roboto',
-                          fontWeight: FontWeight.w500,
-                          height: 24 / 16,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      Spacer(),
-                      Checkbox(
-                        value: mealsTakenModified[0],
-                        onChanged: (newBreakfastValue) {
-                          setState(() {
-                            mealsTakenModified[0] = false;
-                          });
-                        },
-                      )
-                    ],
-                  )
-                : disabledMealChooser("Breakfast"),
+                ? (isToday && isPastCancellationDeadline["breakfast"]!
+                    ? deadlinePastMealChooser("Breakfast")
+                    : Row(
+                        children: [
+                          const Text(
+                            "Breakfast",
+                            style: TextStyle(
+                              color: Color(0xFF000000),
+                              fontSize: 16,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w500,
+                              height: 24 / 16,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          const Spacer(),
+                          Checkbox(
+                            value: mealsTakenModified[0],
+                            onChanged: (newBreakfastValue) {
+                              setState(() {
+                                mealsTakenModified[0] = !mealsTakenModified[0];
+                              });
+                            },
+                          )
+                        ],
+                      ))
+                : notInSubscriptionMealChooser("Breakfast"),
             const Divider(),
             mealsTakenInitial[1]
-                ? Row(
-                    children: [
-                      const Text(
-                        "Lunch",
-                        style: TextStyle(
-                          color: Color(0xFF000000),
-                          fontSize: 16,
-                          fontFamily: 'Roboto',
-                          fontWeight: FontWeight.w500,
-                          height: 24 / 16,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      const Spacer(),
-                      Checkbox(
-                        value: mealsTakenModified[1],
-                        onChanged: (newBreakfastValue) {
-                          setState(() {
-                            mealsTakenModified[1] =
-                                newBreakfastValue ?? mealsTakenInitial[1];
-                          });
-                        },
-                      )
-                    ],
-                  )
-                : disabledMealChooser("Lunch"),
+                ? (isToday && isPastCancellationDeadline["lunch"]!
+                    ? deadlinePastMealChooser("Lunch")
+                    : Row(
+                        children: [
+                          const Text(
+                            "Lunch",
+                            style: TextStyle(
+                              color: Color(0xFF000000),
+                              fontSize: 16,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w500,
+                              height: 24 / 16,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          const Spacer(),
+                          Checkbox(
+                            value: mealsTakenModified[1],
+                            onChanged: (newLunchValue) {
+                              setState(() {
+                                mealsTakenModified[1] = !mealsTakenModified[1];
+                              });
+                            },
+                          )
+                        ],
+                      ))
+                : notInSubscriptionMealChooser("Lunch"),
             const Divider(),
             mealsTakenInitial[2]
-                ? Row(
-                    children: [
-                      const Text(
-                        "Dinner",
-                        style: TextStyle(
-                          color: Color(0xFF000000),
-                          fontSize: 16,
-                          fontFamily: 'Roboto',
-                          fontWeight: FontWeight.w500,
-                          height: 24 / 16,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      const Spacer(),
-                      Checkbox(
-                        value: mealsTakenModified[2],
-                        onChanged: (newBreakfastValue) {
-                          setState(() {
-                            mealsTakenModified[2] =
-                                newBreakfastValue ?? mealsTakenInitial[2];
-                          });
-                        },
-                      )
-                    ],
-                  )
-                : disabledMealChooser("Dinner"),
+                ? (isToday && isPastCancellationDeadline["dinner"]!
+                    ? deadlinePastMealChooser("Dinner")
+                    : Row(
+                        children: [
+                          const Text(
+                            "Dinner",
+                            style: TextStyle(
+                              color: Color(0xFF000000),
+                              fontSize: 16,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w500,
+                              height: 24 / 16,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          const Spacer(),
+                          Checkbox(
+                            value: mealsTakenModified[2],
+                            onChanged: (newDinnerValue) {
+                              setState(() {
+                                mealsTakenModified[2] = !mealsTakenModified[2];
+                              });
+                            },
+                          )
+                        ],
+                      ))
+                : notInSubscriptionMealChooser("Dinner"),
             const SizedBox(height: 12),
             confirmCancelButton(
-              () {
-                widget.calendarBloc.add(CancelButtonClickedEvent(
-                  sbcr_id: widget.calendarData.sbcrId,
-                  ordr_id: widget.calendarData.ordrId,
-                  dt: widget.calendarData.dt,
-                  bc: mealsTakenModified[0] ? 1 : 0,
-                  lc: mealsTakenModified[1] ? 1 : 0,
-                  dc: mealsTakenModified[2] ? 1 : 0,
-                ));
-                Navigator.pop(context);
+              () async {
+                var alertReturn = await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        backgroundColor: Color(0xfffffcef),
+                        title: Text("Are you sure?"),
+                        content:
+                            Text("Cancellation requests cannot be undone!"),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'Go Back'),
+                            child: const Text('Go back'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'Confirm'),
+                            child: const Text('Confirm'),
+                          ),
+                        ],
+                      );
+                    });
+
+                if (alertReturn == "Confirm") {
+                  widget.calendarBloc.add(CancelButtonClickedEvent(
+                    sbcr_id: widget.calendarData.sbcrId,
+                    ordr_id: widget.calendarData.ordrId,
+                    dt: widget.calendarData.dt,
+                    bc: mealsTakenModified[0] ? 1 : 0,
+                    lc: mealsTakenModified[1] ? 1 : 0,
+                    dc: mealsTakenModified[2] ? 1 : 0,
+                  ));
+                  Navigator.pop(context);
+                }
+                if (alertReturn != "Go Back") {
+                  Navigator.pop(context);
+                }
               },
             ),
             const SizedBox(height: 12),
             cancelCancelButton(() {
               Navigator.pop(widget.parentContext);
-            })
+            }),
+            isToday
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Text(
+                      "*Orders can be cancelled upto 2 hours before delivery!",
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xff343434),
+                          fontStyle: FontStyle.italic),
+                    ),
+                  )
+                : const SizedBox(),
           ],
         ),
       ),
@@ -321,7 +379,7 @@ class _CalendarCancelSheetState extends State<CalendarCancelSheet> {
   }
 }
 
-Widget disabledMealChooser(String text) {
+Widget notInSubscriptionMealChooser(String text) {
   return Row(
     children: [
       Text(
@@ -330,12 +388,12 @@ Widget disabledMealChooser(String text) {
           color: Color(0xFFbbbbbb),
           fontSize: 16,
           fontFamily: 'Roboto',
-          fontWeight: FontWeight.w300,
+          fontWeight: FontWeight.w200,
           height: 24 / 16,
           letterSpacing: 0.5,
         ),
       ),
-      Spacer(),
+      const Spacer(),
       Checkbox(
         value: false,
         onChanged: (value) {},
@@ -344,9 +402,34 @@ Widget disabledMealChooser(String text) {
   );
 }
 
+Widget deadlinePastMealChooser(String text) {
+  return Row(
+    children: [
+      Text(
+        text,
+        style: const TextStyle(
+          color: Color(0xFFaaaaaa),
+          fontSize: 16,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeight.w500,
+          height: 24 / 16,
+          letterSpacing: 0.5,
+        ),
+      ),
+      const Spacer(),
+      Checkbox(
+        value: true,
+        onChanged: (value) {
+          Fluttertoast.showToast(msg: "Deadline past for cancellation");
+        },
+      )
+    ],
+  );
+}
+
 Widget dateBox(DateTime date, bool isPast, bool isCancelled) {
   return Padding(
-    padding: const EdgeInsets.all(4),
+    padding: const EdgeInsets.all(5),
     child: Center(
       child: Container(
         // height: size,
@@ -412,22 +495,6 @@ Widget confirmCancelButton(VoidCallback onpress) {
 }
 
 Widget cancelCancelButton(VoidCallback onpress) {
-  Widget buttonText = const Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Spacer(),
-      Text(
-        "Confirm",
-        style: TextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: 16,
-          color: Color(0xff121212),
-          height: 24 / 16,
-        ),
-      ),
-      Spacer()
-    ],
-  );
   return InkWell(
     onTap: () {
       onpress();
@@ -455,4 +522,32 @@ Widget cancelCancelButton(VoidCallback onpress) {
       ),
     ),
   );
+}
+
+bool compareDates(DateTime date1, DateTime date2) {
+  return date1.year == date2.year &&
+      date1.month == date2.month &&
+      date1.day == date2.day;
+}
+
+bool isPast(DateTime time) {
+  DateTime now = DateTime.now();
+
+  if (now.hour > time.hour) {
+    return true;
+  } else if (now.hour < time.hour) {
+    return false;
+  } else {
+    if (now.minute > time.minute) {
+      return true;
+    } else if (now.minute < time.minute) {
+      return false;
+    } else {
+      if (now.second > time.second) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
 }

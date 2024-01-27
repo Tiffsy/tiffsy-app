@@ -351,9 +351,6 @@ class _CalendarCancelSheetState extends State<CalendarCancelSheet> {
                   ));
                   Navigator.pop(context);
                 }
-                if (alertReturn != "Go Back") {
-                  Navigator.pop(context);
-                }
               },
             ),
             const SizedBox(height: 12),

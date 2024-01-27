@@ -83,19 +83,50 @@ class _CalendarScreenState extends State<CalendarScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  const SizedBox(height: 12),
                   Container(
-                    decoration: ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                    height: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: const Color(0xfffffcef),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: SizedBox(
+                        width: MediaQuery.sizeOf(context).width - 40,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                dateColorKey(Color(0xffFFBE1D),
+                                    Color(0xfffdf5d1), "Past Orders"),
+                                const Spacer(),
+                                dateColorKey(Color(0xff329C00),
+                                    Color(0xffCBFFB3), "Upcoming Orders"),
+                              ],
+                            ),
+                            Column(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                dateColorKey(Color(0xffF84545),
+                                    Color(0xffFFDDDD), "Canceled Orders"),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
-                      shadows: const [
-                        BoxShadow(
-                          color: Color(0x1EFFBE1D),
-                          blurRadius: 16,
-                          offset: Offset(0, 4),
-                          spreadRadius: 0,
-                        )
-                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
                       color: const Color(0xfffffcef),
                     ),
                     width: MediaQuery.sizeOf(context).width - 30,
@@ -417,7 +448,7 @@ Widget deadlinePastMealChooser(String text) {
       Checkbox(
         value: true,
         onChanged: (value) {
-          Fluttertoast.showToast(msg: "Deadline past for cancellation");
+          Fluttertoast.showToast(msg: "Deadline for cancellation has passed");
         },
       )
     ],
@@ -442,9 +473,7 @@ Widget dateBox(DateTime date, bool isPast, bool isCancelled) {
                             : const Color(0xff329C00)))),
             color: isCancelled
                 ? const Color(0xffFFDDDD)
-                : (isPast
-                    ? Color.fromARGB(255, 253, 245, 209)
-                    : const Color(0xffCBFFB3))),
+                : (isPast ? const Color(0xfffdf5d1) : const Color(0xffCBFFB3))),
         child: Center(
           child: Text(
             date.day.toString(),
@@ -525,6 +554,35 @@ bool compareDates(DateTime date1, DateTime date2) {
   return date1.year == date2.year &&
       date1.month == date2.month &&
       date1.day == date2.day;
+}
+
+Widget dateColorKey(Color borderColor, Color innerColor, String key) {
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      Container(
+        height: 14,
+        width: 14,
+        decoration: ShapeDecoration(
+            shape: CircleBorder(
+              side: BorderSide(width: 1, color: borderColor),
+            ),
+            color: innerColor),
+      ),
+      const SizedBox(width: 12),
+      Text(
+        key,
+        style: const TextStyle(
+          fontSize: 12,
+          height: 20 / 12,
+          letterSpacing: 0.5,
+          fontWeight: FontWeight.w500,
+          color: Color(0xff494949),
+        ),
+      )
+    ],
+  );
 }
 
 bool isPast(DateTime time) {

@@ -49,7 +49,7 @@ class LoadingAnimation {
         children: [
           Lottie.asset(
             _emptyPageAnimation,
-            height: MediaQuery.sizeOf(context).height * 0.4,
+            height: MediaQuery.sizeOf(context).height * 0.3,
             repeat: false,
             fit: BoxFit.fitHeight,
           ),
@@ -104,7 +104,7 @@ class LoadingAnimation {
         children: [
           Lottie.asset(
             _errorAnimation,
-            height: MediaQuery.sizeOf(context).height * 0.2,
+            height: MediaQuery.sizeOf(context).height * 0.3,
             repeat: false,
             fit: BoxFit.contain,
           ),

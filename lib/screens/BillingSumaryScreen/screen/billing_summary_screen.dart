@@ -3,15 +3,12 @@ import "dart:ui";
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:flutter_svg/svg.dart";
-import "package:fluttertoast/fluttertoast.dart";
 import "package:hive/hive.dart";
 import "package:lottie/lottie.dart";
-import "package:razorpay_flutter/razorpay_flutter.dart";
 import "package:tiffsy_app/Helpers/loading_animation.dart";
 import "package:tiffsy_app/Helpers/page_router.dart";
 import "package:tiffsy_app/screens/BillingSumaryScreen/bloc/billing_summary_bloc.dart";
 import "package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart";
-import "package:tiffsy_app/screens/LoginScreen/screen/login_screen.dart";
 
 class BillingSummaryScreen extends StatefulWidget {
   const BillingSummaryScreen({super.key});
@@ -87,51 +84,110 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
           Hive.box("cart_box").delete("is_subscription");
         },
       ),
-      child: Scaffold(
-        backgroundColor: const Color(0xffffffff),
-        appBar: AppBar(
-          leadingWidth: 64,
-          titleSpacing: 0,
-          backgroundColor: const Color(0xffffffff),
-          surfaceTintColor: const Color(0xffffffff),
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_rounded,
-              color: Color(0xff323232),
-              size: 24,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: const Text(
-            "Billing summary",
-            style: TextStyle(
-              fontSize: 20,
-              height: 28 / 20,
-              fontWeight: FontWeight.w400,
-              color: Color(0xff121212),
-            ),
-          ),
-        ),
-        body: BlocConsumer<BillingSummaryBloc, BillingSummaryState>(
-          listener: (context, state) {
-            if (state is TransactionLoadingState) {
-              Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
-          builder: (context, state) {
-            if (state is RazorpayInProgress) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (state is RazorpaySuccess) {
-              // No need to handle navigation here
-              return Stack(
-                children: [
-                  Padding(
+      child: BlocConsumer<BillingSummaryBloc, BillingSummaryState>(
+        listener: (context, state) {
+          // TODO: implement listener
+          if (state is RazorpayFailure) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.errorMessage)));
+          }
+        },
+        builder: (context, state) {
+          if (state is RazorpayInProgress) {
+            return Scaffold(
+              backgroundColor: const Color(0xffffffff),
+              appBar: AppBar(
+                leadingWidth: 64,
+                titleSpacing: 0,
+                backgroundColor: const Color(0xffffffff),
+                surfaceTintColor: const Color(0xffffffff),
+                leading: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: Color(0xff323232),
+                    size: 24,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                title: const Text(
+                  "Billing summary",
+                  style: TextStyle(
+                    fontSize: 20,
+                    height: 28 / 20,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xff121212),
+                  ),
+                ),
+              ),
+              body: Center(
+                child: LoadingAnimation.circularLoadingAnimation(context),
+              ),
+            );
+          } else if (state is TransactionLoadingState) {
+            return Scaffold(
+              backgroundColor: const Color(0xffffffff),
+              appBar: AppBar(
+                leadingWidth: 64,
+                titleSpacing: 0,
+                backgroundColor: const Color(0xffffffff),
+                surfaceTintColor: const Color(0xffffffff),
+                leading: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: Color(0xff323232),
+                    size: 24,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                title: const Text(
+                  "Billing summary",
+                  style: TextStyle(
+                    fontSize: 20,
+                    height: 28 / 20,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xff121212),
+                  ),
+                ),
+              ),
+              body: Center(
+                child: LoadingAnimation.circularLoadingAnimation(context),
+              ),
+            );
+          } else if (state is RazorpaySuccess) {
+            return Stack(
+              children: [
+                Scaffold(
+                  backgroundColor: const Color(0xffffffff),
+                  appBar: AppBar(
+                    leadingWidth: 64,
+                    titleSpacing: 0,
+                    backgroundColor: const Color(0xffffffff),
+                    surfaceTintColor: const Color(0xffffffff),
+                    leading: IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back_rounded,
+                        color: Color(0xff323232),
+                        size: 24,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    title: const Text(
+                      "Billing summary",
+                      style: TextStyle(
+                        fontSize: 20,
+                        height: 28 / 20,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xff121212),
+                      ),
+                    ),
+                  ),
+                  body: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
                     child: SingleChildScrollView(
                       child: Column(
@@ -149,23 +205,47 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
                                   })),
                     ),
                   ),
-                  LoadingAnimation.circularLoadingAnimation(context),
-                  // BackdropFilter(
-                  //   filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-                  //   child: Container(
-                  //     decoration: BoxDecoration(
-                  //         shape: BoxShape.circle, color: Color(0x88000000)),
-                  //     height: MediaQuery.sizeOf(context).height,
-                  //     width: MediaQuery.sizeOf(context).width,
-                  //   ),
-                  // ),
-                  PaymentSuccessfulPopUp()
-                ],
-              );
-            } else if (state is RazorpayFailure) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.errorMessage)));
-              return Padding(
+                ),
+                BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+                  child: Container(
+                    decoration: BoxDecoration(color: Color(0x88000000)),
+                    height: MediaQuery.sizeOf(context).height,
+                    width: MediaQuery.sizeOf(context).width,
+                  ),
+                ),
+                PaymentSuccessfulPopUp()
+              ],
+            );
+          } else {
+            return Scaffold(
+              backgroundColor: const Color(0xffffffff),
+              appBar: AppBar(
+                leadingWidth: 64,
+                titleSpacing: 0,
+                backgroundColor: const Color(0xffffffff),
+                surfaceTintColor: const Color(0xffffffff),
+                leading: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_rounded,
+                    color: Color(0xff323232),
+                    size: 24,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                title: const Text(
+                  "Billing summary",
+                  style: TextStyle(
+                    fontSize: 20,
+                    height: 28 / 20,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xff121212),
+                  ),
+                ),
+              ),
+              body: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
                 child: SingleChildScrollView(
                   child: Column(
@@ -182,29 +262,10 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
                                 //         PaymentCheckoutScreen(amount: grandTotal)));
                               })),
                 ),
-              );
-            } else {
-              return Padding(
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
-                child: SingleChildScrollView(
-                  child: Column(
-                      children:
-                          billingInformation(summaryBreakdown, grandTotal) +
-                              couponEntryBox(couponCodeController,
-                                  getlistOfCoupons(), clearCouponButton) +
-                              proceedButton(() {
-                                BlocProvider.of<BillingSummaryBloc>(context)
-                                    .initializePayment(grandTotal);
-                                // Navigator.push(
-                                //     context,
-                                //     SlideTransitionRouter.toNextPage(
-                                //         PaymentCheckoutScreen(amount: grandTotal)));
-                              })),
-                ),
-              );
-            }
-          },
-        ),
+              ),
+            );
+          }
+        },
       ),
     );
   }
@@ -379,31 +440,35 @@ class _PaymentSuccessfulPopUpState extends State<PaymentSuccessfulPopUp> {
       children: [
         Center(
           child: Container(
-            height: 280,
+            height: 340,
             width: MediaQuery.sizeOf(context).width - 100,
             decoration: BoxDecoration(
                 color: Color(0xffffffff),
                 borderRadius: BorderRadius.circular(16)),
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                children: [
-                  SvgPicture.asset(
-                    "assets/payment_successful/payment_successful_popup_bg.svg",
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    "Order Placed Successfully!",
-                    style: TextStyle(
-                      color: const Color(0xff121212),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      height: 20 / 14,
-                      letterSpacing: 0.25,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SvgPicture.asset(
+                      "assets/payment_successful/payment_successful_popup_bg.svg",
                     ),
-                  ),
-                  const SizedBox(height: 12)
-                ],
+                    const Material(
+                      child: Text(
+                        "Order Placed Successfully!",
+                        style: TextStyle(
+                          color: Color(0xff121212),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          height: 24 / 16,
+                          letterSpacing: 0.25,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12)
+                  ],
+                ),
               ),
             ),
           ),

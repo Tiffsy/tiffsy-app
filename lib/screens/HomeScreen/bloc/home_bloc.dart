@@ -163,10 +163,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           cartBox.put("cart", cart);
           emit(HomePageCartQuantityChangeState());
           emit(UpdateCartBadge(quantity: cartCount()));
-          Fluttertoast.showToast(
-              msg:
-                  "${toSentenceCase(event.mealType)} ${toSentenceCase(event.mealTime)} added to cart!",
-              toastLength: Toast.LENGTH_SHORT);
         }
       } else {
         bool hasChanged = false;
@@ -181,10 +177,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           cart.add([menuAddedToCart, 1]);
         }
         cartBox.put("cart", cart);
-        Fluttertoast.showToast(
-            msg:
-                "${toSentenceCase(event.mealType)} ${toSentenceCase(event.mealTime)} added to cart!",
-            toastLength: Toast.LENGTH_SHORT);
       }
       // bool alreadyExists = false;
       // for (var element in cart) {

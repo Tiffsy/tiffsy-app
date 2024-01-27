@@ -142,20 +142,24 @@ class _CustomeCartCardState extends State<CustomeCartCard> {
     }
     if (cartBox.get("cart", defaultValue: []).isEmpty) {
       widget.onListEmpty();
+      cartBox.delete("is_subscription");
     }
   }
+
+  late bool cartType;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     quantity = widget.cartItem[1];
+    cartType = cartBox.get("is_subscription", defaultValue: false);
   }
 
   @override
   Widget build(BuildContext context) {
     Map menu = cartBox.get('menu');
-    bool cartType = cartBox.get("is_subscription", defaultValue: false);
+
     Map menuObject =
         menu[widget.cartItem[0]["mealTime"]][widget.cartItem[0]["mealType"]];
     Map<String, dynamic> menuObjectCasted = {};

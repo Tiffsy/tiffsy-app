@@ -452,10 +452,8 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
     return SizedBox(
       child: InkWell(
         onTap: () async {
-          if (isEnabled) {
-            Map<String, Map<String, Map>> menu = cartBox.get('menu');
-            showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
-          }
+          Map<String, Map<String, Map>> menu = cartBox.get('menu');
+          showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
         },
         child: Stack(
           alignment: Alignment.bottomCenter,
@@ -498,30 +496,25 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               clipBehavior: Clip.antiAlias,
               decoration: ShapeDecoration(
-                color: isEnabled
-                    ? const Color(0xffcbffb3)
-                    : const Color(0xffdfdfdf),
+                color: const Color(0xffcbffb3),
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                      width: 1,
-                      color: isEnabled
-                          ? const Color(0xFF6AA64F)
-                          : const Color(0xff666666)),
+                  side: const BorderSide(
+                    width: 1,
+                    color: Color(0xFF6AA64F),
+                  ),
                   borderRadius: BorderRadius.circular(6),
                 ),
               ),
-              child: Row(
+              child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    isEnabled ? 'Add' : "Added",
+                    'Add',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: isEnabled
-                          ? const Color(0xFF6AA64F)
-                          : const Color(0xff666666),
+                      color: Color(0xFF6AA64F),
                       fontSize: 12,
                       fontFamily: 'Roboto',
                       fontWeight: FontWeight.w500,
@@ -669,6 +662,13 @@ class _MenuImageForBottomSheetState extends State<MenuImageForBottomSheet> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.sizeOf(context).width;
+    List cart = cartBox.get("cart", defaultValue: []);
+    for (int i = 0; i < cart.length; i++) {
+      if (cart[i][0]["mealTime"] == widget.mealTime &&
+          cart[i][0]["mealType"] == widget.mealType) {
+        quantity = cart[i][1];
+      }
+    }
     if (widget.subscriptionButtonIsExpanded && cartBoxIsSubscription != false) {
       return SizedBox(
         width: width * 0.35,
@@ -731,13 +731,6 @@ class _MenuImageForBottomSheetState extends State<MenuImageForBottomSheet> {
       );
     } else if (!widget.subscriptionButtonIsExpanded &&
         cartBoxIsSubscription != true) {
-      List cart = cartBox.get("cart");
-      for (int i = 0; i < cart.length; i++) {
-        if (cart[i][0]["mealTime"] == widget.mealTime &&
-            cart[i][0]["mealType"] == widget.mealType) {
-          quantity = cart[i][1];
-        }
-      }
       return (quantity == 0)
           ? SizedBox(
               width: width * 0.35,

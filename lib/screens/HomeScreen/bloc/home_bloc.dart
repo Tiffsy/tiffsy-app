@@ -150,7 +150,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         for (var element in cart) {
           if (element[0]["mealTime"] == event.mealTime) {
             emit(HomePageCartQuantityChangeState());
-            emit(UpdateCartBadge(quantity: cartCount()));
+
             Fluttertoast.showToast(
                 msg: "Can't add the same item twice",
                 toastLength: Toast.LENGTH_LONG);
@@ -162,7 +162,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           cart.add([menuAddedToCart, 1]);
           cartBox.put("cart", cart);
           emit(HomePageCartQuantityChangeState());
-          emit(UpdateCartBadge(quantity: cartCount()));
         }
       } else {
         bool hasChanged = false;
@@ -178,36 +177,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         }
         cartBox.put("cart", cart);
       }
-      // bool alreadyExists = false;
-      // for (var element in cart) {
-      //   if (element[0]["mealTime"] == event.mealTime) {
-      //     emit(HomePageCartQuantityChangeState());
-      //     Fluttertoast.showToast(
-      //         msg: "Can't add the same item twice",
-      //         toastLength: Toast.LENGTH_LONG);
-      //     alreadyExists = true;
-      //     break;
-      //   }
-      // }
-      // if (!alreadyExists) {
-      //   cart.add([menuAddedToCart, 1]);
-      //   cartBox.put("cart", cart);
-      //   emit(HomePageCartQuantityChangeState());
-      //   Fluttertoast.showToast(
-      //       msg:
-      //           "${toSentenceCase(event.mealType)} ${toSentenceCase(event.mealTime)} added to cart!",
-      //       toastLength: Toast.LENGTH_SHORT);
-      // } else if (!event.isSubscription) {
-      //   for (var element in cart) {
-      //     if (element[0] == menuAddedToCart) {
-      //       element[1] += 1;
-      //     }
-      //   }
-      //   cartBox.put("cart", cart);
-      // }
     }
     emit(HomeFetchSuccessfulIsCachedState());
-    emit(UpdateCartBadge(quantity: cartCount()));
   }
 
   FutureOr<void> homePageRemoveFromCartEvent(

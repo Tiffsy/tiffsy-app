@@ -422,6 +422,7 @@ class _HomeState extends State<Home> {
               ),
             );
           } else {
+            print(state.toString());
             return Scaffold(
               backgroundColor: const Color(0xffffffff),
               appBar: AppBar(

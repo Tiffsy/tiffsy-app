@@ -662,14 +662,14 @@ class _MenuImageForBottomSheetState extends State<MenuImageForBottomSheet> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.sizeOf(context).width;
-    List cart = cartBox.get("cart", defaultValue: []);
-    for (int i = 0; i < cart.length; i++) {
-      if (cart[i][0]["mealTime"] == widget.mealTime &&
-          cart[i][0]["mealType"] == widget.mealType) {
-        quantity = cart[i][1];
-      }
-    }
+
     if (widget.subscriptionButtonIsExpanded && cartBoxIsSubscription != false) {
+      List cart = cartBox.get("cart", defaultValue: []);
+      for (int i = 0; i < cart.length; i++) {
+        if (cart[i][0]["mealTime"] == widget.mealTime) {
+          quantity = cart[i][1];
+        }
+      }
       return SizedBox(
         width: width * 0.35,
         child: Stack(
@@ -682,40 +682,52 @@ class _MenuImageForBottomSheetState extends State<MenuImageForBottomSheet> {
             ),
             InkWell(
               onTap: () {
-                bool cartTypeIsSubscription = cartBox.get("is_subscription",
-                    defaultValue: widget.subscriptionButtonIsExpanded);
-                if (cartTypeIsSubscription) {
-                  cartBox.put("is_subscription", true);
-                  widget.homeBloc.add(HomePageAddToCartEvent(
-                      isSubscription: true,
-                      mealTime: widget.mealTime,
-                      mealType: widget.mealType));
-                } else {
+                if (quantity == 0) {
+                  bool cartTypeIsSubscription = cartBox.get("is_subscription",
+                      defaultValue: widget.subscriptionButtonIsExpanded);
+                  if (cartTypeIsSubscription) {
+                    cartBox.put("is_subscription", true);
+                    widget.homeBloc.add(HomePageAddToCartEvent(
+                        isSubscription: true,
+                        mealTime: widget.mealTime,
+                        mealType: widget.mealType));
+                  } else {
+                    Fluttertoast.showToast(
+                      msg: "Clear the cart or checkout first",
+                    );
+                  }
+                  Navigator.pop(context);
                   Fluttertoast.showToast(
-                    msg: "Clear the cart or checkout first",
-                  );
+                      msg:
+                          "${toSentenceCase(widget.mealType)} ${toSentenceCase(widget.mealTime)} added to cart!",
+                      toastLength: Toast.LENGTH_SHORT);
+                  setState(() {});
+                } else {
+                  Fluttertoast.showToast(msg: "Can add only one of each item");
                 }
-                Navigator.pop(context);
-                Fluttertoast.showToast(
-                    msg:
-                        "${toSentenceCase(widget.mealType)} ${toSentenceCase(widget.mealTime)} added to cart!",
-                    toastLength: Toast.LENGTH_SHORT);
-                setState(() {});
               },
               borderRadius: BorderRadius.circular(6),
               child: Container(
                 width: 96,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: const Color(0xffcbffb3),
-                  border: Border.all(width: 1, color: const Color(0xff6aa64f)),
+                  color: (quantity == 0)
+                      ? Color(0xffcbffb3)
+                      : Colors.grey.shade300,
+                  border: Border.all(
+                      width: 1,
+                      color: (quantity == 0)
+                          ? Color(0xff6aa64f)
+                          : Colors.grey.shade600),
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
-                    "Add",
+                    (quantity == 0) ? "Add" : "Added",
                     style: TextStyle(
-                      color: Color(0xFF6AA64F),
+                      color: (quantity == 0)
+                          ? Color(0xff6aa64f)
+                          : Colors.grey.shade700,
                       fontSize: 12,
                       fontFamily: 'Roboto',
                       fontWeight: FontWeight.w500,
@@ -731,6 +743,13 @@ class _MenuImageForBottomSheetState extends State<MenuImageForBottomSheet> {
       );
     } else if (!widget.subscriptionButtonIsExpanded &&
         cartBoxIsSubscription != true) {
+      List cart = cartBox.get("cart", defaultValue: []);
+      for (int i = 0; i < cart.length; i++) {
+        if (cart[i][0]["mealTime"] == widget.mealTime &&
+            cart[i][0]["mealType"] == widget.mealType) {
+          quantity = cart[i][1];
+        }
+      }
       return (quantity == 0)
           ? SizedBox(
               width: width * 0.35,

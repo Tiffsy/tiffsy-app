@@ -33,118 +33,122 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
           child: Text("Personal Details"),
         ),
       ),
-      body: BlocProvider(
-        create: (context) => personalDetailsBloc,
-        child: BlocConsumer<PersonalDetailsBloc, PersonalDetailsState>(
-          listener: (context, state) {
-            if (state is ScreenErrorState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.error)),
-              );
-            }
-            if (state is ContinueButtonClickedSuccessState) {
-              Navigator.popUntil(context, (route) => route.isFirst);
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (_) => const HomeScreen()));
-            }
-          },
-          builder: (context, state) {
-            if (state is ScreenLoadingScreen) {
-              return Center(
-                child: LoadingAnimation.circularLoadingAnimation(context),
-              );
-            } else if (state is PersonalDetailsInitial) {
-              if (state.isPhoneAuth) {
-                return Center(
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.only(right: 30, left: 30, bottom: 100),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        entryBox(name, "Name", AutofillHints.name),
-                        const SizedBox(height: 24),
-                        entryBox(email, "Email ID", AutofillHints.email),
-                        const SizedBox(height: 40),
-                        ElevatedButton(
-                          onPressed: () {
-                            if (name.text.isNotEmpty &&
-                                email.text.contains("@")) {
-                              BlocProvider.of<PersonalDetailsBloc>(context).add(
-                                ContinueButtonClickedForEmailEvent(
-                                    name: name.text,
-                                    number: widget.phoneNumber,
-                                    mailId: email.text),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text("Invalid data entered")));
-                            }
-                          },
-                          child: const Text(
-                            "Continue",
-                            style: TextStyle(color: Color(0xff121212)),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              } else {
-                return Center(
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.only(right: 30, left: 30, bottom: 100),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 80),
-                        const Text(
-                          "Let us know how to address you",
-                          style: TextStyle(
-                            color: Color(0xFF121212),
-                            fontSize: 14,
-                            fontFamily: 'Roboto',
-                            fontWeight: FontWeight.w500,
-                            height: 20 / 14,
-                            letterSpacing: 0.10,
-                          ),
-                        ),
-                        const SizedBox(height: 40),
-                        entryBox(name, "Name", AutofillHints.name),
-                        const SizedBox(height: 24),
-                        entryBox(number, "10-digit Phone Number",
-                            AutofillHints.telephoneNumber),
-                        const SizedBox(height: 40),
-                        orderNowButton(
-                          () {
-                            if (name.text.isNotEmpty &&
-                                number.text.length == 10) {
-                              BlocProvider.of<PersonalDetailsBloc>(context).add(
-                                ContinueButtonClickedForEmailEvent(
-                                    name: name.text,
-                                    number: number.text,
-                                    mailId: user.email!),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text("Invalid data entered")));
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
+      body: SingleChildScrollView(
+        child: BlocProvider(
+          create: (context) => personalDetailsBloc,
+          child: BlocConsumer<PersonalDetailsBloc, PersonalDetailsState>(
+            listener: (context, state) {
+              if (state is ScreenErrorState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(state.error)),
                 );
               }
-            } else {
-              return const SizedBox();
-            }
-          },
+              if (state is ContinueButtonClickedSuccessState) {
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (_) => const HomeScreen()));
+              }
+            },
+            builder: (context, state) {
+              if (state is ScreenLoadingScreen) {
+                return Center(
+                  child: LoadingAnimation.circularLoadingAnimation(context),
+                );
+              } else if (state is PersonalDetailsInitial) {
+                if (state.isPhoneAuth) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          right: 30, left: 30, bottom: 100),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          entryBox(name, "Name", AutofillHints.name),
+                          const SizedBox(height: 24),
+                          entryBox(email, "Email ID", AutofillHints.email),
+                          const SizedBox(height: 40),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (name.text.isNotEmpty &&
+                                  email.text.contains("@")) {
+                                BlocProvider.of<PersonalDetailsBloc>(context)
+                                    .add(
+                                  ContinueButtonClickedForEmailEvent(
+                                      name: name.text,
+                                      number: widget.phoneNumber,
+                                      mailId: email.text),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text("Invalid data entered")));
+                              }
+                            },
+                            child: const Text(
+                              "Continue",
+                              style: TextStyle(color: Color(0xff121212)),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                } else {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          right: 30, left: 30, bottom: 100),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 80),
+                          const Text(
+                            "Let us know how to address you",
+                            style: TextStyle(
+                              color: Color(0xFF121212),
+                              fontSize: 14,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w500,
+                              height: 20 / 14,
+                              letterSpacing: 0.10,
+                            ),
+                          ),
+                          const SizedBox(height: 40),
+                          entryBox(name, "Name", AutofillHints.name),
+                          const SizedBox(height: 24),
+                          entryBox(number, "10-digit Phone Number",
+                              AutofillHints.telephoneNumber),
+                          const SizedBox(height: 40),
+                          orderNowButton(
+                            () {
+                              if (name.text.isNotEmpty &&
+                                  number.text.length == 10) {
+                                BlocProvider.of<PersonalDetailsBloc>(context)
+                                    .add(
+                                  ContinueButtonClickedForEmailEvent(
+                                      name: name.text,
+                                      number: number.text,
+                                      mailId: user.email!),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text("Invalid data entered")));
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+              } else {
+                return const SizedBox();
+              }
+            },
+          ),
         ),
       ),
     );

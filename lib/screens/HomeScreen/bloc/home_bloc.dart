@@ -22,21 +22,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   FutureOr<void> homeInitialFetch(
       HomeInitialFetchEvent event, Emitter<HomeState> emit) async {
-
     emit(HomeLoadingState());
-    
+
     Box cartBox = Hive.box("cart_box");
-    
-    print(event.isCached);
 
     if (!event.isCached) {
-
       Result<List<MenuDataModel>> menu = await HomeRepo.fetchMenu();
-
+      print(menu.isSuccess);
       if (menu.isSuccess) {
         bool loginMethod = HomeRepo.checkUserAuthenticationMethod();
-        
-        if (loginMethod) { // login method true means phone login
+
+        if (loginMethod) {
+          // login method true means phone login
 
           String cstPhone = HomeRepo.getUserInfo();
           cstPhone = cstPhone.substring(3);
@@ -57,10 +54,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 cstDetails["cst_id"],
                 cstDetails["cst_contact"]);
             if (token.isSuccess) {
-
               print(token.data);
               customerBox.put("token", token.data);
-
             } else {
               emit(HomeErrorState(error: token.error.toString()));
             }
@@ -126,8 +121,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         print(menu.error.toString());
         emit(HomeErrorState(error: menu.error.toString()));
       }
-    } 
-    else { 
+    } else {
       cartBox.get("menu");
 
       emit(HomeFetchSuccessfulIsCachedState());
@@ -169,10 +163,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           cartBox.put("cart", cart);
           emit(HomePageCartQuantityChangeState());
           emit(UpdateCartBadge(quantity: cartCount()));
-          Fluttertoast.showToast(
-              msg:
-                  "${toSentenceCase(event.mealType)} ${toSentenceCase(event.mealTime)} added to cart!",
-              toastLength: Toast.LENGTH_SHORT);
         }
       } else {
         bool hasChanged = false;
@@ -187,10 +177,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           cart.add([menuAddedToCart, 1]);
         }
         cartBox.put("cart", cart);
-        Fluttertoast.showToast(
-            msg:
-                "${toSentenceCase(event.mealType)} ${toSentenceCase(event.mealTime)} added to cart!",
-            toastLength: Toast.LENGTH_SHORT);
       }
       // bool alreadyExists = false;
       // for (var element in cart) {

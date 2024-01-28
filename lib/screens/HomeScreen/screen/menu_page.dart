@@ -20,6 +20,7 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
   bool orderNowButtonIsExpanded = false;
   bool subscriptionButtonIsExpanded = false;
   ScrollController topButtonsHorizontalScrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeBloc, HomeState>(
@@ -368,48 +369,47 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
   Widget orderNowButtons(BuildContext context, String imageAsset,
       String menuTime, HomeBloc homeBloc) {
     return SizedBox(
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          Column(
-            children: [
-              Container(
-                decoration: ShapeDecoration(
-                  color: const Color(0x00000000),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: () async {
+          Map<String, Map<String, Map>> menu = cartBox.get('menu');
+          showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
+        },
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Column(
+              children: [
+                Container(
+                  decoration: ShapeDecoration(
+                    color: const Color(0x00000000),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  height: 80,
+                  width: 86,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 7),
+                      SizedBox(height: 41, child: SvgPicture.asset(imageAsset)),
+                      Text(
+                        toSentenceCase(menuTime),
+                        style: const TextStyle(
+                          color: Color(0xFF121212),
+                          fontSize: 12,
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w500,
+                          height: 16 / 12,
+                          letterSpacing: 0.50,
+                        ),
+                      )
+                    ],
                   ),
                 ),
-                height: 80,
-                width: (MediaQuery.sizeOf(context).width - 72) / 3,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 7),
-                    SizedBox(height: 41, child: SvgPicture.asset(imageAsset)),
-                    Text(
-                      toSentenceCase(menuTime),
-                      style: const TextStyle(
-                        color: Color(0xFF121212),
-                        fontSize: 12,
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.w500,
-                        height: 16 / 12,
-                        letterSpacing: 0.50,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 18),
-            ],
-          ),
-          InkWell(
-            onTap: () async {
-              Map<String, Map<String, Map>> menu = cartBox.get('menu');
-              showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
-            },
-            borderRadius: BorderRadius.circular(6),
-            child: Container(
+                const SizedBox(height: 18),
+              ],
+            ),
+            Container(
               width: 86,
               height: 30,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -440,9 +440,9 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
                   ),
                 ],
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -450,50 +450,49 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
   Widget orderSubscriptionButtons(BuildContext context, String imageAsset,
       bool isEnabled, String menuTime, HomeBloc homeBloc) {
     return SizedBox(
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          Column(
-            children: [
-              Container(
-                decoration: ShapeDecoration(
-                  color: const Color(0x00000000),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: () async {
+          if (isEnabled) {
+            Map<String, Map<String, Map>> menu = cartBox.get('menu');
+            showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
+          }
+        },
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Column(
+              children: [
+                Container(
+                  decoration: ShapeDecoration(
+                    color: const Color(0x00000000),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  height: 80,
+                  width: 86,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 7),
+                      SizedBox(height: 41, child: SvgPicture.asset(imageAsset)),
+                      Text(
+                        toSentenceCase(menuTime),
+                        style: const TextStyle(
+                          color: Color(0xFF121212),
+                          fontSize: 12,
+                          fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w500,
+                          height: 16 / 12,
+                          letterSpacing: 0.50,
+                        ),
+                      )
+                    ],
                   ),
                 ),
-                height: 80,
-                width: (MediaQuery.sizeOf(context).width - 72) / 3,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 7),
-                    SizedBox(height: 41, child: SvgPicture.asset(imageAsset)),
-                    Text(
-                      toSentenceCase(menuTime),
-                      style: const TextStyle(
-                        color: Color(0xFF121212),
-                        fontSize: 12,
-                        fontFamily: 'Roboto',
-                        fontWeight: FontWeight.w500,
-                        height: 16 / 12,
-                        letterSpacing: 0.50,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 18),
-            ],
-          ),
-          InkWell(
-            onTap: () async {
-              if (isEnabled) {
-                Map<String, Map<String, Map>> menu = cartBox.get('menu');
-                showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
-              }
-            },
-            borderRadius: BorderRadius.circular(6),
-            child: Container(
+                const SizedBox(height: 18),
+              ],
+            ),
+            Container(
               width: 86,
               height: 30,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -532,9 +531,9 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
                   ),
                 ],
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -625,78 +624,305 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
               ),
             ],
           ),
-          menuImageForBottomSheet(
-              menuData.mealTime, menuData.mealType, homeBloc)
-        ],
-      ),
-    );
-  }
-
-  Widget menuImageForBottomSheet(
-      String mealTime, String mealType, HomeBloc homeBloc) {
-    double width = MediaQuery.sizeOf(context).width;
-    return SizedBox(
-      width: width * 0.35,
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          Image.asset(
-            'assets/images/vectors/thali_full.png',
-            fit: BoxFit.contain,
-            width: width * 0.3,
-          ),
-          InkWell(
-            onTap: () {
-              bool cartTypeIsSubscription = cartBox.get("is_subscription",
-                  defaultValue: subscriptionButtonIsExpanded);
-              print(cartTypeIsSubscription);
-              if (subscriptionButtonIsExpanded && cartTypeIsSubscription) {
-                cartBox.put("is_subscription", true);
-                homeBloc.add(HomePageAddToCartEvent(
-                    isSubscription: true,
-                    mealTime: mealTime,
-                    mealType: mealType));
-              } else if (orderNowButtonIsExpanded && !cartTypeIsSubscription) {
-                cartBox.put("is_subscription", false);
-                homeBloc.add(HomePageAddToCartEvent(
-                    isSubscription: false,
-                    mealTime: mealTime,
-                    mealType: mealType));
-              } else {
-                Fluttertoast.showToast(
-                  msg: "Clear the cart or checkout first",
-                );
-              }
-              Navigator.pop(context);
-              setState(() {});
-            },
-            borderRadius: BorderRadius.circular(6),
-            child: Container(
-              height: 28,
-              width: 76,
-              decoration: BoxDecoration(
-                color: const Color(0xffcbffb3),
-                border: Border.all(width: 1, color: const Color(0xff6aa64f)),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: const Center(
-                child: Text(
-                  "Add",
-                  style: TextStyle(
-                    color: Color(0xFF6AA64F),
-                    fontSize: 12,
-                    fontFamily: 'Roboto',
-                    fontWeight: FontWeight.w500,
-                    height: 16 / 11,
-                    letterSpacing: 0.15,
-                  ),
-                ),
-              ),
-            ),
+          MenuImageForBottomSheet(
+            mealTime: menuData.mealTime,
+            mealType: menuData.mealType,
+            homeBloc: homeBloc,
+            subscriptionButtonIsExpanded: subscriptionButtonIsExpanded,
           )
         ],
       ),
     );
+  }
+}
+
+class MenuImageForBottomSheet extends StatefulWidget {
+  const MenuImageForBottomSheet({
+    super.key,
+    required this.subscriptionButtonIsExpanded,
+    required this.homeBloc,
+    required this.mealTime,
+    required this.mealType,
+  });
+  final HomeBloc homeBloc;
+  final bool subscriptionButtonIsExpanded;
+  final String mealTime;
+  final String mealType;
+
+  @override
+  State<MenuImageForBottomSheet> createState() =>
+      _MenuImageForBottomSheetState();
+}
+
+class _MenuImageForBottomSheetState extends State<MenuImageForBottomSheet> {
+  Box cartBox = Hive.box("cart_box");
+  bool? cartBoxIsSubscription;
+  int quantity = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    cartBoxIsSubscription = cartBox.get("is_subscription");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    double width = MediaQuery.sizeOf(context).width;
+    if (widget.subscriptionButtonIsExpanded && cartBoxIsSubscription != false) {
+      return SizedBox(
+        width: width * 0.35,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Image.asset(
+              'assets/images/vectors/thali_full.png',
+              fit: BoxFit.contain,
+              width: width * 0.3,
+            ),
+            InkWell(
+              onTap: () {
+                bool cartTypeIsSubscription = cartBox.get("is_subscription",
+                    defaultValue: widget.subscriptionButtonIsExpanded);
+                if (cartTypeIsSubscription) {
+                  cartBox.put("is_subscription", true);
+                  widget.homeBloc.add(HomePageAddToCartEvent(
+                      isSubscription: true,
+                      mealTime: widget.mealTime,
+                      mealType: widget.mealType));
+                } else {
+                  Fluttertoast.showToast(
+                    msg: "Clear the cart or checkout first",
+                  );
+                }
+                Navigator.pop(context);
+                Fluttertoast.showToast(
+                    msg:
+                        "${toSentenceCase(widget.mealType)} ${toSentenceCase(widget.mealTime)} added to cart!",
+                    toastLength: Toast.LENGTH_SHORT);
+                setState(() {});
+              },
+              borderRadius: BorderRadius.circular(6),
+              child: Container(
+                width: 96,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: const Color(0xffcbffb3),
+                  border: Border.all(width: 1, color: const Color(0xff6aa64f)),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Center(
+                  child: Text(
+                    "Add",
+                    style: TextStyle(
+                      color: Color(0xFF6AA64F),
+                      fontSize: 12,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w500,
+                      height: 16 / 11,
+                      letterSpacing: 0.15,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      );
+    } else if (!widget.subscriptionButtonIsExpanded &&
+        cartBoxIsSubscription != true) {
+      List cart = cartBox.get("cart");
+      for (int i = 0; i < cart.length; i++) {
+        if (cart[i][0]["mealTime"] == widget.mealTime &&
+            cart[i][0]["mealType"] == widget.mealType) {
+          quantity = cart[i][1];
+        }
+      }
+      return (quantity == 0)
+          ? SizedBox(
+              width: width * 0.35,
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  Image.asset(
+                    'assets/images/vectors/thali_full.png',
+                    fit: BoxFit.contain,
+                    width: width * 0.3,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      bool cartTypeIsSubscription = cartBox.get(
+                          "is_subscription",
+                          defaultValue: widget.subscriptionButtonIsExpanded);
+                      if (!cartTypeIsSubscription) {
+                        cartBox.put("is_subscription", false);
+                        widget.homeBloc.add(HomePageAddToCartEvent(
+                            isSubscription: false,
+                            mealTime: widget.mealTime,
+                            mealType: widget.mealType));
+                      } else {
+                        Fluttertoast.showToast(
+                          msg: "Clear the cart or checkout first",
+                        );
+                      }
+                      Fluttertoast.showToast(
+                          msg:
+                              "${toSentenceCase(widget.mealType)} ${toSentenceCase(widget.mealTime)} added to cart!",
+                          toastLength: Toast.LENGTH_SHORT);
+                      setState(() {});
+                    },
+                    borderRadius: BorderRadius.circular(6),
+                    child: Container(
+                      width: 96,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: const Color(0xffcbffb3),
+                        border: Border.all(
+                            width: 1, color: const Color(0xff6aa64f)),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Add",
+                          style: TextStyle(
+                            color: Color(0xFF6AA64F),
+                            fontSize: 12,
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w500,
+                            height: 16 / 11,
+                            letterSpacing: 0.15,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            )
+          : SizedBox(
+              width: width * 0.35,
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  Image.asset(
+                    'assets/images/vectors/thali_full.png',
+                    fit: BoxFit.contain,
+                    width: width * 0.3,
+                  ),
+                  Container(
+                    width: 96,
+                    height: 32,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    clipBehavior: Clip.antiAlias,
+                    decoration: ShapeDecoration(
+                      color: const Color(0xFFCBFFB2),
+                      shape: RoundedRectangleBorder(
+                        side: const BorderSide(
+                            width: 1, color: Color(0xFF329C00)),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: () async {
+                            widget.homeBloc.add(
+                              HomePageRemoveFromCartEvent(
+                                mealTime: widget.mealTime,
+                                mealType: widget.mealType,
+                              ),
+                            );
+                            setState(() {
+                              quantity -= 1;
+                            });
+                          },
+                          child: const Icon(
+                            Icons.remove_rounded,
+                            size: 20,
+                            color: Color(0xFF329C00),
+                          ),
+                        ),
+                        Text(
+                          quantity.toString(),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Color(0xFF329C00),
+                            fontSize: 16,
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w500,
+                            height: 20 / 16,
+                            letterSpacing: 0.15,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            widget.homeBloc.add(HomePageAddToCartEvent(
+                                isSubscription: false,
+                                mealTime: widget.mealTime,
+                                mealType: widget.mealType));
+
+                            setState(() {
+                              quantity += 1;
+                            });
+                          },
+                          child: const Icon(
+                            Icons.add_rounded,
+                            size: 20,
+                            color: Color(0xFF329C00),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            );
+    } else {
+      return SizedBox(
+        width: width * 0.35,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Image.asset(
+              'assets/images/vectors/thali_full.png',
+              fit: BoxFit.contain,
+              width: width * 0.3,
+            ),
+            InkWell(
+              onTap: () {
+                Fluttertoast.showToast(msg: "Clear the cart or checkout first");
+              },
+              borderRadius: BorderRadius.circular(6),
+              child: Container(
+                width: 96,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: const Color(0xffdfdfdf),
+                  border: Border.all(width: 1, color: const Color(0xff666666)),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Center(
+                  child: Text(
+                    "Add",
+                    style: TextStyle(
+                      color: Color(0xFF666666),
+                      fontSize: 12,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w500,
+                      height: 16 / 11,
+                      letterSpacing: 0.15,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      );
+    }
   }
 }
 

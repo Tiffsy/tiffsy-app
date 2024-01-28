@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
+import 'package:tiffsy_app/Helpers/loading_animation.dart';
 import 'package:tiffsy_app/Helpers/page_router.dart';
 import 'package:tiffsy_app/screens/AddAddressScreen/screen/add_address_screen.dart';
 import 'package:tiffsy_app/screens/AddressBookScreen/model/address_data_model.dart';
@@ -421,8 +422,45 @@ class _HomeState extends State<Home> {
               ),
             );
           } else {
-            return Center(
-              child: CircularProgressIndicator(),
+            return Scaffold(
+              backgroundColor: const Color(0xffffffff),
+              appBar: AppBar(
+                leadingWidth: 60,
+                leading: const Icon(
+                  Icons.location_on,
+                  size: 36,
+                  color: Color(0xffffbe1d),
+                ),
+              ),
+              bottomNavigationBar: NavigationBar(
+                onDestinationSelected: (int index) {
+                  setState(() {
+                    currentPageIndex = index;
+                  });
+                },
+                selectedIndex: currentPageIndex,
+                destinations: const <Widget>[
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.restaurant_menu),
+                    icon: Icon(Icons.restaurant_menu_outlined),
+                    label: 'Menu',
+                  ),
+                  NavigationDestination(
+                    selectedIcon: NavigationBarCartItem(isSelected: true),
+                    icon: NavigationBarCartItem(isSelected: false),
+                    label: 'Cart',
+                  ),
+                  NavigationDestination(
+                    selectedIcon: Icon(Icons.food_bank),
+                    icon: Icon(Icons.food_bank_outlined),
+                    label: 'Subscription',
+                  )
+                ],
+              ),
+              body: Center(
+                child: LoadingAnimation.errorAnimation(
+                    context, "Something went wrong"),
+              ),
             );
           }
         },

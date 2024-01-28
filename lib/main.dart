@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:tiffsy_app/Helpers/internet_connectivity.dart';
 import 'package:tiffsy_app/firebase_options.dart';
 import 'package:tiffsy_app/screens/LoginScreen/repository/user_repo.dart';
 import 'package:flutter/services.dart';
@@ -14,21 +16,23 @@ Future<void> main() async {
   await Hive.openBox("cart_box");
   await Hive.openBox("address_box");
   await Hive.openBox("customer_box");
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then(
-    (value) => runApp(
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((value) {
+    runApp(
       RepositoryProvider(
         create: (context) => UserRepo(),
         child: const MyApp(),
       ),
-    ),
-  );
+    );
+    DependencyInjection.init();
+  });
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),
       title: 'Tiffsy',
@@ -114,5 +118,3 @@ ThemeData getTheme() {
     useMaterial3: true,
   );
 }
-
-// 1. Internet connectivity

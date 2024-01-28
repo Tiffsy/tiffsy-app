@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinput/pinput.dart';
 import 'package:tiffsy_app/screens/LoginScreen/bloc/login_bloc.dart';
 import 'package:tiffsy_app/screens/PersonalDetailsScreen/screen/personalDetails_screen.dart';
-
 import '../../HomeScreen/screen/home_screen.dart';
 
 class OtpScreen extends StatefulWidget {

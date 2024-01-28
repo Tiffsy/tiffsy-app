@@ -1,4 +1,4 @@
-package com.example.tiffsy_app
+package com.tiffsy.tiffsy_app
 
 import io.flutter.embedding.android.FlutterActivity
 

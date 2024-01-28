@@ -1,26 +1,44 @@
 {
   "project_info": {
-    "project_number": "663990303984",
-    "project_id": "tiffsy-805bb",
-    "storage_bucket": "tiffsy-805bb.appspot.com"
+    "project_number": "276683143717",
+    "project_id": "tiffsy-foods",
+    "storage_bucket": "tiffsy-foods.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:663990303984:android:4cdddf7712d23d6bdb9635",
+        "mobilesdk_app_id": "1:276683143717:android:998f845e1a4ce7a9141dcc",
         "android_client_info": {
-          "package_name": "com.example.tiffsy_app"
+          "package_name": "com.tiffsy.tiffsy_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "276683143717-7090m9n00is1rknfn25in3rtqs8gfq3h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tiffsy.tiffsy_app",
+            "certificate_hash": "f35dbca3c0365940104d2d0a83bee965005ee48d"
+          }
+        },
+        {
+          "client_id": "276683143717-s5v5r48engs0m048mlt5rhpqs2sjud40.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyA9DhjhCSsH1ZSHyHiIgPPJfWkoYep-0XY"
+          "current_key": "AIzaSyC49GEIdnhDXLWZUHgWG1b1Zsj3-I2TPdM"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "276683143717-s5v5r48engs0m048mlt5rhpqs2sjud40.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

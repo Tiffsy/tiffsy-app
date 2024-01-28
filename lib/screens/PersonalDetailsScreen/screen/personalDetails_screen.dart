@@ -74,8 +74,8 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                               BlocProvider.of<PersonalDetailsBloc>(context).add(
                                 ContinueButtonClickedForEmailEvent(
                                     name: name.text,
-                                    number: number.text,
-                                    mailId: user.email!),
+                                    number: widget.phoneNumber,
+                                    mailId: email.text),
                               );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(

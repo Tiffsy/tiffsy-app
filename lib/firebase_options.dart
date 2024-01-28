@@ -14,6 +14,9 @@ import 'package:flutter/foundation.dart'
 ///   options: DefaultFirebaseOptions.currentPlatform,
 /// );
 /// ```
+/// 
+/// import 'package:firebase_core/firebase_core.dart';
+
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -44,38 +47,42 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCrg_cAiVVwB8eRHsrTi6l6Csuxe-_wvjw',
-    appId: '1:663990303984:web:6961695a09badb0edb9635',
-    messagingSenderId: '663990303984',
-    projectId: 'tiffsy-805bb',
-    authDomain: 'tiffsy-805bb.firebaseapp.com',
-    storageBucket: 'tiffsy-805bb.appspot.com',
-    measurementId: 'G-JLZ3C76RQC',
+    apiKey: 'AIzaSyB2Q5rZhDPGpa7obzcFp92RDrsv4N6qzWE',
+    appId: '1:276683143717:web:363521db3541a273141dcc',
+    messagingSenderId: '276683143717',
+    projectId: 'tiffsy-foods',
+    authDomain: 'tiffsy-foods.firebaseapp.com',
+    storageBucket: 'tiffsy-foods.appspot.com',
+    measurementId: 'G-NHWS75XEV5',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyA9DhjhCSsH1ZSHyHiIgPPJfWkoYep-0XY',
-    appId: '1:663990303984:android:4cdddf7712d23d6bdb9635',
-    messagingSenderId: '663990303984',
-    projectId: 'tiffsy-805bb',
-    storageBucket: 'tiffsy-805bb.appspot.com',
+    apiKey: 'AIzaSyC49GEIdnhDXLWZUHgWG1b1Zsj3-I2TPdM',
+    appId: '1:276683143717:android:998f845e1a4ce7a9141dcc',
+    messagingSenderId: '276683143717',
+    projectId: 'tiffsy-foods',
+    storageBucket: 'tiffsy-foods.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCBeHl0wDrSzTCUfMWQKfp8wJY0KwuCDhQ',
-    appId: '1:663990303984:ios:79c042b2f53ee5bedb9635',
-    messagingSenderId: '663990303984',
-    projectId: 'tiffsy-805bb',
-    storageBucket: 'tiffsy-805bb.appspot.com',
+    apiKey: 'AIzaSyBkOVVPHP4s2dw-FKpVJMfm38aGCgKnxSs',
+    appId: '1:276683143717:ios:cc78be58b8c78779141dcc',
+    messagingSenderId: '276683143717',
+    projectId: 'tiffsy-foods',
+    storageBucket: 'tiffsy-foods.appspot.com',
+    androidClientId: '276683143717-7090m9n00is1rknfn25in3rtqs8gfq3h.apps.googleusercontent.com',
+    iosClientId: '276683143717-fng25r09u5u9h0jnp9j092iio9i4d0p1.apps.googleusercontent.com',
     iosBundleId: 'com.example.tiffsyApp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCBeHl0wDrSzTCUfMWQKfp8wJY0KwuCDhQ',
-    appId: '1:663990303984:ios:9c36e9d1525392dfdb9635',
-    messagingSenderId: '663990303984',
-    projectId: 'tiffsy-805bb',
-    storageBucket: 'tiffsy-805bb.appspot.com',
+    apiKey: 'AIzaSyBkOVVPHP4s2dw-FKpVJMfm38aGCgKnxSs',
+    appId: '1:276683143717:ios:3a57fcfb4373920f141dcc',
+    messagingSenderId: '276683143717',
+    projectId: 'tiffsy-foods',
+    storageBucket: 'tiffsy-foods.appspot.com',
+    androidClientId: '276683143717-7090m9n00is1rknfn25in3rtqs8gfq3h.apps.googleusercontent.com',
+    iosClientId: '276683143717-k504mfvdglnee327p8u5dfa2bma7efk4.apps.googleusercontent.com',
     iosBundleId: 'com.example.tiffsyApp.RunnerTests',
   );
 }

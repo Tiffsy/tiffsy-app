@@ -11,7 +11,7 @@ String subscriptionDataModelToJson(SubscriptionDataModel data) =>
     json.encode(data.toJson());
 
 class SubscriptionDataModel {
-  String? name;
+  String? nickname;
   int dc;
   String ts;
   int bc;
@@ -30,7 +30,7 @@ class SubscriptionDataModel {
   String lchMealType;
 
   SubscriptionDataModel({
-    this.name,
+    this.nickname,
     required this.dc,
     required this.ts,
     required this.bc,
@@ -49,29 +49,31 @@ class SubscriptionDataModel {
     required this.lchMealType,
   });
 
-  factory SubscriptionDataModel.fromJson(Map<String, dynamic> json) =>
-      SubscriptionDataModel(
-        name: json["name"],
-        dc: json["dc"],
-        ts: json["ts"],
-        bc: json["bc"],
-        cntct: json["cntct"],
-        strDt: json["str_dt"],
-        endDt: json["end_dt"],
-        subtype: json["subtype"],
-        sbcrId: json["sbcr_id"],
-        brkMealType: json["brkMealType"],
-        addrId: json["addr_id"],
-        addrLine: json["addr_line"],
-        bill: json["bill"],
-        cstId: json["cst_id"],
-        lc: json["lc"],
-        dinMealType: json["dinMealType"],
-        lchMealType: json["lchMealType"],
-      );
+  factory SubscriptionDataModel.fromJson(Map<String, dynamic> json) {
+    //print(json);
+    return SubscriptionDataModel(
+      nickname: json["nickname"],
+      dc: json["dc"],
+      ts: json["ts"],
+      bc: json["bc"],
+      cntct: json["cntct"],
+      strDt: json["str_dt"],
+      endDt: json["end_dt"],
+      subtype: json["subtype"],
+      sbcrId: json["sbcr_id"],
+      brkMealType: json["brkMealType"],
+      addrId: json["addr_id"],
+      addrLine: json["addr_line"],
+      bill: json["bill"],
+      cstId: json["cst_id"],
+      lc: json["lc"],
+      dinMealType: json["dinMealType"],
+      lchMealType: json["lchMealType"],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-        "name": name,
+        "nickname": nickname,
         "dc": dc,
         "ts": ts,
         "bc": bc,
@@ -89,4 +91,7 @@ class SubscriptionDataModel {
         "dinMealType": dinMealType,
         "lchMealType": lchMealType,
       };
+
+  @override
+  String toString() => toJson().toString();
 }

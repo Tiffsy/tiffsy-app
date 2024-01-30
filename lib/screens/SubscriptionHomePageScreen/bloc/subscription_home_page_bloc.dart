@@ -25,6 +25,10 @@ class SubscriptionHomePageBloc
     if (subcription.isSuccess) {
       List<SubscriptionDataModel> subcriptionList = subcription.data!;
       emit(SubscriptionFetchSuccessState(subcriptionList: subcriptionList));
+      subcriptionList.forEach((element) {
+        print(element.toString());
+        print("__");
+      });
     } else {
       emit(SubscriptionPageErrorState(error: subcription.error.toString()));
     }

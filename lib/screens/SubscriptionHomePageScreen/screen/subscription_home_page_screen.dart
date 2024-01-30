@@ -112,7 +112,7 @@ class _SubscriptionHomePageScreenState
       SubscriptionDataModel subscriptionData, Function cancelOrder) {
     //subscriptionData.name = "name of sub";
     bool hasName =
-        !(subscriptionData.name == "" || subscriptionData.name == null);
+        !(subscriptionData.nickname == "" || subscriptionData.nickname == null);
     return SizedBox(
       width: MediaQuery.sizeOf(context).width - 40,
       child: Column(
@@ -149,7 +149,7 @@ class _SubscriptionHomePageScreenState
                         children: [
                           Text(
                             hasName
-                                ? subscriptionData.name!
+                                ? subscriptionData.nickname!
                                 : getSubscriptionLength(
                                     subscriptionData.subtype.toString()),
                             style: const TextStyle(

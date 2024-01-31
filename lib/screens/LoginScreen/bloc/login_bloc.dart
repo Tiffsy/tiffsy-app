@@ -34,7 +34,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               add(OnPhoneOtpSend(
                   verificationId: verificationId, token: refreshToken));
             },
-            codeAutoRetrievalTimeout: (String verificationId) {});
+            codeAutoRetrievalTimeout: (String verificationId, ) {
+            });
       } catch (err) {
         emit(AuthErrorState(err.toString()));
       }

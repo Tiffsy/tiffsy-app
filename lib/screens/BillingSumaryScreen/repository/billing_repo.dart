@@ -123,7 +123,10 @@ class BillingRepo {
           
         };
         print(params);
+
         var res = await http.post(Uri.parse('$apiJsURL/today-order'), body: params, headers: {'Authorization': 'Bearer $token'});
+        print(res.statusCode);
+        print(res.body);
         if(res.statusCode == 200){
           return Result(data: {
             "bill": bill.toString(),

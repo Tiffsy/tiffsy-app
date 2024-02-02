@@ -155,37 +155,31 @@ class _ProfileState extends State<Profile> {
                     color: Color(0xff121212),
                   ),
                 ),
+                actions: [
+                  logoutButton(
+                    onPressed: () {
+                      profileBloc.add(ProfilePageLogoutButtonOnPressEvent());
+                    },
+                  )
+                ],
               ),
               body: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 5),
                 child: SingleChildScrollView(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                          userCard(state.user),
-                          const SizedBox(height: 12),
-                          listOfHorizontalCardButtons(
-                              getHorizontalListButtonOptions(),
-                              MediaQuery.sizeOf(context).width),
-                          const SizedBox(height: 12)
-                        ] +
-                        listOfVerticalOptions(getVerticalListButtonOptions()) +
-                        [
-                          logoutButton(
-                            onPressed: () {
-                              profileBloc
-                                  .add(ProfilePageLogoutButtonOnPressEvent());
-                            },
-                            icon: const Icon(
-                              Icons.power_settings_new_rounded,
-                              size: 24,
-                              color: Colors.white,
-                            ),
-                          )
-                        ],
-                  ),
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                            userCard(state.user),
+                            const SizedBox(height: 12),
+                            listOfHorizontalCardButtons(
+                                getHorizontalListButtonOptions(),
+                                MediaQuery.sizeOf(context).width),
+                            const SizedBox(height: 12)
+                          ] +
+                          listOfVerticalOptions(
+                              getVerticalListButtonOptions())),
                 ),
               ),
             );
@@ -221,29 +215,18 @@ class _ProfileState extends State<Profile> {
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 5),
                 child: SingleChildScrollView(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                          //userCard(state.user),
-                          const SizedBox(height: 12),
-                          listOfHorizontalCardButtons(
-                              getHorizontalListButtonOptions(),
-                              MediaQuery.sizeOf(context).width),
-                          const SizedBox(height: 12)
-                        ] +
-                        listOfVerticalOptions(getVerticalListButtonOptions()) +
-                        [
-                          logoutButton(
-                              onPressed: () {
-                                profileBloc
-                                    .add(ProfilePageLogoutButtonOnPressEvent());
-                              },
-                              icon: const SizedBox(
-                                  height: 15,
-                                  width: 15,
-                                  child: CircularProgressIndicator()))
-                        ],
-                  ),
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                            //userCard(state.user),
+                            const SizedBox(height: 12),
+                            listOfHorizontalCardButtons(
+                                getHorizontalListButtonOptions(),
+                                MediaQuery.sizeOf(context).width),
+                            const SizedBox(height: 12)
+                          ] +
+                          listOfVerticalOptions(
+                              getVerticalListButtonOptions())),
                 ),
               ),
             );
@@ -438,43 +421,29 @@ Widget customVerticalCardButton(
   });
 }
 
-Widget logoutButton({required VoidCallback onPressed, required Widget icon}) {
-  return Builder(builder: (context) {
-    var width = MediaQuery.sizeOf(context).width;
-    return SizedBox(
-      width: width,
-      height: 48,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 5, bottom: 5),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              elevation: 0,
-              backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12))),
-          onPressed: onPressed,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              icon,
-              const SizedBox(width: 12),
-              const Text(
-                "Logout",
-                style: TextStyle(
-                  color: Color(0xffffffff),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  height: 16 / 12,
-                  letterSpacing: 0.5,
-                ),
-              )
-            ],
-          ),
+Widget logoutButton({required VoidCallback onPressed}) {
+  return Padding(
+    padding: const EdgeInsets.only(right: 20),
+    child: InkWell(
+      onTap: () {
+        onPressed();
+      },
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: Colors.red.shade400,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: const Icon(
+          Icons.power_settings_new_rounded,
+          size: 24,
+          color: Colors.white,
         ),
       ),
-    );
-  });
+    ),
+  );
 }
 
 String capitalizeEachWord(String input) {

@@ -345,7 +345,7 @@ class _CustomeCartCardState extends State<CustomeCartCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                InkWell(
+                GestureDetector(
                   onTap: () async {
                     homeBloc.add(
                       HomePageRemoveFromCartEvent(
@@ -374,7 +374,7 @@ class _CustomeCartCardState extends State<CustomeCartCard> {
                     letterSpacing: 0.15,
                   ),
                 ),
-                InkWell(
+                GestureDetector(
                   onTap: () {
                     homeBloc.add(HomePageAddToCartEvent(
                         isSubscription: false,

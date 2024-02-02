@@ -32,25 +32,13 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
           menuState = state;
         } else if (state is HomeFetchSuccessfulIsCachedState) {}
         return SingleChildScrollView(
+          reverse: true,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16),
               upgradeToDeluxCard(() {}),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: MediaQuery.sizeOf(context).width - 39,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    orderNowExpandableButton(),
-                    subscriptionExpandableButton(),
-                  ],
-                ),
-              ),
               const SizedBox(height: 12),
               const Text(
                 // Today's Menu
@@ -65,11 +53,22 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
               ),
               const SizedBox(height: 12),
               Column(
-                // list of menu cards
-                children:
-                    listOfMenuCards(menuState.menu, context, widget.homeBloc) +
-                        [const SizedBox(height: 12)],
+                  // list of menu cards
+                  children: listOfMenuCards(
+                      menuState.menu, context, widget.homeBloc)),
+              SizedBox(
+                width: MediaQuery.sizeOf(context).width - 39,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    orderNowExpandableButton(),
+                    subscriptionExpandableButton(),
+                  ],
+                ),
               ),
+              const SizedBox(height: 12),
             ],
           ),
         );
@@ -957,8 +956,9 @@ Widget mealTimeTag(String mealTime) {
   // design.
   return Container(
     decoration: BoxDecoration(
+      border: Border.all(color: const Color(0xffffbe1d)),
       borderRadius: BorderRadius.circular(6),
-      color: const Color(0xffffbe1d),
+      color: const Color(0xfffffcef),
     ),
     width: 76,
     height: 23,
@@ -966,6 +966,7 @@ Widget mealTimeTag(String mealTime) {
       child: Text(
         toSentenceCase(mealTime),
         style: const TextStyle(
+          color: Color(0xffffbe1d),
           fontSize: 11,
           fontWeight: FontWeight.w500,
           height: 16 / 11,

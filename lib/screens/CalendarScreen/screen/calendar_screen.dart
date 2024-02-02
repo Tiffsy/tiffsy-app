@@ -28,7 +28,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
     CalendarBloc calendarBloc = CalendarBloc();
     List<CalendarDataModel> calendarData = [];
     return BlocProvider(
@@ -242,7 +241,7 @@ class _CalendarCancelSheetState extends State<CalendarCancelSheet> {
   Map<String, bool> isPastCancellationDeadline = {
     "breakfast": isPast(DateTime(1970, 1, 1, 7, 0, 0)),
     "lunch": isPast(DateTime(1970, 1, 1, 11, 0, 0)),
-    "dinner": isPast(DateTime(1970, 1, 1, 6, 0, 0))
+    "dinner": isPast(DateTime(1970, 1, 1, 18, 0, 0))
   };
 
   @override
@@ -349,7 +348,7 @@ class _CalendarCancelSheetState extends State<CalendarCancelSheet> {
                       ))
                 : notInSubscriptionMealChooser("Dinner"),
             const SizedBox(height: 12),
-            confirmCancelButton(
+            confirmCancelationButton(
               () async {
                 var alertReturn = await showDialog(
                     context: context,
@@ -386,7 +385,7 @@ class _CalendarCancelSheetState extends State<CalendarCancelSheet> {
               },
             ),
             const SizedBox(height: 12),
-            cancelCancelButton(() {
+            cancelCancelationButton(() {
               Navigator.pop(widget.parentContext);
             }),
             isToday
@@ -486,7 +485,7 @@ Widget dateBox(DateTime date, bool isPast, bool isCancelled) {
   );
 }
 
-Widget confirmCancelButton(VoidCallback onpress) {
+Widget confirmCancelationButton(VoidCallback onpress) {
   Widget buttonText = const Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
@@ -521,7 +520,7 @@ Widget confirmCancelButton(VoidCallback onpress) {
   );
 }
 
-Widget cancelCancelButton(VoidCallback onpress) {
+Widget cancelCancelationButton(VoidCallback onpress) {
   return InkWell(
     onTap: () {
       onpress();

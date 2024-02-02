@@ -20,7 +20,10 @@ class UserRepo {
         verificationCompleted: verificationCompleted,
         verificationFailed: verificationFailed,
         codeSent: codeSent,
-        codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
+        codeAutoRetrievalTimeout: codeAutoRetrievalTimeout, 
+        forceResendingToken: null,
+        timeout: const Duration(seconds: 60),
+        );
   }
 
   Future<void> storePhoneNumber({required String phoneNumber}) async {

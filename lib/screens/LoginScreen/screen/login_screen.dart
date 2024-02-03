@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tiffsy_app/main.dart';
@@ -335,9 +336,19 @@ class _contentState extends State<content> {
                         width: _mediaQuery.size.width * 0.9,
                         child: OutlinedButton(
                           onPressed: () {
-                            String phoneNumber = "+91${phoneController.text}";
-                            loginBloc.add(
-                                SendOtpToPhoneEvent(phoneNumber: phoneNumber));
+                            if (phoneController.text.length == 10 &&
+                                phoneController.text.isNum) {
+                              String phoneNumber = "+91${phoneController.text}";
+                              loginBloc.add(SendOtpToPhoneEvent(
+                                  phoneNumber: phoneNumber));
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Invalid Phone Number!"),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
                           },
                           style: OutlinedButton.styleFrom(
                               side: const BorderSide(color: Color(0xffFAFAFA)),

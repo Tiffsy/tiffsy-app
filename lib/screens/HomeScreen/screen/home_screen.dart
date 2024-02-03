@@ -109,7 +109,13 @@ class _HomeState extends State<Home> {
                         ? Navigator.push(
                             context,
                             SlideTransitionRouter.toNextPage(
-                              AddAddressScreen(onAdd: () {}),
+                              AddAddressScreen(onAdd: () {
+                                setState(() {
+                                  Box addressBox = Hive.box("address_box");
+                                  defaultAddress = AddressDataModel.fromJson(
+                                      addressBox.get("default_address"));
+                                });
+                              }),
                             ),
                           )
                         : await showAddressBottomSheet(homeBloc);
@@ -422,7 +428,6 @@ class _HomeState extends State<Home> {
               ),
             );
           } else {
-            print(state.toString());
             return Scaffold(
               backgroundColor: const Color(0xffffffff),
               appBar: AppBar(

@@ -29,7 +29,11 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
     Box customerBox = Hive.box("customer_box");
+    Box addressBox = Hive.box("address_box");
+    Box cartBox = Hive.box("cart_box");
+    addressBox.clear();
     customerBox.clear();
+    cartBox.clear();
   }
 
   @override

@@ -21,8 +21,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       (event, emit) async {
         emit(LogoutLoadingState());
         Box customerBox = Hive.box("customer_box");
-        print(customerBox.values);
-        
         await FirebaseAuth.instance.signOut();
         emit(ProfilePageLogoutButtonOnPressState());
       },

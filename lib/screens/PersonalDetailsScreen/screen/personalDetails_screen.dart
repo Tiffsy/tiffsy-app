@@ -52,7 +52,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
             builder: (context, state) {
               if (state is ScreenLoadingScreen) {
                 return Center(
-                  child: LoadingAnimation.circularLoadingAnimation(context),
+                  child: LoadingAnimation.loadingAnimationTwo(context),
                 );
               } else if (state is PersonalDetailsInitial) {
                 if (state.isPhoneAuth) {
@@ -121,7 +121,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                           entryBox(number, "10-digit Phone Number",
                               AutofillHints.telephoneNumber),
                           const SizedBox(height: 40),
-                          orderNowButton(
+                          continueButton(
                             () {
                               if (name.text.isNotEmpty &&
                                   number.text.length == 10) {
@@ -179,7 +179,7 @@ Widget entryBox(
   );
 }
 
-Widget orderNowButton(VoidCallback onpress) {
+Widget continueButton(VoidCallback onpress) {
   Widget buttonText = const Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [

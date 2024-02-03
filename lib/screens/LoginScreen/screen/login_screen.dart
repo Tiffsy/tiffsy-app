@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
+import 'package:tiffsy_app/main.dart';
 import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/LoginScreen/bloc/login_bloc.dart';
 import 'package:tiffsy_app/screens/OtpScreen/screen/opt_screen.dart';
@@ -18,7 +19,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
-   
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: [SystemUiOverlay.top]);
@@ -68,10 +68,10 @@ class _contentState extends State<content> {
   TextEditingController countryCode = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   LoginBloc loginBloc = LoginBloc(LoginScreenInitialState());
+  bool phoneIsExpanded = false;
 
   @override
   void initState() {
-
     super.initState();
     countryCode.text = "+91";
   }
@@ -126,7 +126,7 @@ class _contentState extends State<content> {
       },
       builder: (context, state) {
         if (state is AuthLoadingState) {
-          return  Center(
+          return Center(
             child: Container(
               child: Lottie.asset('assets/Tiffsy1.json'),
             ),
@@ -176,145 +176,17 @@ class _contentState extends State<content> {
                                 fontSize: 16, fontWeight: FontWeight.w500),
                           ),
                           Expanded(
-                              child: Divider(
-                            thickness: 1,
-                            color: Color.fromARGB(255, 194, 194, 194),
-                            indent: 22,
-                            endIndent: 20,
-                          ))
+                            child: Divider(
+                              thickness: 1,
+                              color: Color.fromARGB(255, 194, 194, 194),
+                              indent: 22,
+                              endIndent: 20,
+                            ),
+                          )
                         ],
                       ),
+                      const SizedBox(height: 20),
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.01),
-                      Container(
-                        margin: const EdgeInsets.all(20.0),
-                        height: _mediaQuery.size.height * 0.060,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const SizedBox(width: 10),
-                            const Text(
-                              "IND",
-                              style: TextStyle(
-                                color: Color(0xFF0F1728),
-                                fontSize: 20,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Flexible(
-                                flex: 1,
-                                child: TextField(
-                                  textAlignVertical: TextAlignVertical.center,
-                                  keyboardType: TextInputType.phone,
-                                  controller: countryCode,
-                                  decoration: const InputDecoration(
-                                      border: InputBorder.none),
-                                  style: const TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w400,
-                                      fontFamily: 'Roboto'),
-                                )),
-                            const SizedBox(width: 0.1),
-                            Flexible(
-                              flex: 5,
-                              child: TextField(
-                                controller: phoneController,
-                                keyboardType: TextInputType.phone,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'Enter Phone Number',
-                                  hintStyle: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w400,
-                                      fontFamily: 'Roboto'),
-                                ),
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: 'Roboto'),
-                              ),
-                            ),
-                            Tooltip(
-                              key: _tooltipKey,
-                              message: 'Enter your 10 digit phone number',
-                              child: IconButton(
-                                icon: const Icon(Icons.help_outline_sharp),
-                                onPressed: () => {showTooltip()},
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.01),
-                      SizedBox(
-                        height: _mediaQuery.size.height * 0.045,
-                        width: _mediaQuery.size.width * 0.9,
-                        child: OutlinedButton(
-                          onPressed: () {
-                            String phoneNumber = "+91${phoneController.text}";
-                            loginBloc.add(
-                                SendOtpToPhoneEvent(phoneNumber: phoneNumber));
-                          },
-                          style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: Color(0xffFAFAFA)),
-                              backgroundColor: const Color(0xffF2B620),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              )),
-                          child: const Text(
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: 0.10,
-                                  height: 0.08,
-                                  color: Colors.black),
-                              'Continue'),
-                        ),
-                      ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.04),
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                              child: Divider(
-                                  thickness: 1,
-                                  color: Color.fromARGB(255, 194, 194, 194),
-                                  indent: 20,
-                                  endIndent: 20)),
-                          Text(
-                            'or',
-                            style: TextStyle(
-                                color: Color(0xFF121212),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500),
-                          ),
-                          Expanded(
-                              child: Divider(
-                            thickness: 1,
-                            color: Color.fromARGB(255, 194, 194, 194),
-                            indent: 20,
-                            endIndent: 20,
-                          ))
-                        ],
-                      ),
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.04),
-                      Container(
                         height: _mediaQuery.size.height * 0.045,
                         width: _mediaQuery.size.width * 0.9,
                         child: OutlinedButton(
@@ -349,6 +221,138 @@ class _contentState extends State<content> {
                                 'Continue with Google Account',
                               ),
                             ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              thickness: 1,
+                              color: Color.fromARGB(255, 194, 194, 194),
+                              indent: 20,
+                              endIndent: 20,
+                            ),
+                          ),
+                          Text(
+                            'or',
+                            style: TextStyle(
+                                color: Color(0xFF121212),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              thickness: 1,
+                              color: Color.fromARGB(255, 194, 194, 194),
+                              indent: 20,
+                              endIndent: 20,
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Container(
+                          height: _mediaQuery.size.height * 0.060,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const SizedBox(width: 10),
+                              const Text(
+                                "IND",
+                                style: TextStyle(
+                                  color: Color(0xFF0F1728),
+                                  fontSize: 20,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Flexible(
+                                flex: 1,
+                                child: TextField(
+                                  textAlignVertical: TextAlignVertical.center,
+                                  keyboardType: TextInputType.phone,
+                                  controller: countryCode,
+                                  decoration: const InputDecoration(
+                                      border: InputBorder.none),
+                                  style: const TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'Roboto'),
+                                ),
+                              ),
+                              const SizedBox(width: 0.1),
+                              Flexible(
+                                flex: 5,
+                                child: TextField(
+                                  controller: phoneController,
+                                  keyboardType: TextInputType.phone,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: 'Enter Phone Number',
+                                    hintStyle: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w400,
+                                        fontFamily: 'Roboto'),
+                                  ),
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'Roboto'),
+                                ),
+                              ),
+                              Tooltip(
+                                key: _tooltipKey,
+                                message: 'Enter your 10 digit phone number',
+                                child: IconButton(
+                                  icon: const Icon(Icons.help_outline_sharp),
+                                  onPressed: () => {showTooltip()},
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        height: _mediaQuery.size.height * 0.045,
+                        width: _mediaQuery.size.width * 0.9,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            String phoneNumber = "+91${phoneController.text}";
+                            loginBloc.add(
+                                SendOtpToPhoneEvent(phoneNumber: phoneNumber));
+                          },
+                          style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: Color(0xffFAFAFA)),
+                              backgroundColor: const Color(0xffF2B620),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              )),
+                          child: const Text(
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.10,
+                                height: 0.08,
+                                color: Colors.black),
+                            'Continue',
                           ),
                         ),
                       ),

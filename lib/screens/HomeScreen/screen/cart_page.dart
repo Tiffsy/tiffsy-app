@@ -74,12 +74,14 @@ class _CartScreenHomePageState extends State<CartScreenHomePage> {
                               setState(() {});
                             },
                           )));
-                        } else if (cartBox.get("is_subscription")) {
+                        } else if (cartBox.get("is_subscription",
+                            defaultValue: false)) {
                           Navigator.push(
                               context,
                               SlideTransitionRouter.toNextPage(
                                   const CartScreen()));
-                        } else {
+                        } else if (!cartBox.get("is_subscription",
+                            defaultValue: true)) {
                           cartBox.put("subType", 1);
                           Navigator.push(
                               context,

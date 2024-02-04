@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:lottie/lottie.dart';
+import 'package:tiffsy_app/Helpers/page_router.dart';
 import 'package:tiffsy_app/main.dart';
 import 'package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart';
 import 'package:tiffsy_app/screens/LoginScreen/bloc/login_bloc.dart';
@@ -21,14 +22,14 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: [SystemUiOverlay.top]);
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        systemNavigationBarColor: Color(0xfffafafa),
-        statusBarColor: Color(0xffF2B620),
-      ),
-    );
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+    //     overlays: [SystemUiOverlay.top]);
+    // SystemChrome.setSystemUIOverlayStyle(
+    //   const SystemUiOverlayStyle(
+    //     systemNavigationBarColor: Color(0xfffafafa),
+    //     statusBarColor: Color(0xffF2B620),
+    //   ),
+    // );
     Box customerBox = Hive.box("customer_box");
     Box addressBox = Hive.box("address_box");
     Box cartBox = Hive.box("cart_box");
@@ -104,23 +105,21 @@ class _contentState extends State<content> {
           Navigator.popUntil(context, (route) => route.isFirst);
           Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                  builder: (_) => const PersonalDetailsScreen(
-                        isPhoneAuth: false,
-                        phoneNumber: "0000000000",
-                      )));
+              SlideTransitionRouter.toNextPage(const PersonalDetailsScreen(
+                isPhoneAuth: false,
+                phoneNumber: "0000000000",
+              )));
         } else if (state is PhoneAuthCodeSentSuccess) {
           Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => OtpScreen(
-                        verificationId: state.verificationId,
-                        phoneNumber: phoneController.text,
-                      )));
+              SlideTransitionRouter.toNextPage(OtpScreen(
+                verificationId: state.verificationId,
+                phoneNumber: phoneController.text,
+              )));
         } else if (state is LoadHomeScreenState) {
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
+            SlideTransitionRouter.toNextPage(HomeScreen()),
             (route) => false,
           );
         }
@@ -351,11 +350,12 @@ class _contentState extends State<content> {
                             }
                           },
                           style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: Color(0xffFAFAFA)),
-                              backgroundColor: const Color(0xffF2B620),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                              )),
+                            side: const BorderSide(color: Color(0xffFAFAFA)),
+                            backgroundColor: const Color(0xffF2B620),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
                           child: const Text(
                             style: TextStyle(
                                 fontSize: 16,

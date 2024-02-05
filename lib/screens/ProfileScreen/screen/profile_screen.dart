@@ -80,7 +80,6 @@ class _ProfileState extends State<Profile> {
         "Subscription": [
           Icons.food_bank,
           () {
-            print("Subscription");
           }
         ],
         "Payments": [
@@ -93,7 +92,6 @@ class _ProfileState extends State<Profile> {
         "Settings": [
           Icons.settings,
           () {
-            print("Settings");
           }
         ],
       };
@@ -289,7 +287,6 @@ Widget userCard(User user) {
               style: const TextStyle(
                 color: Color(0xFF121212),
                 fontSize: 20,
-                fontFamily: 'Roboto',
                 fontWeight: FontWeight.w400,
                 height: 0.07,
               ),

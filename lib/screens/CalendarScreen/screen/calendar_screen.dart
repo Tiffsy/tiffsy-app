@@ -271,7 +271,6 @@ class _CalendarCancelSheetState extends State<CalendarCancelSheet> {
                             style: TextStyle(
                               color: Color(0xFF000000),
                               fontSize: 16,
-                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.w500,
                               height: 24 / 16,
                               letterSpacing: 0.5,
@@ -300,7 +299,6 @@ class _CalendarCancelSheetState extends State<CalendarCancelSheet> {
                             style: TextStyle(
                               color: Color(0xFF000000),
                               fontSize: 16,
-                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.w500,
                               height: 24 / 16,
                               letterSpacing: 0.5,
@@ -329,7 +327,6 @@ class _CalendarCancelSheetState extends State<CalendarCancelSheet> {
                             style: TextStyle(
                               color: Color(0xFF000000),
                               fontSize: 16,
-                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.w500,
                               height: 24 / 16,
                               letterSpacing: 0.5,
@@ -415,7 +412,6 @@ Widget notInSubscriptionMealChooser(String text) {
         style: const TextStyle(
           color: Color(0xFFbbbbbb),
           fontSize: 16,
-          fontFamily: 'Roboto',
           fontWeight: FontWeight.w200,
           height: 24 / 16,
           letterSpacing: 0.5,
@@ -438,7 +434,6 @@ Widget deadlinePastMealChooser(String text) {
         style: const TextStyle(
           color: Color(0xFFaaaaaa),
           fontSize: 16,
-          fontFamily: 'Roboto',
           fontWeight: FontWeight.w500,
           height: 24 / 16,
           letterSpacing: 0.5,

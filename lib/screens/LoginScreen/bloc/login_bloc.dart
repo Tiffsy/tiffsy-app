@@ -11,11 +11,8 @@ part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
-  String loginResult = "";
   UserRepo userRepo = UserRepo();
   UserCredential? userCredential;
-  late final GoogleSignIn _googleSignIn;
-
   LoginBloc(super.initialState) {
 
     on<SendOtpToPhoneEvent>((event, emit) async {
@@ -146,18 +143,4 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       }
     });
   }
-
-  // FutureOr<void> _onGoogleSignInPressed(
-  //     GoogleSignInRequested event, Emitter<LoginState> emit) async {
-  //   // final response = await userRepository.signInWithGoogle();
-  //   // if(response != null){
-  //   //   emit(Authenticated());
-  //   // }
-  // }
-
-  // FutureOr<void> _onGoogleSignOutPressed(
-  //     GoogleSignOutRequested event, Emitter<LoginState> emit) {
-  //   // userRepository.handleSignOut();
-  //   // emit(UnAuthenticated());
-  // }
 }

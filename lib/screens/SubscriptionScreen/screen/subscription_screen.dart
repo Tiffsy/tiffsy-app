@@ -94,7 +94,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         style: TextStyle(
                           color: Color(0xFF121212),
                           fontSize: 14,
-                          fontFamily: 'Roboto',
                           fontWeight: FontWeight.w500,
                           height: 20 / 14,
                           letterSpacing: 0.10,
@@ -180,7 +179,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       style: TextStyle(
                         color: Color(0xFF121212),
                         fontSize: 14,
-                        fontFamily: 'Roboto',
                         fontWeight: FontWeight.w400,
                         height: 20 / 14,
                         letterSpacing: 0.25,
@@ -215,7 +213,6 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         style: TextStyle(
                           color: Color(0xFF121212),
                           fontSize: 14,
-                          fontFamily: 'Roboto',
                           fontWeight: FontWeight.w500,
                           height: 20 / 14,
                           letterSpacing: 0.10,
@@ -327,7 +324,6 @@ Widget cartSummaryEntry(String mealType, String time, int quantity) {
             style: const TextStyle(
               color: Color(0xFF121212),
               fontSize: 16,
-              fontFamily: 'Roboto',
               fontWeight: FontWeight.w500,
               height: 24 / 16,
               letterSpacing: 0.15,
@@ -341,7 +337,6 @@ Widget cartSummaryEntry(String mealType, String time, int quantity) {
         style: const TextStyle(
           color: Color(0xFF121212),
           fontSize: 16,
-          fontFamily: 'Roboto',
           fontWeight: FontWeight.w400,
           height: 24 / 16,
           letterSpacing: 0.50,
@@ -354,7 +349,6 @@ Widget cartSummaryEntry(String mealType, String time, int quantity) {
         style: const TextStyle(
           color: Color(0xFF121212),
           fontSize: 11,
-          fontFamily: 'Roboto',
           fontWeight: FontWeight.w500,
           height: 16 / 11,
           letterSpacing: 0.50,
@@ -386,7 +380,6 @@ Widget cartSummaryEntry(String mealType, String time, int quantity) {
     ],
   );
 }
-
 Widget entryBox(
     TextEditingController controller, String label, String? autofillHints) {
   Iterable<String>? autoFill = autofillHints == null ? {} : {autofillHints};
@@ -415,7 +408,6 @@ Widget entryBox(
     ),
   );
 }
-
 Widget proceedToCheckOutButton(VoidCallback onpress) {
   Widget buttonText = const Row(
     mainAxisAlignment: MainAxisAlignment.center,

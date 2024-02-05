@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:tiffsy_app/Helpers/internet_connectivity.dart';
 import 'package:tiffsy_app/firebase_options.dart';
+import 'package:tiffsy_app/screens/AddAddressScreen/screen/add_address_screen.dart';
 import 'package:tiffsy_app/screens/LoginScreen/repository/user_repo.dart';
 import 'package:flutter/services.dart';
 import 'package:tiffsy_app/screens/splash_screen.dart';
@@ -34,15 +35,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
+      home:  SplashScreen(),
       title: 'Tiffsy',
-      theme: getTheme(),
+      theme: getTheme(context),
     );
   }
 }
 
-ThemeData getTheme() {
+ThemeData getTheme(BuildContext context) {
   return ThemeData(
+    fontFamily: 'Gothic A1',
+    textTheme: Theme.of(context).textTheme.apply(fontFamily: 'Gothic A1'),
     datePickerTheme: const DatePickerThemeData(
         backgroundColor: Color(0xfffffcef),
         surfaceTintColor: Color(0xfffffcef),
@@ -51,6 +54,7 @@ ThemeData getTheme() {
         todayBorder: BorderSide(color: Color(0xffCBFFB3)),
         rangeSelectionBackgroundColor: Color(0xffCBFFB3)),
     appBarTheme: const AppBarTheme(
+        centerTitle: false,
         titleSpacing: 0,
         backgroundColor: Color(0xffffffff),
         shadowColor: Color(0xffffffff),

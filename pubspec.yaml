@@ -38,6 +38,23 @@ dev_dependencies:
   flutter_lints: ^2.0.0
 
 flutter:
+  fonts:
+    - family: Gothic A1
+      fonts:
+        - asset: assets/fonts/GothicA1-Regular.ttf
+        - asset: assets/fonts/GothicA1-Bold.ttf
+        - asset: assets/fonts/GothicA1-Black.ttf
+        - asset: assets/fonts/GothicA1-ExtraBold.ttf
+        - asset: assets/fonts/GothicA1-ExtraLight.ttf
+        - asset: assets/fonts/GothicA1-Light.ttf
+        - asset: assets/fonts/GothicA1-Medium.ttf
+        - asset: assets/fonts/GothicA1-SemiBold.ttf
+        - asset: assets/fonts/GothicA1-Thin.ttf
+    - family: Charmonman
+      fonts:
+        - asset: assets/fonts/Charmonman-Bold.ttf
+        - asset: assets/fonts/Charmonman-Regular.ttf
+
   uses-material-design: true
   assets:
     - assets/images/logo/ 

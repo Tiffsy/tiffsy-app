@@ -22,7 +22,6 @@ class _CartScreenHomePageState extends State<CartScreenHomePage> {
   void onListEmpty() {
     setState(() {
       listOfCards = [];
-      print(listOfCards);
     });
   }
 
@@ -298,7 +297,6 @@ class _CustomeCartCardState extends State<CustomeCartCard> {
                   style: TextStyle(
                     color: Color(0xFFF84545),
                     fontSize: 16,
-                    fontFamily: 'Roboto',
                     fontWeight: FontWeight.w500,
                     height: 20 / 16,
                     letterSpacing: 0.15,
@@ -368,7 +366,7 @@ class _CustomeCartCardState extends State<CustomeCartCard> {
                   style: const TextStyle(
                     color: Color(0xFF329C00),
                     fontSize: 16,
-                    fontFamily: 'Roboto',
+
                     fontWeight: FontWeight.w500,
                     height: 20 / 16,
                     letterSpacing: 0.15,
@@ -490,7 +488,7 @@ Widget emptyCartMessageBox(BuildContext context, String message) {
         style: const TextStyle(
           color: Color(0xFF121212),
           fontSize: 12,
-          fontFamily: 'Roboto',
+
           fontWeight: FontWeight.w500,
           height: 0.11,
           letterSpacing: 0.50,

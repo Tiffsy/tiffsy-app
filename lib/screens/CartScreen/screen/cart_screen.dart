@@ -213,7 +213,6 @@ class _CartScreenState extends State<CartScreen> {
                           style: const TextStyle(
                             color: Color(0xFF121212),
                             fontSize: 11,
-                            fontFamily: 'Roboto',
                             fontWeight: FontWeight.w500,
                             height: 16 / 11,
                             letterSpacing: 0.50,
@@ -250,7 +249,6 @@ Widget cartPriceMessageBox(String message) {
         style: const TextStyle(
           color: Color(0xFF121212),
           fontSize: 16,
-          fontFamily: 'Inter',
           fontWeight: FontWeight.w500,
           height: 20 / 16,
           letterSpacing: 0.10,

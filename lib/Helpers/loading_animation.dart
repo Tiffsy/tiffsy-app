@@ -58,7 +58,6 @@ class LoadingAnimation {
             style: const TextStyle(
               color: Color(0xFF121212),
               fontSize: 16,
-              fontFamily: 'Roboto',
               fontWeight: FontWeight.w500,
               height: 24 / 16,
               letterSpacing: 0.15,
@@ -86,7 +85,6 @@ class LoadingAnimation {
             style: const TextStyle(
               color: Color(0xFF121212),
               fontSize: 16,
-              fontFamily: 'Roboto',
               fontWeight: FontWeight.w500,
               height: 24 / 16,
               letterSpacing: 0.15,
@@ -113,7 +111,6 @@ class LoadingAnimation {
             style: const TextStyle(
               color: Color(0xFF121212),
               fontSize: 16,
-              fontFamily: 'Roboto',
               fontWeight: FontWeight.w500,
               height: 24 / 16,
               letterSpacing: 0.15,

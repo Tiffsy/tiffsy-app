@@ -207,7 +207,6 @@ class _contentState extends State<content> {
                               style: TextStyle(
                                 color: Color(0xFF0F1728),
                                 fontSize: 20,
-                                fontFamily: 'Inter',
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
@@ -224,7 +223,7 @@ class _contentState extends State<content> {
                                       color: Colors.grey,
                                       fontSize: 18,
                                       fontWeight: FontWeight.w400,
-                                      fontFamily: 'Roboto'),
+                                      ),
                                 )),
                             const SizedBox(width: 0.1),
                             Flexible(
@@ -238,12 +237,12 @@ class _contentState extends State<content> {
                                   hintStyle: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w400,
-                                      fontFamily: 'Roboto'),
+                                      ),
                                 ),
                                 style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w400,
-                                    fontFamily: 'Roboto'),
+                                    ),
                               ),
                             ),
                             Tooltip(

@@ -27,7 +27,6 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
     for (var element in listOfAddressJsons) {
       addressListState.add(AddressDataModel.fromJson(element));
     }
-    print(addressListState);
     setState(() {
       addressListState = addressListState;
     });

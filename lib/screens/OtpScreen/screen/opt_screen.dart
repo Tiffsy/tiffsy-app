@@ -43,7 +43,6 @@ class _OtpScreenState extends State<OtpScreen> {
             style: const TextStyle(
               color: Color(0xFF121212),
               fontSize: 25,
-              fontFamily: 'Inter',
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -171,7 +170,6 @@ class _contentState extends State<content> {
                     style: TextStyle(
                       color: Color(0xFF121212),
                       fontSize: 21,
-                      fontFamily: 'Inter',
                       fontWeight: FontWeight.w400,
                       height: 0,
                     ),
@@ -182,7 +180,6 @@ class _contentState extends State<content> {
                     style: const TextStyle(
                       color: Color(0xFF121212),
                       fontSize: 21,
-                      fontFamily: 'Inter',
                       fontWeight: FontWeight.w700,
                       height: 0,
                     ),
@@ -208,7 +205,6 @@ class _contentState extends State<content> {
                         style: TextStyle(
                           color: Color(0xFF121212),
                           fontSize: 21,
-                          fontFamily: 'Inter',
                           fontWeight: FontWeight.w400,
                           height: 0,
                         ),
@@ -225,7 +221,6 @@ class _contentState extends State<content> {
                                 style: TextStyle(
                                     color: Color(0xFF121212),
                                     fontSize: 18,
-                                    fontFamily: 'Inter',
                                     fontWeight: FontWeight.w400,
                                     height: 0),
                               ))),
@@ -236,7 +231,6 @@ class _contentState extends State<content> {
                           style: const TextStyle(
                               color: Color(0xFF121212),
                               fontSize: 18,
-                              fontFamily: 'Inter',
                               fontWeight: FontWeight.w400,
                               height: 0),
                         ),

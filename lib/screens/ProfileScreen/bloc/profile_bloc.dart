@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 part 'profile_event.dart';
 part 'profile_state.dart';
 
@@ -20,7 +19,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ProfilePageLogoutButtonOnPressEvent>(
       (event, emit) async {
         emit(LogoutLoadingState());
-        Box customerBox = Hive.box("customer_box");
         await FirebaseAuth.instance.signOut();
         emit(ProfilePageLogoutButtonOnPressState());
       },

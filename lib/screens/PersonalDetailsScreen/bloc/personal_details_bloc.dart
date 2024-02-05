@@ -16,9 +16,7 @@ class PersonalDetailsBloc
       String name = event.name;
       String mailId = event.mailId;
       String number = event.number;
-      print(mailId);
       try {
-        var client = http.Client();
         Map<String, dynamic> params = {
           "cst_name": name,
           "cst_mail": mailId,
@@ -47,16 +45,14 @@ class PersonalDetailsBloc
       String name = event.name;
       String number = event.number;
       String mailId = event.mailId;
-      print(number);
       try {
-        var client = http.Client();
         Map<String, dynamic> params = {
           "cst_name": name,
           "cst_mail": mailId,
           "cst_contact": number
         };
         var response =
-            await http.post(Uri.parse(apiJsURL + '/add-user'), body: params);
+            await http.post(Uri.parse('$apiJsURL/add-user'), body: params);
         if (response.statusCode == 200) {
           final FirebaseFirestore firestore = FirebaseFirestore.instance;
           CollectionReference users = firestore.collection('email');

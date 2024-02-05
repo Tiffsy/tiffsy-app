@@ -109,7 +109,6 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                             style: TextStyle(
                               color: Color(0xFF121212),
                               fontSize: 14,
-                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.w500,
                               height: 20 / 14,
                               letterSpacing: 0.10,

@@ -22,7 +22,7 @@ class UserRepo {
         codeSent: codeSent,
         codeAutoRetrievalTimeout: codeAutoRetrievalTimeout, 
         forceResendingToken: null,
-        timeout: const Duration(seconds: 60),
+        timeout: const Duration(seconds: 300),
         );
   }
 

@@ -93,7 +93,6 @@ class _SubscriptionHomePageScreenState
                             style: TextStyle(
                               color: Color(0xFF121212),
                               fontSize: 16,
-                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.w500,
                               height: 24 / 16,
                               letterSpacing: 0.15,
@@ -155,7 +154,6 @@ class _SubscriptionHomePageScreenState
                             style: const TextStyle(
                               color: Color(0xFF121212),
                               fontSize: 14,
-                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.w600,
                               height: 20 / 14,
                               letterSpacing: 0.10,
@@ -169,7 +167,6 @@ class _SubscriptionHomePageScreenState
                                   style: const TextStyle(
                                     color: Color(0xFF121212),
                                     fontSize: 12,
-                                    fontFamily: 'Roboto',
                                     fontWeight: FontWeight.w500,
                                     height: 20 / 12,
                                     letterSpacing: 0.10,
@@ -196,7 +193,6 @@ class _SubscriptionHomePageScreenState
                                 style: const TextStyle(
                                   color: Color(0xFFF84545),
                                   fontSize: 11,
-                                  fontFamily: 'Roboto',
                                   fontWeight: FontWeight.w400,
                                   height: 16 / 11,
                                   letterSpacing: 0.50,
@@ -217,7 +213,6 @@ class _SubscriptionHomePageScreenState
                         style: const TextStyle(
                           color: Color(0xFF454545),
                           fontSize: 11,
-                          fontFamily: 'Roboto',
                           fontWeight: FontWeight.w400,
                           height: 16 / 11,
                           letterSpacing: 0.50,
@@ -247,7 +242,6 @@ class _SubscriptionHomePageScreenState
                                 color: Color(0xFFD39B0D),
                                 fontSize: 11,
                                 height: 1,
-                                fontFamily: 'Roboto',
                                 fontWeight: FontWeight.w500,
                                 letterSpacing: 0.50,
                               ),

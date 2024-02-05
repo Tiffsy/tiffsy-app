@@ -28,7 +28,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     if (!event.isCached) {
       Result<List<MenuDataModel>> menu = await HomeRepo.fetchMenu();
-      print(menu.isSuccess);
       if (menu.isSuccess) {
         bool loginMethod = HomeRepo.checkUserAuthenticationMethod();
 
@@ -37,12 +36,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
           String cstPhone = HomeRepo.getUserInfo();
           cstPhone = cstPhone.substring(3);
-          print(cstPhone);
-
           Result<Map<String, dynamic>> result =
               await HomeRepo.getCustomerIdByPhone(cstPhone);
-
-          print(result.data);
 
           if (result.isSuccess) {
             Map<String, dynamic> cstDetails = result.data!;
@@ -54,7 +49,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
                 cstDetails["cst_id"],
                 cstDetails["cst_contact"]);
             if (token.isSuccess) {
-              print(token.data);
               customerBox.put("token", token.data);
             } else {
               emit(HomeErrorState(error: token.error.toString()));
@@ -64,12 +58,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           }
         } else {
           String cstMail = HomeRepo.getUserInfo();
-          print(cstMail);
           Result<Map<String, dynamic>> result =
               await HomeRepo.getCustomerIdByMail(cstMail);
-          print(result.data);
           if (result.isSuccess) {
-            print(result.data);
             Map<String, dynamic> cstDetails = result.data!;
             Box customerBox = await Hive.openBox("customer_box");
             customerBox.putAll(cstDetails);
@@ -118,7 +109,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(HomeFetchSuccessfulState(menu: menuList));
         // emit(UpdateCartBadge(quantity: cartCount()));
       } else {
-        print(menu.error.toString());
         emit(HomeErrorState(error: menu.error.toString()));
       }
     } else {
@@ -209,7 +199,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     if (newCart.isEmpty) {
       await cartBox.delete("is_subscription");
-      print(cartBox.get("is_subscription"));
     }
     emit(HomePageCartQuantityChangeState());
   }

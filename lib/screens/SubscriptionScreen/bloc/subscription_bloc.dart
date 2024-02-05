@@ -10,8 +10,6 @@ class SubscriptionBloc extends Bloc<SubscriptionEvent, SubscriptionState> {
     on<StartDateChoosenEvent>((event, emit) {
       DateTime startDate = event.startDate;
       DateTime endDate = startDate.add(Duration(days: event.noOfdays));
-      print(startDate);
-      print(endDate);
       emit(NewDatesState(startDate: startDate, endDate: endDate));
     });
   }

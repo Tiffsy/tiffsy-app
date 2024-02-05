@@ -15,13 +15,15 @@ class AddAddressScreen extends StatefulWidget {
 
 class _AddAddressScreenState extends State<AddAddressScreen> {
   Map<String, List> statesAndCities = {
-    "Maharashtra": ["Pune", "Mumbai"],
-    "Goa": ["Vasco", "Margao", "Panjim"],
+    "Maharashtra": ["Pune"],
   };
+  List<String> pincodes = ["306308","411006","411028","411036","451224"];
 
   // populate this list based on the state selected
-  List<DropdownMenuEntry> citesOfChoosenState = [];
-
+  List<DropdownMenuEntry> citesOfChoosenState = [
+     const DropdownMenuEntry(value: "Pune", label: "Pune"),
+  ];
+  
   List<DropdownMenuEntry> addressTypes = [
     const DropdownMenuEntry(value: "Home", label: "Home"),
     const DropdownMenuEntry(value: "Work", label: "Work"),
@@ -152,7 +154,19 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                     ),
                     saveAddressButton(
                       () {
-                        BlocProvider.of<AddAddressScreenDartBloc>(context).add(
+                        if(houseNumberController.text.isEmpty || stateController.text.isEmpty 
+                        || streetController.text.isEmpty || cityController.text.isEmpty || addressTypeController.text.isEmpty){
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            backgroundColor: Colors.red,
+                          content: Text("All fields are mandatory.")));
+                        }
+                        else if(!pincodes.contains(pincodeController.text)){
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            backgroundColor: Color(0xffFFBE1D),
+                            content: Text("Outside the service coverage", style: TextStyle(color: Colors.black),)));
+                        }
+                        else{
+                           BlocProvider.of<AddAddressScreenDartBloc>(context).add(
                           SaveAddressClicked(
                             cst_id: Hive.box('customer_box')
                                 .get('cst_id')
@@ -167,6 +181,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                             contact: "9530077899",
                           ),
                         );
+                        }
                       },
                     ),
                   ],

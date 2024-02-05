@@ -17,3 +17,12 @@ class NewDatesState extends SubscriptionState {
 }
 
 class EmptyState extends SubscriptionState {}
+class CouponFetchSuccessState extends SubscriptionState{
+  final List<CouponDataModel> couponList;
+  CouponFetchSuccessState({required this.couponList});
+}
+class fetchErrorState extends SubscriptionState{
+  final String error;  
+  fetchErrorState({required this.error});
+}
+class fetchLoadingState extends SubscriptionState{}

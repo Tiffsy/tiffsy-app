@@ -20,3 +20,6 @@ class EndDateChoosenEvent extends SubscriptionEvent {
 
   const EndDateChoosenEvent({required this.endDate});
 }
+class FetchCouponsEvent extends SubscriptionEvent {
+
+}

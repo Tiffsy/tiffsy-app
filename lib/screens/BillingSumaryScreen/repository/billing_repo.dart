@@ -8,21 +8,17 @@ import 'package:tiffsy_app/screens/BillingSumaryScreen/model/coupon_data_model.d
 import 'package:uuid/uuid.dart';
 
 class BillingRepo {
-
   static Future<Result<Map<String, dynamic>>> addSubscription() async {
     try {
       Box customer_box = Hive.box("customer_box");
       Box address_box = Hive.box("address_box");
       Box cart_box = Hive.box("cart_box");
-
       String addr_line = address_box.get("default_address")["addr_line"];
       String addr_id = address_box.get("default_address")["addr_id"];
-
       String cst_id = customer_box.get('cst_id');
       String token = customer_box.get("token");
       String ordr_type =
           cart_box.get("is_subscription") ? "subscription" : "onetime";
-
       if (cart_box.get("is_subscription")) {
         int lc = 0;
         int bc = 0;
@@ -174,7 +170,6 @@ class BillingRepo {
   static Future<Result<List<CouponDataModel>>> getCoupons() async{
     try{
       String cst_id = Hive.box('customer_box').get('cst_id');
-      print(cst_id);
       List<CouponDataModel> couponList = [];
       Map<String, dynamic> params = {
           "cst_id": cst_id
@@ -188,6 +183,26 @@ class BillingRepo {
         couponList.add(coupon);
       }
       return Result(data: couponList, error: null);
+    }
+    catch(err){
+      return Result(data: null, error: err.toString());
+    }
+  }
+
+  static Future<Result<String>> applyCoupon() async {
+    try{
+      String cst_id = Hive.box('customer_box').get('cst_id');
+      String cpnCode = Hive.box("coupon").get("cpn",defaultValue: "dummy");
+      print(cpnCode);
+      Map<String, dynamic> params = {
+          "cst_id": cst_id,
+          "cpn_code": cpnCode
+      };
+      Box customer_box = Hive.box("customer_box");
+      String token = customer_box.get("token");
+      var response = await http.post(Uri.parse('$apiJsURL/coupon-applied'), body: params, headers: {'Authorization': 'Bearer $token'});
+      print(response.body);
+      return Result(data: "SUCCESS", error: null);
     }
     catch(err){
       return Result(data: null, error: err.toString());

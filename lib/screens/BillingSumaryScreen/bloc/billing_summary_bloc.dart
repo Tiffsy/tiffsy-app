@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:tiffsy_app/Helpers/result.dart';
+import 'package:tiffsy_app/screens/BillingSumaryScreen/model/coupon_data_model.dart';
 import 'package:tiffsy_app/screens/BillingSumaryScreen/repository/billing_repo.dart';
 
 part 'billing_summary_event.dart';
@@ -20,6 +21,7 @@ class BillingSummaryBloc
   BillingSummaryBloc({required this.onPaymentSuccess})
       : super(BillingSummaryInitial()) {
     on<BillingSummaryEvent>((event, emit) {});
+
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, (event) {
       add(PaymentSuccessEvent(paymentId: event.paymentId));
     });
@@ -58,6 +60,7 @@ class BillingSummaryBloc
     } else if (event is PaymentSuccessEvent) {
       emit(TransactionLoadingState());
       Result<Map<String, dynamic>> result = await BillingRepo.addSubscription();
+      Result<String> tp = await BillingRepo.applyCoupon();
       if (result.isSuccess) {
         Map<String, dynamic> tmp = result.data!;
         Result<String> res = await BillingRepo.addTransaction(

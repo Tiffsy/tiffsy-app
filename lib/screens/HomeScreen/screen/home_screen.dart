@@ -95,8 +95,10 @@ class _HomeState extends State<Home> {
               tempTwo,
             );
             return Scaffold(
-              backgroundColor: const Color(0xffffffff),
+              backgroundColor: Colors.white,
               appBar: AppBar(
+                backgroundColor: Color(0xfffffcef),
+                elevation: 0,
                 leadingWidth: 60,
                 leading: const Icon(
                   Icons.location_on,
@@ -126,7 +128,6 @@ class _HomeState extends State<Home> {
                                 style: TextStyle(
                                   color: Color(0xFF121212),
                                   fontSize: 16,
-                                  fontFamily: 'Roboto',
                                   fontWeight: FontWeight.w500,
                                   height: 24 / 16,
                                   letterSpacing: 0.15,
@@ -151,7 +152,6 @@ class _HomeState extends State<Home> {
                                       style: const TextStyle(
                                         color: Color(0xFF121212),
                                         fontSize: 16,
-                                        fontFamily: 'Roboto',
                                         fontWeight: FontWeight.w500,
                                         height: 24 / 16,
                                         letterSpacing: 0.15,
@@ -172,7 +172,6 @@ class _HomeState extends State<Home> {
                                 style: const TextStyle(
                                   color: Color(0xFF121212),
                                   fontSize: 12,
-                                  fontFamily: 'Roboto',
                                   fontWeight: FontWeight.w400,
                                   height: 16 / 12,
                                 ),
@@ -259,8 +258,10 @@ class _HomeState extends State<Home> {
             );
           } else if (state is HomeFetchSuccessfulIsCachedState) {
             return Scaffold(
-              backgroundColor: const Color(0xffffffff),
+              backgroundColor: Colors.white,
               appBar: AppBar(
+                elevation: 0,
+                backgroundColor: Color(0xfffffcef),
                 leadingWidth: 60,
                 leading: const Icon(
                   Icons.location_on,
@@ -290,7 +291,6 @@ class _HomeState extends State<Home> {
                                 style: TextStyle(
                                   color: Color(0xFF121212),
                                   fontSize: 16,
-                                  fontFamily: 'Roboto',
                                   fontWeight: FontWeight.w500,
                                   height: 24 / 16,
                                   letterSpacing: 0.15,
@@ -315,7 +315,6 @@ class _HomeState extends State<Home> {
                                       style: const TextStyle(
                                         color: Color(0xFF121212),
                                         fontSize: 16,
-                                        fontFamily: 'Roboto',
                                         fontWeight: FontWeight.w500,
                                         height: 24 / 16,
                                         letterSpacing: 0.15,
@@ -336,7 +335,6 @@ class _HomeState extends State<Home> {
                                 style: const TextStyle(
                                   color: Color(0xFF121212),
                                   fontSize: 12,
-                                  fontFamily: 'Roboto',
                                   fontWeight: FontWeight.w400,
                                   height: 16 / 12,
                                 ),
@@ -422,7 +420,6 @@ class _HomeState extends State<Home> {
               ),
             );
           } else {
-            print(state.toString());
             return Scaffold(
               backgroundColor: const Color(0xffffffff),
               appBar: AppBar(
@@ -501,7 +498,6 @@ class _HomeState extends State<Home> {
                   style: TextStyle(
                     color: Color(0xFF121212),
                     fontSize: 16,
-                    fontFamily: 'Roboto',
                     fontWeight: FontWeight.w500,
                     height: 24 / 16,
                     letterSpacing: 0.10,
@@ -754,7 +750,6 @@ Widget emptyCartMessageBox(BuildContext context, String message) {
         style: const TextStyle(
           color: Color(0xFF121212),
           fontSize: 12,
-          fontFamily: 'Roboto',
           fontWeight: FontWeight.w500,
           height: 0.11,
           letterSpacing: 0.50,
@@ -784,7 +779,6 @@ class _NavigationBarCartItemState extends State<NavigationBarCartItem> {
             setState(() {
               count = Hive.box("cart_box").get("cart", defaultValue: []).length;
             });
-            print(count);
           }
         },
         builder: (context, state) {

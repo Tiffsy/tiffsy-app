@@ -7,11 +7,13 @@ import "package:lottie/lottie.dart";
 import "package:tiffsy_app/Helpers/loading_animation.dart";
 import "package:tiffsy_app/Helpers/page_router.dart";
 import "package:tiffsy_app/screens/BillingSumaryScreen/bloc/billing_summary_bloc.dart";
+import "package:tiffsy_app/screens/BillingSumaryScreen/model/coupon_data_model.dart";
 import "package:tiffsy_app/screens/HomeScreen/screen/home_screen.dart";
 
-
 class BillingSummaryScreen extends StatefulWidget {
-  const BillingSummaryScreen({super.key});
+  final List<CouponDataModel> couponList;
+  const BillingSummaryScreen({Key? key, required this.couponList})
+      : super(key: key);
 
   @override
   State<BillingSummaryScreen> createState() => _BillingSummaryScreenState();
@@ -21,13 +23,13 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
   TextEditingController couponCodeController = TextEditingController();
   late Map<String, double> summaryBreakdown;
   late double grandTotal;
+  Map<String, List<int>> discountList = {};
+  List<DropdownMenuEntry> coupons = [];
+  int discount = 0;
+  double bill = 0;
 
   Map<String, double> getSummaryBreakdown() {
-    // return map for the type of amount as the key (case sensitive) and the amount
-    // as the value. Also all te values will be added up later so if they need to be
-    // substracted then they should be negative, when displaying the sign will be
-    // ignored.
-    return {"Subtotal": 1000, "Discount": 0, "Shipping": 0, "GST 5%": 0};
+    return {"Subtotal": 0, "Discount (-)": 0, "Shipping": 0};
   }
 
   double calculateTotal(Map<String, double> summaryBreakdown) {
@@ -38,19 +40,78 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
     return grandTotal;
   }
 
-  void clearCouponButton() {
-    couponCodeController.clear();
-  }
+  void applyCoupon() {
+    String selectedCouponCode = couponCodeController.text;
+    if (discountList.containsKey(selectedCouponCode)) {
+      int discountPrnct = discountList[selectedCouponCode]![0];
+      int maxPrice = discountList[selectedCouponCode]![1];
+      int minPrice = discountList[selectedCouponCode]![2];
 
-  List<String> getlistOfCoupons() {
-    return ["FIRST", "NOFOOD", "OKAY"];
+      if (bill < minPrice) {
+        setState(() {
+          summaryBreakdown["Discount (-)"] = 0.0;
+          grandTotal = calculateTotal(summaryBreakdown);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('Add items worth ₹${minPrice-bill} more to apply'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      } else {
+        double discountAmt = (bill * discountPrnct / 100) > maxPrice* 1.0 ? maxPrice * 1.0 : (bill * discountPrnct / 100);
+        setState(() {
+          summaryBreakdown["Discount (-)"] = ((discountAmt) * (-1));
+          grandTotal = calculateTotal(summaryBreakdown);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xffCBFFB3),
+            content: Text('Voila! You Saved ₹$discountAmt', style: TextStyle(
+              color: Colors.black
+            ),),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    } else {
+      if (selectedCouponCode.isEmpty) {
+        setState(() {
+          discount = 0;
+          summaryBreakdown["Discount (-)"] = ((bill * discount / 100) * (-1));
+          grandTotal = calculateTotal(summaryBreakdown);
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('Invalid coupon code'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    }
   }
 
   @override
   void initState() {
     super.initState();
+
+    for (int i = 0; i < widget.couponList.length; i++) {
+      DropdownMenuEntry x = DropdownMenuEntry(
+          value: widget.couponList[i].discountPrnct,
+          label: widget.couponList[i].cpnCode);
+      coupons.add(x);
+      discountList[widget.couponList[i].cpnCode] = [];
+      discountList[widget.couponList[i].cpnCode]!
+          .add(widget.couponList[i].discountPrnct);
+      discountList[widget.couponList[i].cpnCode]!
+          .add(widget.couponList[i].maxDiscount);
+      discountList[widget.couponList[i].cpnCode]!
+          .add(widget.couponList[i].minPrice);
+    }
     summaryBreakdown = getSummaryBreakdown();
-    double bill = 0;
     Box cart_box = Hive.box("cart_box");
     List cart = cart_box.get("cart");
     if (cart_box.get("is_subscription")) {
@@ -65,8 +126,9 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
             int.parse(element[1].toString());
       }
     }
+
     summaryBreakdown["Subtotal"] = bill * 1.0;
-    // summaryBreakdown["GST 5%"] = (bill * 5.0) / 100;
+    summaryBreakdown["Discount"] = ((bill * discount / 100) * (-1));
     grandTotal = calculateTotal(summaryBreakdown);
   }
 
@@ -82,14 +144,16 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
         onPaymentSuccess: () {
           Hive.box("cart_box").put("cart", []);
           Hive.box("cart_box").delete("is_subscription");
+          Hive.box("coupon").clear();
         },
       ),
       child: BlocConsumer<BillingSummaryBloc, BillingSummaryState>(
         listener: (context, state) {
           // TODO: implement listener
           if (state is RazorpayFailure) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.errorMessage)));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Colors.red,
+                content: Text(state.errorMessage)));
           }
         },
         builder: (context, state) {
@@ -193,15 +257,12 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
                       child: Column(
                           children:
                               billingInformation(summaryBreakdown, grandTotal) +
-                                  couponEntryBox(couponCodeController,
-                                      getlistOfCoupons(), clearCouponButton) +
+                                  couponEntryBox(couponCodeController, coupons,
+                                      applyCoupon, "Coupons") +
                                   proceedButton(() {
+                                    Hive.box("coupon").put("cpn",couponCodeController.text);
                                     BlocProvider.of<BillingSummaryBloc>(context)
                                         .initializePayment(grandTotal);
-                                    // Navigator.push(
-                                    //     context,
-                                    //     SlideTransitionRouter.toNextPage(
-                                    //         PaymentCheckoutScreen(amount: grandTotal)));
                                   })),
                     ),
                   ),
@@ -251,9 +312,10 @@ class _BillingSummaryScreenState extends State<BillingSummaryScreen> {
                   child: Column(
                       children:
                           billingInformation(summaryBreakdown, grandTotal) +
-                              couponEntryBox(couponCodeController,
-                                  getlistOfCoupons(), clearCouponButton) +
+                              couponEntryBox(couponCodeController, coupons,
+                                  applyCoupon, "Coupons") +
                               proceedButton(() {
+                                Hive.box("coupon").put("cpn",couponCodeController.text,);
                                 BlocProvider.of<BillingSummaryBloc>(context)
                                     .initializePayment(grandTotal);
                                 // Navigator.push(
@@ -306,6 +368,33 @@ List<Widget> billingInformation(
   return listOfBillBreakdown;
 }
 
+Widget dropDownMenu(
+    String label,
+    List<DropdownMenuEntry<dynamic>> dropDownMenuEntries,
+    TextEditingController controller) {
+  return DropdownMenu(
+    trailingIcon: const Icon(
+      Icons.keyboard_arrow_down_rounded,
+      size: 24,
+    ),
+    enableSearch: true,
+    enableFilter: true,
+    dropdownMenuEntries: dropDownMenuEntries,
+    controller: controller,
+    requestFocusOnTap: true,
+    label: Text(label),
+    inputDecorationTheme: const InputDecorationTheme(
+      labelStyle: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        color: Color(0x66121212),
+        height: 24 / 16,
+      ),
+    ),
+    expandedInsets: EdgeInsets.zero,
+  );
+}
+
 Widget amountSubPartText(String text, bool bold) {
   return Text(
     text,
@@ -334,45 +423,146 @@ Widget amountTotalText(String text) {
 
 // convert this to a statefulwidget!
 
-List<Widget> couponEntryBox(TextEditingController couponTextEditingController,
-    List<String> listOfcoupons, Function clearAll) {
+// List<Widget> couponEntryBox(TextEditingController couponTextEditingController,
+//     List<String> listOfcoupons, Function clearAll) {
+//   return [
+//     const SizedBox(height: 28),
+//     TextFormField(
+//       controller: couponTextEditingController,
+//       validator: (value) {
+//         return (listOfcoupons.contains(value) ? "Applied Successfully" : null);
+//       },
+//       maxLines: 1,
+//       style: const TextStyle(
+//         fontSize: 16,
+//         fontWeight: FontWeight.w400,
+//         letterSpacing: 0.5,
+//         height: 24 / 16,
+//       ),
+//       decoration: InputDecoration(
+//         constraints: const BoxConstraints(maxHeight: 56),
+//         suffixIcon: couponTextEditingController.text.isEmpty
+//             ? Container()
+//             : IconButton(
+//                 color: const Color(0xff121212),
+//                 onPressed: () {
+//                   clearAll();
+//                 },
+//                 icon: const Icon(
+//                   Icons.cancel_outlined,
+//                   size: 24,
+//                 ),
+//               ),
+//         labelText: "COUPON",
+//         labelStyle: const TextStyle(
+//           fontSize: 16,
+//           fontWeight: FontWeight.w400,
+//           color: Color(0x66121212),
+//           height: 24 / 16,
+//         ),
+//       ),
+//     ),
+//     const SizedBox(height: 16)
+//   ];
+// }
+
+List<Widget> couponEntryBox(
+  TextEditingController couponTextEditingController,
+  List<DropdownMenuEntry> dropDownMenuEntries,
+  Function onApply,
+  String label,
+) {
   return [
     const SizedBox(height: 28),
-    TextFormField(
-      controller: couponTextEditingController,
-      validator: (value) {
-        return (listOfcoupons.contains(value) ? "Applied Successfully" : null);
-      },
-      maxLines: 1,
-      style: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        letterSpacing: 0.5,
-        height: 24 / 16,
-      ),
-      decoration: InputDecoration(
-        constraints: const BoxConstraints(maxHeight: 56),
-        suffixIcon: couponTextEditingController.text.isEmpty
-            ? Container()
-            : IconButton(
-                color: const Color(0xff121212),
-                onPressed: () {
-                  clearAll();
-                },
-                icon: const Icon(
-                  Icons.cancel_outlined,
-                  size: 24,
-                ),
+    Row(
+      children: [
+        Expanded(
+          child: DropdownMenu(
+            trailingIcon: const Icon(
+              Icons.keyboard_arrow_down_rounded,
+              size: 24,
+            ),
+            enableSearch: true,
+            enableFilter: true,
+            dropdownMenuEntries: dropDownMenuEntries,
+            controller: couponTextEditingController,
+            requestFocusOnTap: true,
+            label: Text(label),
+            inputDecorationTheme: const InputDecorationTheme(
+              labelStyle: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+                color: Color(0x66121212),
+                height: 24 / 16,
               ),
-        labelText: "COUPON",
-        labelStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w400,
-          color: Color(0x66121212),
-          height: 24 / 16,
+            ),
+            expandedInsets: EdgeInsets.zero,
+          ),
         ),
-      ),
+        SizedBox(width: 12),
+        ElevatedButton(
+          onPressed: () {
+            onApply();
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor:
+                const Color(0xffCBFFB3), // Set the button color to green
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                side: BorderSide(
+                    color: const Color(0xff329C00)) // Set the border radius
+                ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "Apply",
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.black, // Set the text color to white
+              ),
+            ),
+          ),
+        )
+      ],
     ),
+    // TextFormField(
+    //   controller: couponTextEditingController,
+    //   validator: (value) {
+    //     return (listOfcoupons.contains(value) ? "Applied Successfully" : null);
+    //   },
+    //   maxLines: 1,
+    //   style: const TextStyle(
+    //     fontSize: 16,
+    //     fontWeight: FontWeight.w400,
+    //     letterSpacing: 0.5,
+    //     height: 24 / 16,
+    //   ),
+    //   decoration: InputDecoration(
+    //     constraints: const BoxConstraints(maxHeight: 56),
+    //     suffixIcon: couponTextEditingController.text.isEmpty
+    //         ? Container()
+    //         : IconButton(
+    //             color: const Color(0xff121212),
+    //             onPressed: () {
+    //               clearAll();
+    //             },
+    //             icon: const Icon(
+    //               Icons.cancel_outlined,
+    //               size: 24,
+    //             ),
+    //           ),
+    //     labelText: "COUPON",
+    //     hintText: "COUPON",
+    //     labelStyle: const TextStyle(
+    //       fontSize: 16,
+    //       fontWeight: FontWeight.w400,
+    //       color: Color(0x66121212),
+    //       height: 24 / 16,
+    //     ),
+    //   ),
+    // ),
     const SizedBox(height: 16)
   ];
 }

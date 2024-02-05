@@ -7,6 +7,7 @@ abstract class BillingSummaryEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class CouponFetchEvent extends BillingSummaryEvent{}
 class InitializePaymentEvent extends BillingSummaryEvent {
   final double amount;
   InitializePaymentEvent({required this.amount});

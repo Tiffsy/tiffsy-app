@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:tiffsy_app/Helpers/internet_connectivity.dart';
 import 'package:tiffsy_app/firebase_options.dart';
-import 'package:tiffsy_app/screens/AddAddressScreen/screen/add_address_screen.dart';
 import 'package:tiffsy_app/screens/LoginScreen/repository/user_repo.dart';
 import 'package:flutter/services.dart';
 import 'package:tiffsy_app/screens/splash_screen.dart';
@@ -17,6 +16,7 @@ Future<void> main() async {
   await Hive.openBox("cart_box");
   await Hive.openBox("address_box");
   await Hive.openBox("customer_box");
+  await Hive.openBox("coupon");
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((value) {
     runApp(
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      home:  SplashScreen(),
+      home: SplashScreen(),
       title: 'Tiffsy',
       theme: getTheme(context),
     );
@@ -46,6 +46,9 @@ ThemeData getTheme(BuildContext context) {
   return ThemeData(
     fontFamily: 'Gothic A1',
     textTheme: Theme.of(context).textTheme.apply(fontFamily: 'Gothic A1'),
+    snackBarTheme: const SnackBarThemeData(
+      backgroundColor: Colors.red,
+    ),
     datePickerTheme: const DatePickerThemeData(
         backgroundColor: Color(0xfffffcef),
         surfaceTintColor: Color(0xfffffcef),

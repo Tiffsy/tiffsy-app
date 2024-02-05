@@ -40,32 +40,122 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
               const SizedBox(height: 16),
               upgradeToDeluxCard(() {}),
               const SizedBox(height: 12),
-              const Text(
-                // Today's Menu
-                "Today's Menu",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  height: 24 / 16,
-                  letterSpacing: 0.15,
-                  color: Color(0xff121212),
-                ),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Divider(
+                      thickness: 2, // Adjust line thickness as needed
+                      color: Colors.black, // Customize line color
+                      indent: 10,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 16.0, right: 16, top: 8, bottom: 8),
+                    child: Text(
+                      "Serving Today",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        fontFamily: "Charmonman",
+                        height: 24 / 16,
+                        letterSpacing: 0.15,
+                        color: Color(0xff121212),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Divider(
+                      thickness: 2,
+                      color: Colors.black,
+                      endIndent: 15,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 12),
-              Column(
-                  // list of menu cards
-                  children: listOfMenuCards(
-                      menuState.menu, context, widget.homeBloc)),
-              SizedBox(
-                width: MediaQuery.sizeOf(context).width - 39,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Container(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    orderNowExpandableButton(),
-                    subscriptionExpandableButton(),
+                    Container(
+                      width: MediaQuery.sizeOf(context).width,
+                      color: const Color(0xffFFBE1D),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: listOfMenuCards(
+                              menuState.menu, context, widget.homeBloc)),
+                    ),
+                    Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        Container(
+                          height: 30,
+                          width: MediaQuery.sizeOf(context).width,
+                          color: const Color(0xffFFBE1D),
+                        ),
+                        Positioned(
+                          top: 17,
+                          child: Row(
+                            children: [
+                              circle(),
+                              SizedBox(
+                                width: MediaQuery.sizeOf(context).width * 0.05,
+                              ),
+                              circle(),
+                              SizedBox(
+                                width: MediaQuery.sizeOf(context).width * 0.05,
+                              ),
+                              circle(),
+                              SizedBox(
+                                width: MediaQuery.sizeOf(context).width * 0.05,
+                              ),
+                              circle(),
+                              SizedBox(
+                                width: MediaQuery.sizeOf(context).width * 0.05,
+                              ),
+                              circle(),
+                              SizedBox(
+                                width: MediaQuery.sizeOf(context).width * 0.05,
+                              ),
+                              circle(),
+                              SizedBox(
+                                width: MediaQuery.sizeOf(context).width * 0.05,
+                              ),
+                              circle(),
+                              SizedBox(
+                                width: MediaQuery.sizeOf(context).width * 0.05,
+                              ),
+                              circle(),
+                              SizedBox(
+                                width: MediaQuery.sizeOf(context).width * 0.05,
+                              ),
+                              circle(),
+                            ],
+                          ),
+                        )
+                      ],
+                    )
                   ],
+                ),
+              ),
+              // Column(
+              //     children: listOfMenuCards(
+              //         menuState.menu, context, widget.homeBloc)),
+              Padding(
+                padding: const EdgeInsets.only(top: 30),
+                child: SizedBox(
+                  width: MediaQuery.sizeOf(context).width - 39,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      orderNowExpandableButton(),
+                      subscriptionExpandableButton(),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -73,6 +163,105 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
           ),
         );
       },
+    );
+  }
+
+  Widget customMenuTab(BuildContext context, MenuDataModel menuPage) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: InkWell(
+        onTap: () {
+          showDialog(context: context, 
+          builder: (BuildContext context){
+            return AlertDialog(
+              backgroundColor: Color(0xfffffcef),
+              title: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Divider(
+                      thickness: 2, // Adjust line thickness as needed
+                      color: Colors.black, // Customize line color
+                      indent: 10,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 16.0, right: 16, top: 8, bottom: 8),
+                    child: Text(
+                      "Description",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        fontFamily: "Charmonman",
+                        height: 24 / 16,
+                        letterSpacing: 0.15,
+                        color: Color(0xff121212),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Divider(
+                      thickness: 2,
+                      color: Colors.black,
+                      endIndent: 15,
+                    ),
+                  ),
+                ],
+              ),
+              content: Text(menuPage.description),
+              actions: [
+                TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the popup
+              },
+              child: Text('Close', style: TextStyle(color: Colors.black),),
+            ),
+              ],
+            );
+          });
+        },
+        child: SizedBox(
+          width: MediaQuery.sizeOf(context).width - 70,
+          height: 75,
+          child: Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5), // Adjust color and opacity
+                  blurRadius: 5.0, // Adjust blur radius
+                  spreadRadius: 2.0, // Adjust spread radius (optional)
+                  offset: const Offset(2.0, 2.0), // Adjust offset (optional)
+                ),
+              ],
+              borderRadius: BorderRadius.circular(16.0), // Set desired radius
+              color: Colors.white,
+              // Add border if needed
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 20, left: 10),
+                  child: mealTimeTagCustom(menuPage.mealTime),
+                ),
+                Container(
+                    width: MediaQuery.sizeOf(context).width - 250,
+                    child: mealCardBoldText(menuPage.title))
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget circle() {
+    return Container(
+      width: 20,
+      height: 20,
+      decoration: BoxDecoration(
+          color: Colors.white, borderRadius: BorderRadius.circular(10)),
     );
   }
 
@@ -122,7 +311,6 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
                       style: TextStyle(
                         color: Color(0xFF121212),
                         fontSize: 16,
-                        fontFamily: 'Inter',
                         fontWeight: FontWeight.w500,
                         height: 20 / 16,
                         letterSpacing: 0.10,
@@ -187,7 +375,6 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
                       style: TextStyle(
                         color: Color(0xFF121212),
                         fontSize: 16,
-                        fontFamily: 'Inter',
                         fontWeight: FontWeight.w500,
                         height: 20 / 16,
                         letterSpacing: 0.10,
@@ -208,27 +395,22 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
       List<MenuDataModel> menu, BuildContext context, HomeBloc homeBloc) {
     List<Widget> listOfMenuCards = [];
     Map<String, List<MenuDataModel>> temp = {};
-
     for (var element in menu) {
       temp[element.mealTime] = (temp[element.mealTime] ?? []) + [element];
     }
+
     temp.forEach((key, value) {
       value.sort((a, b) => a.price.compareTo(b.price));
     });
 
     List<String> mealOrder = ["breakfast", "lunch", "dinner"];
-
     for (var key in mealOrder) {
       if (temp[key] != null) {
         listOfMenuCards.addAll([
-          customMenuCard(context, temp[key]![0], homeBloc),
-          const SizedBox(height: 18),
-          dashedDivider(context),
-          const SizedBox(height: 16)
+          customMenuTab(context, temp[key]![0]),
         ]);
       }
     }
-
     return listOfMenuCards;
   }
 
@@ -396,7 +578,6 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
                         style: const TextStyle(
                           color: Color(0xFF121212),
                           fontSize: 12,
-                          fontFamily: 'Roboto',
                           fontWeight: FontWeight.w500,
                           height: 16 / 12,
                           letterSpacing: 0.50,
@@ -431,7 +612,6 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
                     style: TextStyle(
                       color: Color(0xFF6AA64F),
                       fontSize: 12,
-                      fontFamily: 'Roboto',
                       fontWeight: FontWeight.w500,
                       height: 16 / 12,
                       letterSpacing: 0.50,
@@ -477,7 +657,6 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
                         style: const TextStyle(
                           color: Color(0xFF121212),
                           fontSize: 12,
-                          fontFamily: 'Roboto',
                           fontWeight: FontWeight.w500,
                           height: 16 / 12,
                           letterSpacing: 0.50,
@@ -515,7 +694,6 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
                     style: TextStyle(
                       color: Color(0xFF6AA64F),
                       fontSize: 12,
-                      fontFamily: 'Roboto',
                       fontWeight: FontWeight.w500,
                       height: 16 / 12,
                       letterSpacing: 0.50,
@@ -728,7 +906,6 @@ class _MenuImageForBottomSheetState extends State<MenuImageForBottomSheet> {
                           ? Color(0xff6aa64f)
                           : Colors.grey.shade700,
                       fontSize: 12,
-                      fontFamily: 'Roboto',
                       fontWeight: FontWeight.w500,
                       height: 16 / 11,
                       letterSpacing: 0.15,
@@ -798,7 +975,6 @@ class _MenuImageForBottomSheetState extends State<MenuImageForBottomSheet> {
                           style: TextStyle(
                             color: Color(0xFF6AA64F),
                             fontSize: 12,
-                            fontFamily: 'Roboto',
                             fontWeight: FontWeight.w500,
                             height: 16 / 11,
                             letterSpacing: 0.15,
@@ -862,7 +1038,6 @@ class _MenuImageForBottomSheetState extends State<MenuImageForBottomSheet> {
                           style: const TextStyle(
                             color: Color(0xFF329C00),
                             fontSize: 16,
-                            fontFamily: 'Roboto',
                             fontWeight: FontWeight.w500,
                             height: 20 / 16,
                             letterSpacing: 0.15,
@@ -921,7 +1096,6 @@ class _MenuImageForBottomSheetState extends State<MenuImageForBottomSheet> {
                     style: TextStyle(
                       color: Color(0xFF666666),
                       fontSize: 12,
-                      fontFamily: 'Roboto',
                       fontWeight: FontWeight.w500,
                       height: 16 / 11,
                       letterSpacing: 0.15,
@@ -943,11 +1117,63 @@ Text mealCardBoldText(String text) {
   return Text(
     text,
     style: const TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.w500,
+      fontSize: 16,
+      fontWeight: FontWeight.w700,
       height: 20 / 14,
       letterSpacing: 0.1,
     ),
+    softWrap: true,
+    overflow: TextOverflow.clip,
+  );
+}
+
+Widget mealTimeTagCustom(String mealTime, ) {
+  // Returns the meal time string placed in the tag like container as mentioned in the
+  // design.
+  return Stack(
+    alignment: AlignmentDirectional.center,
+    children: [
+      Positioned(
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: const Color(0xffffbe1d)),
+            borderRadius: BorderRadius.circular(6),
+            color: const Color(0xffffbe1d),
+          ),
+          width: 150,
+          height: 23,
+          child: Center(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Text(
+                  toSentenceCase(mealTime),
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    height: 16 / 11,
+                    letterSpacing: 0.5,
+                  ),
+                  textAlign: TextAlign.right,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      Align(
+        alignment: Alignment.centerLeft,
+        widthFactor: 2.5,
+        child: Image.asset(
+          'assets/images/vectors/thali_full.png',
+          fit: BoxFit.cover,
+          width: 60,
+          height: 60,
+        ),
+      ),
+    ],
   );
 }
 

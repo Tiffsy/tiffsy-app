@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/intl.dart';
+import 'package:tiffsy_app/Helpers/loading_animation.dart';
 import 'package:tiffsy_app/Helpers/page_router.dart';
 import 'package:tiffsy_app/screens/BillingSumaryScreen/screen/billing_summary_screen.dart';
-
+import 'package:tiffsy_app/screens/SubscriptionScreen/bloc/subscription_bloc.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key, required this.noOfDays});
@@ -43,224 +45,454 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     int lunchCount = cartBox.get("Lunch", defaultValue: 0);
     int dinnerCount = cartBox.get("Dinner", defaultValue: 0);
     bool isSubscription = cartBox.get("is_subscription");
-
-    return Scaffold(
-      backgroundColor: const Color(0xffffffff),
-      appBar: AppBar(
-        leadingWidth: 64,
-        titleSpacing: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_rounded,
-            color: Color(0xff323232),
-            size: 24,
+    return BlocProvider(
+      create: (context) => SubscriptionBloc()..add(FetchCouponsEvent()),
+      child: Scaffold(
+        backgroundColor: const Color(0xffffffff),
+        appBar: AppBar(
+          leadingWidth: 64,
+          titleSpacing: 0,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_rounded,
+              color: Color(0xff323232),
+              size: 24,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-          onPressed: () {
-            Navigator.pop(context);
+          title: Text(
+            subscriptionLength(widget.noOfDays),
+            style: const TextStyle(
+              fontSize: 20,
+              height: 28 / 20,
+              fontWeight: FontWeight.w400,
+              color: Color(0xff121212),
+            ),
+          ),
+        ),
+        body: BlocConsumer<SubscriptionBloc, SubscriptionState>(
+          listener: (context, state) {
+            if (state is fetchErrorState) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error)));
+            }
           },
-        ),
-        title: Text(
-          subscriptionLength(widget.noOfDays),
-          style: const TextStyle(
-            fontSize: 20,
-            height: 28 / 20,
-            fontWeight: FontWeight.w400,
-            color: Color(0xff121212),
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
-              Container(
-                height: 154,
-                width: MediaQuery.sizeOf(context).width - 40,
-                decoration: ShapeDecoration(
-                  color: const Color(0xFFFFFCEF),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 24, top: 16, bottom: 8),
-                      child: Text(
-                        'Time Period',
-                        style: TextStyle(
-                          color: Color(0xFF121212),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          height: 20 / 14,
-                          letterSpacing: 0.10,
-                        ),
-                      ),
-                    ),
-                    const Divider(height: 0, thickness: 1),
-                    const SizedBox(height: 18),
-                    Row(
-                      children: [
-                        const SizedBox(width: 24),
-                        Flexible(
-                          child: GestureDetector(
-                            onTap: () async {
-                              startDate = await showDatePicker(
-                                context: context,
-                                firstDate: DateTime.now(),
-                                lastDate: DateTime.now().add(
-                                  const Duration(days: 100),
-                                ),
-                              );
-                              if (startDate != null) {
-                                endDate = startDate!
-                                    .add(Duration(days: widget.noOfDays));
-                                String startDateText =
-                                    DateFormat('dd/MM/yyyy').format(startDate!);
-                                String endDateText =
-                                    DateFormat('dd/MM/yyyy').format(endDate!);
-                                setState(() {
-                                  startDateController.text = startDateText;
-                                  endDateController.text = endDateText;
-                                });
-                              }
-                            },
-                            child: AbsorbPointer(
-                              child: dateEntryBox(
-                                isSubscription ? "Start Date" : "Delivery Date",
-                                startDateController,
-                              ),
-                            ),
+          builder: (context, state) {
+            if (state is fetchLoadingState) {
+              return Center(
+                child: LoadingAnimation.circularLoadingAnimation(context),
+              );
+            } else if (state is CouponFetchSuccessState) {
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      Container(
+                        height: 154,
+                        width: MediaQuery.sizeOf(context).width - 40,
+                        decoration: ShapeDecoration(
+                          color: const Color(0xFFFFFCEF),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        SizedBox(width: isSubscription ? 12 : 0),
-                        isSubscription
-                            ? Flexible(
-                                child: GestureDetector(
-                                  child: AbsorbPointer(
-                                    child: dateEntryBox(
-                                      "End date",
-                                      endDateController,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding:
+                                  EdgeInsets.only(left: 24, top: 16, bottom: 8),
+                              child: Text(
+                                'Time Period',
+                                style: TextStyle(
+                                  color: Color(0xFF121212),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  height: 20 / 14,
+                                  letterSpacing: 0.10,
+                                ),
+                              ),
+                            ),
+                            const Divider(height: 0, thickness: 1),
+                            const SizedBox(height: 18),
+                            Row(
+                              children: [
+                                const SizedBox(width: 24),
+                                Flexible(
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      startDate = await showDatePicker(
+                                        context: context,
+                                        firstDate: DateTime.now(),
+                                        lastDate: DateTime.now().add(
+                                          const Duration(days: 100),
+                                        ),
+                                      );
+                                      if (startDate != null) {
+                                        endDate = startDate!.add(
+                                            Duration(days: widget.noOfDays));
+                                        String startDateText =
+                                            DateFormat('dd/MM/yyyy')
+                                                .format(startDate!);
+                                        String endDateText =
+                                            DateFormat('dd/MM/yyyy')
+                                                .format(endDate!);
+                                        setState(() {
+                                          startDateController.text =
+                                              startDateText;
+                                          endDateController.text = endDateText;
+                                        });
+                                      }
+                                    },
+                                    child: AbsorbPointer(
+                                      child: dateEntryBox(
+                                        isSubscription
+                                            ? "Start Date"
+                                            : "Delivery Date",
+                                        startDateController,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              )
-                            : const SizedBox(),
-                        const SizedBox(width: 24),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                alignment: Alignment.topCenter,
-                height: 270,
-                width: MediaQuery.sizeOf(context).width - 40,
-                decoration: ShapeDecoration(
-                  color: const Color(0xFFFFFCEF),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 16),
-                    const Icon(Icons.food_bank, size: 24),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Time corresponding to the meal is tentative.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xFF121212),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        height: 20 / 14,
-                        letterSpacing: 0.25,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    cartSummaryList(
-                      breakfastCount,
-                      lunchCount,
-                      dinnerCount,
-                      context,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                width: MediaQuery.sizeOf(context).width - 40,
-                decoration: ShapeDecoration(
-                  color: const Color(0xFFFFFCEF),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 24, top: 16, bottom: 8),
-                      child: Text(
-                        'Add More Details (Optional)',
-                        style: TextStyle(
-                          color: Color(0xFF121212),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          height: 20 / 14,
-                          letterSpacing: 0.10,
+                                SizedBox(width: isSubscription ? 12 : 0),
+                                isSubscription
+                                    ? Flexible(
+                                        child: GestureDetector(
+                                          child: AbsorbPointer(
+                                            child: dateEntryBox(
+                                              "End date",
+                                              endDateController,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : const SizedBox(),
+                                const SizedBox(width: 24),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    const Divider(thickness: 1, height: 0),
-                    SizedBox(height: isSubscription ? 20 : 0),
-                    isSubscription
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
-                            child: entryBox(subscriptionNameController,
-                                "Subscription name", null),
-                          )
-                        : SizedBox(),
-                    const SizedBox(height: 16),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child:
-                          entryBox(instructionController, "Instructions", null),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
+                      const SizedBox(height: 20),
+                      Container(
+                        alignment: Alignment.topCenter,
+                        height: 270,
+                        width: MediaQuery.sizeOf(context).width - 40,
+                        decoration: ShapeDecoration(
+                          color: const Color(0xFFFFFCEF),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 16),
+                            const Icon(Icons.food_bank, size: 24),
+                            const SizedBox(height: 20),
+                            const Text(
+                              'Time corresponding to the meal is tentative.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color(0xFF121212),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                height: 20 / 14,
+                                letterSpacing: 0.25,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            cartSummaryList(
+                              breakfastCount,
+                              lunchCount,
+                              dinnerCount,
+                              context,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                        width: MediaQuery.sizeOf(context).width - 40,
+                        decoration: ShapeDecoration(
+                          color: const Color(0xFFFFFCEF),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding:
+                                  EdgeInsets.only(left: 24, top: 16, bottom: 8),
+                              child: Text(
+                                'Add More Details (Optional)',
+                                style: TextStyle(
+                                  color: Color(0xFF121212),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  height: 20 / 14,
+                                  letterSpacing: 0.10,
+                                ),
+                              ),
+                            ),
+                            const Divider(thickness: 1, height: 0),
+                            SizedBox(height: isSubscription ? 20 : 0),
+                            isSubscription
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 24),
+                                    child: entryBox(subscriptionNameController,
+                                        "Subscription name", null),
+                                  )
+                                : SizedBox(),
+                            const SizedBox(height: 16),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24),
+                              child: entryBox(
+                                  instructionController, "Instructions", null),
+                            ),
+                            const SizedBox(height: 24),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      proceedToCheckOutButton(
+                        () async {
+                          cartBox.putAll({
+                            "sub_name": subscriptionNameController.text,
+                            "sub_instructions": instructionController.text
+                          });
+                          if (startDate != null && endDate != null) {
+                            cartBox.putAll(
+                                {"start_date": startDate, 'end_date': endDate});
+                            Navigator.push(
+                                context,
+                                SlideTransitionRouter.toNextPage(
+                                    BillingSummaryScreen(
+                                        couponList: state.couponList)));
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text("Please choose start date")));
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              proceedToCheckOutButton(
-                () async {
-                  cartBox.putAll({
-                    "sub_name": subscriptionNameController.text,
-                    "sub_instructions": instructionController.text
-                  });
-                  if (startDate != null && endDate != null) {
-                    cartBox
-                        .putAll({"start_date": startDate, 'end_date': endDate});
-                    Navigator.push(
-                        context,
-                        SlideTransitionRouter.toNextPage(
-                            BillingSummaryScreen()));
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text("Please choose start date")));
-                  }
-                },
-              ),
-              const SizedBox(height: 24),
-            ],
-          ),
+              );
+            } else {
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      Container(
+                        height: 154,
+                        width: MediaQuery.sizeOf(context).width - 40,
+                        decoration: ShapeDecoration(
+                          color: const Color(0xFFFFFCEF),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding:
+                                  EdgeInsets.only(left: 24, top: 16, bottom: 8),
+                              child: Text(
+                                'Time Period',
+                                style: TextStyle(
+                                  color: Color(0xFF121212),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  height: 20 / 14,
+                                  letterSpacing: 0.10,
+                                ),
+                              ),
+                            ),
+                            const Divider(height: 0, thickness: 1),
+                            const SizedBox(height: 18),
+                            Row(
+                              children: [
+                                const SizedBox(width: 24),
+                                Flexible(
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      startDate = await showDatePicker(
+                                        context: context,
+                                        firstDate: DateTime.now(),
+                                        lastDate: DateTime.now().add(
+                                          const Duration(days: 100),
+                                        ),
+                                      );
+                                      if (startDate != null) {
+                                        endDate = startDate!.add(
+                                            Duration(days: widget.noOfDays));
+                                        String startDateText =
+                                            DateFormat('dd/MM/yyyy')
+                                                .format(startDate!);
+                                        String endDateText =
+                                            DateFormat('dd/MM/yyyy')
+                                                .format(endDate!);
+                                        setState(() {
+                                          startDateController.text =
+                                              startDateText;
+                                          endDateController.text = endDateText;
+                                        });
+                                      }
+                                    },
+                                    child: AbsorbPointer(
+                                      child: dateEntryBox(
+                                        isSubscription
+                                            ? "Start Date"
+                                            : "Delivery Date",
+                                        startDateController,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: isSubscription ? 12 : 0),
+                                isSubscription
+                                    ? Flexible(
+                                        child: GestureDetector(
+                                          child: AbsorbPointer(
+                                            child: dateEntryBox(
+                                              "End date",
+                                              endDateController,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : const SizedBox(),
+                                const SizedBox(width: 24),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                        alignment: Alignment.topCenter,
+                        height: 270,
+                        width: MediaQuery.sizeOf(context).width - 40,
+                        decoration: ShapeDecoration(
+                          color: const Color(0xFFFFFCEF),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 16),
+                            const Icon(Icons.food_bank, size: 24),
+                            const SizedBox(height: 20),
+                            const Text(
+                              'Time corresponding to the meal is tentative.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color(0xFF121212),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                height: 20 / 14,
+                                letterSpacing: 0.25,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            cartSummaryList(
+                              breakfastCount,
+                              lunchCount,
+                              dinnerCount,
+                              context,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                        width: MediaQuery.sizeOf(context).width - 40,
+                        decoration: ShapeDecoration(
+                          color: const Color(0xFFFFFCEF),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding:
+                                  EdgeInsets.only(left: 24, top: 16, bottom: 8),
+                              child: Text(
+                                'Add More Details (Optional)',
+                                style: TextStyle(
+                                  color: Color(0xFF121212),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  height: 20 / 14,
+                                  letterSpacing: 0.10,
+                                ),
+                              ),
+                            ),
+                            const Divider(thickness: 1, height: 0),
+                            SizedBox(height: isSubscription ? 20 : 0),
+                            isSubscription
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 24),
+                                    child: entryBox(subscriptionNameController,
+                                        "Subscription name", null),
+                                  )
+                                : SizedBox(),
+                            const SizedBox(height: 16),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24),
+                              child: entryBox(
+                                  instructionController, "Instructions", null),
+                            ),
+                            const SizedBox(height: 24),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      proceedToCheckOutButton(
+                        () async {
+                          cartBox.putAll({
+                            "sub_name": subscriptionNameController.text,
+                            "sub_instructions": instructionController.text
+                          });
+                          if (startDate != null && endDate != null) {
+                            cartBox.putAll(
+                                {"start_date": startDate, 'end_date': endDate});
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    
+                                    content: Text("Please choose start date")));
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+              );
+            }
+          },
         ),
       ),
     );
@@ -380,6 +612,7 @@ Widget cartSummaryEntry(String mealType, String time, int quantity) {
     ],
   );
 }
+
 Widget entryBox(
     TextEditingController controller, String label, String? autofillHints) {
   Iterable<String>? autoFill = autofillHints == null ? {} : {autofillHints};
@@ -408,6 +641,7 @@ Widget entryBox(
     ),
   );
 }
+
 Widget proceedToCheckOutButton(VoidCallback onpress) {
   Widget buttonText = const Row(
     mainAxisAlignment: MainAxisAlignment.center,

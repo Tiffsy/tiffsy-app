@@ -19,4 +19,14 @@ class RazorpayFailure extends BillingSummaryState {
   final String errorMessage;
   RazorpayFailure({required this.errorMessage});
 }
+class CouponFetchSuccessState extends BillingSummaryState{
+  final List<CouponDataModel> couponList;
+  CouponFetchSuccessState({required this.couponList});
+}
+class fetchLoadingState extends BillingSummaryState{}
+class fetchErrorState extends BillingSummaryState{
+  final String error;
+  
+  fetchErrorState({required this.error});
 
+}

@@ -54,6 +54,7 @@ class _HomeState extends State<Home> {
   Box cartBox = Hive.box("cart_box");
   Box addressBox = Hive.box("address_box");
   AddressDataModel? defaultAddress;
+  int count = 0;
 
   HomeFetchSuccessfulState menuState = HomeFetchSuccessfulState(menu: const []);
 
@@ -95,7 +96,7 @@ class _HomeState extends State<Home> {
               tempTwo,
             );
             return Scaffold(
-              backgroundColor: Colors.white,
+              backgroundColor: const Color(0xffffffff),
               appBar: AppBar(
                 backgroundColor: Color(0xfffffcef),
                 elevation: 0,
@@ -111,7 +112,13 @@ class _HomeState extends State<Home> {
                         ? Navigator.push(
                             context,
                             SlideTransitionRouter.toNextPage(
-                              AddAddressScreen(onAdd: () {}),
+                              AddAddressScreen(onAdd: () {
+                                setState(() {
+                                  Box addressBox = Hive.box("address_box");
+                                  defaultAddress = AddressDataModel.fromJson(
+                                      addressBox.get("default_address"));
+                                });
+                              }),
                             ),
                           )
                         : await showAddressBottomSheet(homeBloc);
@@ -227,7 +234,7 @@ class _HomeState extends State<Home> {
                   });
                 },
                 selectedIndex: currentPageIndex,
-                destinations: const <Widget>[
+                destinations:  <Widget>[
                   NavigationDestination(
                     selectedIcon: Icon(Icons.restaurant_menu),
                     icon: Icon(Icons.restaurant_menu_outlined),
@@ -235,7 +242,10 @@ class _HomeState extends State<Home> {
                   ),
                   NavigationDestination(
                     selectedIcon: NavigationBarCartItem(isSelected: true),
-                    icon: NavigationBarCartItem(isSelected: false),
+                    icon: Badge(
+            label: Text('•'),
+            child: Icon(Icons.shopping_cart),
+          ),
                     label: 'Cart',
                   ),
                   NavigationDestination(
@@ -258,7 +268,7 @@ class _HomeState extends State<Home> {
             );
           } else if (state is HomeFetchSuccessfulIsCachedState) {
             return Scaffold(
-              backgroundColor: Colors.white,
+              backgroundColor: const Color(0xffffffff),
               appBar: AppBar(
                 elevation: 0,
                 backgroundColor: Color(0xfffffcef),
@@ -398,7 +408,10 @@ class _HomeState extends State<Home> {
                   ),
                   NavigationDestination(
                     selectedIcon: NavigationBarCartItem(isSelected: true),
-                    icon: NavigationBarCartItem(isSelected: false),
+                    icon: Badge(
+            label: Text('•'),
+            child: Icon(Icons.shopping_cart),
+          ),
                     label: 'Cart',
                   ),
                   NavigationDestination(
@@ -420,6 +433,7 @@ class _HomeState extends State<Home> {
               ),
             );
           } else {
+
             return Scaffold(
               backgroundColor: const Color(0xffffffff),
               appBar: AppBar(
@@ -445,7 +459,10 @@ class _HomeState extends State<Home> {
                   ),
                   NavigationDestination(
                     selectedIcon: NavigationBarCartItem(isSelected: true),
-                    icon: NavigationBarCartItem(isSelected: false),
+                    icon: Badge(
+            label: Text('•'),
+            child: Icon(Icons.shopping_cart),
+          ),
                     label: 'Cart',
                   ),
                   NavigationDestination(
@@ -465,6 +482,8 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+
+
 
   Future<dynamic> showAddressBottomSheet(HomeBloc homeBloc) {
     Box addressBox = Hive.box("address_box");

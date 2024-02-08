@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,7 +53,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
             builder: (context, state) {
               if (state is ScreenLoadingScreen) {
                 return Center(
-                  child: LoadingAnimation.circularLoadingAnimation(context),
+                  child: LoadingAnimation.loadingAnimationTwo(context),
                 );
               } else if (state is PersonalDetailsInitial) {
                 if (state.isPhoneAuth) {
@@ -69,20 +70,30 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                           entryBox(email, "Email ID", AutofillHints.email),
                           const SizedBox(height: 40),
                           ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               if (name.text.isNotEmpty &&
                                   email.text.contains("@")) {
-                                BlocProvider.of<PersonalDetailsBloc>(context)
-                                    .add(
-                                  ContinueButtonClickedForEmailEvent(
-                                      name: name.text,
-                                      number: widget.phoneNumber,
-                                      mailId: email.text),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
+                                    final FirebaseFirestore firestore =
+                                    FirebaseFirestore.instance;
+                                    CollectionReference users = firestore.collection('email');
+                                    QuerySnapshot querySnapshot = await users.where('email', isEqualTo: email).get();
+                                    
+                                    if(querySnapshot.docs.isNotEmpty){
+                                      ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                        content: Text("Invalid data entered")));
+                                        content: Text("Email is already registered!")));
+                                    }
+                                    else{
+                                       BlocProvider.of<PersonalDetailsBloc>(context)
+                                        .add(
+                                      ContinueButtonClickedForEmailEvent(
+                                          name: name.text,
+                                          number: widget.phoneNumber,
+                                          mailId: email.text),
+                                    );
+                                    }
+                              } else {
+                                
                               }
                             },
                             child: const Text(
@@ -109,6 +120,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                             style: TextStyle(
                               color: Color(0xFF121212),
                               fontSize: 14,
+                              fontFamily: 'Roboto',
                               fontWeight: FontWeight.w500,
                               height: 20 / 14,
                               letterSpacing: 0.10,
@@ -120,17 +132,30 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                           entryBox(number, "10-digit Phone Number",
                               AutofillHints.telephoneNumber),
                           const SizedBox(height: 40),
-                          orderNowButton(
-                            () {
+                          continueButton(
+                            () async {
                               if (name.text.isNotEmpty &&
                                   number.text.length == 10) {
-                                BlocProvider.of<PersonalDetailsBloc>(context)
-                                    .add(
-                                  ContinueButtonClickedForEmailEvent(
-                                      name: name.text,
-                                      number: number.text,
-                                      mailId: user.email!),
-                                );
+                                final FirebaseFirestore firestore =
+                                    FirebaseFirestore.instance;
+                                CollectionReference users =
+                                    firestore.collection('users_phone');
+                                QuerySnapshot querySnapshot = await users
+                                    .where('phoneNumber',
+                                        isEqualTo: number.text)
+                                    .get();
+                                if (querySnapshot.docs.isNotEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text("Phone Number is already registered!")));
+                                } else {
+                                  BlocProvider.of<PersonalDetailsBloc>(context).add(
+                                    ContinueButtonClickedForEmailEvent(
+                                        name: name.text,
+                                        number: number.text,
+                                        mailId: user.email!),
+                                  );
+                                }
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
@@ -178,7 +203,7 @@ Widget entryBox(
   );
 }
 
-Widget orderNowButton(VoidCallback onpress) {
+Widget continueButton(VoidCallback onpress) {
   Widget buttonText = const Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [

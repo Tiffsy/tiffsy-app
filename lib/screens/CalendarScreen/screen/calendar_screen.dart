@@ -136,10 +136,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         availableCalendarFormats: const {
                           CalendarFormat.month: 'Month',
                         },
-                        firstDay: DateTime.now()
-                            .subtract(Duration(days: calendarData.length)),
-                        lastDay: DateTime.now()
-                            .add(Duration(days: calendarData.length)),
+                        firstDay: DateTime.now().subtract(Duration(days: calendarData.length + 31)),
+                        lastDay: DateTime.now().add(Duration(days: calendarData.length + 31)),
                         focusedDay: DateTime.now(),
                         selectedDayPredicate: (day) =>
                             isSameDay(_selectedDay, day),

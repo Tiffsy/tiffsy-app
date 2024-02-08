@@ -1,15 +1,19 @@
+import 'dart:ffi';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:tiffsy_app/Helpers/page_router.dart';
 import 'package:tiffsy_app/screens/AddressBookScreen/screen/address_book_screen.dart';
+import 'package:tiffsy_app/screens/ContactUsScreen/screen/contact_us_screen.dart';
 import 'package:tiffsy_app/screens/FrequentlyAskedQuestionsScreen/screen/frequently_asked_questions_screen.dart';
 import 'package:tiffsy_app/screens/HowItWorksScreen/screen/how_it_works_screen.dart';
 import 'package:tiffsy_app/screens/LoginScreen/screen/login_screen.dart';
 import 'package:tiffsy_app/screens/OrderHistoryScreen/screen/order_history_screen.dart';
 import 'package:tiffsy_app/screens/PaymentHistoryScreen/screen/payment_history_screen.dart';
 import 'package:tiffsy_app/screens/ProfileScreen/bloc/profile_bloc.dart';
+import 'package:tiffsy_app/screens/RefundScreen/screen/refund_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -77,9 +81,11 @@ class _ProfileState extends State<Profile> {
 
     Map getHorizontalListButtonOptions() {
       return {
-        "Subscription": [
-          Icons.food_bank,
+        "Contact Us": [
+          Icons.phone,
           () {
+            Navigator.push(context,
+                SlideTransitionRouter.toNextPage(ContactUsScreen()));
           }
         ],
         "Payments": [
@@ -89,9 +95,11 @@ class _ProfileState extends State<Profile> {
                 SlideTransitionRouter.toNextPage(PaymentHistoryScreen()));
           }
         ],
-        "Settings": [
-          Icons.settings,
+        "Refunds": [
+          Icons.account_balance_wallet,
           () {
+             Navigator.push(context,
+                SlideTransitionRouter.toNextPage(RefundScreen()));
           }
         ],
       };
@@ -278,19 +286,33 @@ Widget userCard(User user) {
                     ),
             ),
             const SizedBox(width: 18),
-            Text(
-              user.displayName != null
-                  ? capitalizeEachWord(user.displayName.toString())
-                  : capitalizeEachWord(
-                      Hive.box('customer_box').get('cst_name').toString()),
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Color(0xFF121212),
-                fontSize: 20,
-                fontWeight: FontWeight.w400,
-                height: 0.07,
-              ),
-            )
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  user.displayName != null
+                      ? capitalizeEachWord(user.displayName.toString())
+                      : capitalizeEachWord(
+                          Hive.box('customer_box').get('cst_name').toString()),
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color(0xFF121212),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    height: 0.07,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  "Email: ${Hive.box('customer_box').get('cst_mail').toString()}",
+                ),
+                Text(
+                  "Phone: ${Hive.box('customer_box').get('cst_contact').toString()}"
+                )
+              ],
+            ),
+
           ],
         ),
       );

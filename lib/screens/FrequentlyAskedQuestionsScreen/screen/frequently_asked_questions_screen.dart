@@ -59,13 +59,12 @@ Widget listOfFaqs(Map<String, String> faqs) {
     listOfFaqExpansionTile.add(singleFaqExpansionTile(question, answer));
     listOfFaqExpansionTile.add(const Divider(height: 0));
   });
-  return Flexible(
-      child: SingleChildScrollView(
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(children: listOfFaqExpansionTile),
-    ),
-  ));
+  return SingleChildScrollView(
+      child: Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 20),
+  child: Column(children: listOfFaqExpansionTile),
+      ),
+    );
 }
 
 Widget singleFaqExpansionTile(String question, String answer) {

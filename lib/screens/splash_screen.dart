@@ -17,7 +17,8 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
-    // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: ));
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: [SystemUiOverlay.top]);
     Future.delayed(const Duration(milliseconds: 2325), () {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -28,13 +29,6 @@ class _SplashScreenState extends State<SplashScreen>
             MaterialPageRoute(builder: (_) => const HomeScreen()));
       }
     });
-  }
-
-  @override
-  void dispose() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: SystemUiOverlay.values);
-    super.dispose();
   }
 
   @override

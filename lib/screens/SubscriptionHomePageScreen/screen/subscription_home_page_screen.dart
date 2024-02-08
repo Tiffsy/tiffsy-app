@@ -97,9 +97,18 @@ class _SubscriptionHomePageScreenState
                               height: 24 / 16,
                               letterSpacing: 0.15,
                             ),
-                          )
+                          ),
+                          const Text("• Have any complaint? Contact us for resolution",
+                softWrap: true,
+                overflow: TextOverflow.clip,
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 1,
+                  
+              ),)
                         ] +
                         subsCard,
+                        
                   ),
                 );
         },
@@ -119,7 +128,7 @@ class _SubscriptionHomePageScreenState
         children: [
           const SizedBox(height: 8),
           Container(
-            height: hasName ? 100 : 80,
+            height: hasName ? 100 : 100,
             decoration: ShapeDecoration(
               color: Colors.white,
               shape: RoundedRectangleBorder(

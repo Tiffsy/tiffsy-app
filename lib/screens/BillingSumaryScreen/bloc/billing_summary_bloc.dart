@@ -46,7 +46,7 @@ class BillingSummaryBloc
       int amountInPaisa = (event.amount * 100).floor();
       Box customer_box = Hive.box("customer_box");
       _razorpay.open({
-        "key": "rzp_test_q5b3nNR3JdGWUH",
+        "key": "rzp_live_fhj6bcgpHjUJ0J",
         "amount": amountInPaisa,
         "currency": "INR",
         "name": "Tiffsy",

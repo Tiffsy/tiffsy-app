@@ -97,6 +97,11 @@ class _AddressBookScreenState extends State<AddressBookScreen> {
                     ? LoadingAnimation.emptyDataAnimation(
                         context, "No Addresses Found")
                     : listOfAddressCards(addressListState),
+                const Text("• Choose default address on home screen",
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 16,
+                ),)
               ],
             );
           },

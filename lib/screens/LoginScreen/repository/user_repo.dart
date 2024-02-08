@@ -22,18 +22,16 @@ class UserRepo {
         codeSent: codeSent,
         codeAutoRetrievalTimeout: codeAutoRetrievalTimeout, 
         forceResendingToken: null,
-        timeout: const Duration(seconds: 300),
-        );
+        timeout: const Duration(seconds: 120),
+    );
   }
 
   Future<void> storePhoneNumber({required String phoneNumber}) async {
     CollectionReference users = firestore.collection('users_phone');
-    
     await users.add({
       'phoneNumber': phoneNumber,
     });
   }
-
   Future<bool> checkPhoneNumber({required String phoneNumber}) async {
     CollectionReference users = firestore.collection('users_phone');
     QuerySnapshot querySnapshot =

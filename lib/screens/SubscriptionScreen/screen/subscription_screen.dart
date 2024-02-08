@@ -84,6 +84,14 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 child: LoadingAnimation.circularLoadingAnimation(context),
               );
             } else if (state is CouponFetchSuccessState) {
+              if(!isSubscription){
+                  startDate = DateTime.now();
+                  endDate = startDate!.add(Duration(days: widget.noOfDays - 1));
+                  String startDateText = DateFormat('dd/MM/yyyy').format(startDate!);
+                  String endDateText = DateFormat('dd/MM/yyyy').format(endDate!);
+                  startDateController.text = startDateText;
+                   endDateController.text = endDateText;
+              }
               return SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -124,16 +132,21 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 Flexible(
                                   child: GestureDetector(
                                     onTap: () async {
-                                      startDate = await showDatePicker(
+                                      if(isSubscription){
+                                        startDate = await showDatePicker(
                                         context: context,
-                                        firstDate: DateTime.now(),
+                                        firstDate: DateTime.now().add(Duration(days: 1)),
                                         lastDate: DateTime.now().add(
-                                          const Duration(days: 100),
+                                          const Duration(days: 30),
                                         ),
                                       );
+                                      }
+                                      else{
+                                        startDate = DateTime.now();
+                                      }
                                       if (startDate != null) {
                                         endDate = startDate!.add(
-                                            Duration(days: widget.noOfDays));
+                                            Duration(days: widget.noOfDays - 1));
                                         String startDateText =
                                             DateFormat('dd/MM/yyyy')
                                                 .format(startDate!);
@@ -195,7 +208,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             const Icon(Icons.food_bank, size: 24),
                             const SizedBox(height: 20),
                             const Text(
-                              'Time corresponding to the meal is tentative.',
+                              'Delivery time for the meal is tentative.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Color(0xFF121212),
@@ -285,11 +298,27 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         },
                       ),
                       const SizedBox(height: 24),
+                      const Text("• Have any complaint? Contact us for resolution",
+                softWrap: true,
+                overflow: TextOverflow.clip,
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                  
+              ),)
                     ],
                   ),
                 ),
               );
             } else {
+              if(!isSubscription){
+                  startDate = DateTime.now();
+                  endDate = startDate!.add(Duration(days: widget.noOfDays - 1));
+                  String startDateText = DateFormat('dd/MM/yyyy').format(startDate!);
+                  String endDateText = DateFormat('dd/MM/yyyy').format(endDate!);
+                  startDateController.text = startDateText;
+                   endDateController.text = endDateText;
+              }
               return SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -330,16 +359,23 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 Flexible(
                                   child: GestureDetector(
                                     onTap: () async {
-                                      startDate = await showDatePicker(
+
+                                      if(isSubscription){
+                                        startDate = await showDatePicker(
                                         context: context,
-                                        firstDate: DateTime.now(),
+                                        firstDate: DateTime.now().add(Duration(days: 1)),
                                         lastDate: DateTime.now().add(
-                                          const Duration(days: 100),
+                                          const Duration(days: 30),
                                         ),
                                       );
+                                      }
+                                      else{
+                                        startDate = DateTime.now();
+                                      }
+
                                       if (startDate != null) {
                                         endDate = startDate!.add(
-                                            Duration(days: widget.noOfDays));
+                                            Duration(days: widget.noOfDays - 1));
                                         String startDateText =
                                             DateFormat('dd/MM/yyyy')
                                                 .format(startDate!);
@@ -401,7 +437,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                             const Icon(Icons.food_bank, size: 24),
                             const SizedBox(height: 20),
                             const Text(
-                              'Time corresponding to the meal is tentative.',
+                              'Delivery time for the meal is tentative.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Color(0xFF121212),
@@ -487,6 +523,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         },
                       ),
                       const SizedBox(height: 24),
+                      const Text("• Have any complaint? Contact us for resolution",
+                        softWrap: true,
+                        overflow: TextOverflow.clip,
+                        style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+              ),)
                     ],
                   ),
                 ),
@@ -532,11 +575,11 @@ Widget cartSummaryList(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
-          cartSummaryEntry("Breakfast", "9:00 AM", breakfast),
+          cartSummaryEntry("Breakfast", "09:00 AM - 10:00 AM ", breakfast),
           const Divider(height: 0, thickness: 1),
-          cartSummaryEntry("Lunch", "2:00 PM", lunch),
+          cartSummaryEntry("Lunch", "01:00 PM - 02:00 PM", lunch),
           const Divider(height: 0, thickness: 1),
-          cartSummaryEntry("Dinner", "7:00 PM", dinner)
+          cartSummaryEntry("Dinner", "07:00 PM - 08:30 PM", dinner)
         ],
       ),
     ),

@@ -1,3 +1,7 @@
+import 'dart:ffi';
+import 'dart:ui';
+
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -7,19 +11,46 @@ import 'package:tiffsy_app/screens/HomeScreen/bloc/home_bloc.dart';
 import 'package:tiffsy_app/screens/HomeScreen/model/home_model.dart';
 
 class MenuScreenHomePage extends StatefulWidget {
-  const MenuScreenHomePage({super.key, required this.homeBloc});
+  const MenuScreenHomePage({
+    super.key,
+    required this.homeBloc,
+  });
   final HomeBloc homeBloc;
 
   @override
   State<MenuScreenHomePage> createState() => _MenuScreenHomePageState();
 }
-
 class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
   HomeFetchSuccessfulState menuState = HomeFetchSuccessfulState(menu: const []);
   Box cartBox = Hive.box("cart_box");
   bool orderNowButtonIsExpanded = false;
   bool subscriptionButtonIsExpanded = false;
   ScrollController topButtonsHorizontalScrollController = ScrollController();
+  List<Container> carouselItems = [
+    Container(
+      child: SvgPicture.asset(
+        'assets/images/vectors/Group 251img6.svg',
+      ),
+    ),
+    Container(
+      child: SvgPicture.asset(
+        'assets/images/vectors/img2.svg',
+        semanticsLabel: 'vector image',
+      ),
+    ),
+    Container(
+      child: SvgPicture.asset(
+        'assets/images/vectors/img3.svg',
+        semanticsLabel: 'vector image',
+      ),
+    ),
+    Container(
+      child: SvgPicture.asset(
+        'assets/images/vectors/img4.svg',
+        semanticsLabel: 'vector image',
+      ),
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +61,164 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
       builder: (context, state) {
         if (state is HomeFetchSuccessfulState) {
           menuState = state;
-        } else if (state is HomeFetchSuccessfulIsCachedState) {}
+        } else if (state is HomeFetchSuccessfulIsCachedState) {
+          return SingleChildScrollView(
+            reverse: true,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 16),
+                upgradeToDeluxCard(() {}),
+                const SizedBox(height: 12),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        thickness: 2, // Adjust line thickness as needed
+                        color: Colors.black, // Customize line color
+                        indent: 10,
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: 16.0, right: 16, top: 8, bottom: 8),
+                      child: Text(
+                        "Serving Today",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          fontFamily: "Charmonman",
+                          height: 24 / 16,
+                          letterSpacing: 0.15,
+                          color: Color(0xff121212),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        thickness: 2,
+                        color: Colors.black,
+                        endIndent: 15,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: MediaQuery.sizeOf(context).width,
+                        color: const Color(0xffFFBE1D),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: listOfMenuCards(
+                                menuState.menu, context, widget.homeBloc)),
+                      ),
+                      Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: [
+                          Container(
+                            height: 30,
+                            width: MediaQuery.sizeOf(context).width,
+                            color: const Color(0xffFFBE1D),
+                          ),
+                          Positioned(
+                            top: 17,
+                            child: Row(
+                              children: [
+                                circle(),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.sizeOf(context).width * 0.05,
+                                ),
+                                circle(),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.sizeOf(context).width * 0.05,
+                                ),
+                                circle(),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.sizeOf(context).width * 0.05,
+                                ),
+                                circle(),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.sizeOf(context).width * 0.05,
+                                ),
+                                circle(),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.sizeOf(context).width * 0.05,
+                                ),
+                                circle(),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.sizeOf(context).width * 0.05,
+                                ),
+                                circle(),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.sizeOf(context).width * 0.05,
+                                ),
+                                circle(),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.sizeOf(context).width * 0.05,
+                                ),
+                                circle(),
+                              ],
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                // Column(
+                //     children: listOfMenuCards(
+                //         menuState.menu, context, widget.homeBloc)),
+                Padding(
+                  padding: const EdgeInsets.only(top: 30),
+                  child: SizedBox(
+                    width: MediaQuery.sizeOf(context).width - 39,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        orderNowExpandableButton(),
+                        subscriptionExpandableButton(),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                const Text(
+                  '• You can order meals till below mentioned time for ordering today',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: Color(0xFF121212),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    height: 20 / 14,
+                    letterSpacing: 0.25,
+                  ),
+                ),
+                cartSummaryList(
+                  1,
+                  0,
+                  0,
+                  context,
+                ),
+              ],
+            ),
+          );
+        }
         return SingleChildScrollView(
           reverse: true,
           child: Column(
@@ -158,11 +346,113 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 30),
+              const Text(
+                '• You can order meals till below mentioned time for ordering today',
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  color: Color(0xFF121212),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  height: 20 / 14,
+                  letterSpacing: 0.25,
+                ),
+              ),
+              cartSummaryList(
+                1,
+                0,
+                0,
+                context,
+              ),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget cartSummaryList(
+      int breakfast, int lunch, int dinner, BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.sizeOf(context).width - 40,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          children: [
+            cartSummaryEntry("Dinner", "Before 6:30 PM ", breakfast),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget cartSummaryEntry(String mealType, String time, int quantity) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 40,
+          height: 56,
+          child: Center(
+            child: Text(
+              mealType[0],
+              style: const TextStyle(
+                color: Color(0xFF121212),
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                height: 24 / 16,
+                letterSpacing: 0.15,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Text(
+          mealType,
+          style: const TextStyle(
+            color: Color(0xFF121212),
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            height: 24 / 16,
+            letterSpacing: 0.50,
+          ),
+        ),
+        const Spacer(),
+        Text(
+          time,
+          textAlign: TextAlign.right,
+          style: const TextStyle(
+            color: Color(0xFF121212),
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            height: 16 / 11,
+            letterSpacing: 0.50,
+          ),
+        ),
+        const SizedBox(width: 15),
+        // Container(
+        //   width: 18,
+        //   height: 18,
+        //   decoration: ShapeDecoration(
+        //     color: const Color(0xFF6AA64F),
+        //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        //   ),
+        //   child: Center(
+        //     child: Text(
+        //       quantity.toString(),
+        //       textAlign: TextAlign.right,
+        //       style: const TextStyle(
+        //         color: Color(0xFFffffff),
+        //         fontSize: 11,
+        //         fontFamily: 'Roboto',
+        //         fontWeight: FontWeight.w700,
+        //         height: 16 / 11,
+        //         letterSpacing: 0.50,
+        //       ),
+        //     ),
+        //   ),
+        // ),
+      ],
     );
   }
 
@@ -171,55 +461,59 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
       padding: const EdgeInsets.all(10.0),
       child: InkWell(
         onTap: () {
-          showDialog(context: context, 
-          builder: (BuildContext context){
-            return AlertDialog(
-              backgroundColor: Color(0xfffffcef),
-              title: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Divider(
-                      thickness: 2, // Adjust line thickness as needed
-                      color: Colors.black, // Customize line color
-                      indent: 10,
-                    ),
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  backgroundColor: Color(0xfffffcef),
+                  title: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 2, // Adjust line thickness as needed
+                          color: Colors.black, // Customize line color
+                          indent: 10,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            left: 16.0, right: 16, top: 8, bottom: 8),
+                        child: Text(
+                          "Description",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w800,
+                            fontFamily: "Charmonman",
+                            height: 24 / 16,
+                            letterSpacing: 0.15,
+                            color: Color(0xff121212),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(
+                          thickness: 2,
+                          color: Colors.black,
+                          endIndent: 15,
+                        ),
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        left: 16.0, right: 16, top: 8, bottom: 8),
-                    child: Text(
-                      "Description",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w800,
-                        fontFamily: "Charmonman",
-                        height: 24 / 16,
-                        letterSpacing: 0.15,
-                        color: Color(0xff121212),
+                  content: Text(menuPage.description),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the popup
+                      },
+                      child: Text(
+                        'Close',
+                        style: TextStyle(color: Colors.black),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Divider(
-                      thickness: 2,
-                      color: Colors.black,
-                      endIndent: 15,
-                    ),
-                  ),
-                ],
-              ),
-              content: Text(menuPage.description),
-              actions: [
-                TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the popup
-              },
-              child: Text('Close', style: TextStyle(color: Colors.black),),
-            ),
-              ],
-            );
-          });
+                  ],
+                );
+              });
         },
         child: SizedBox(
           width: MediaQuery.sizeOf(context).width - 70,
@@ -228,7 +522,8 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
             decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.5), // Adjust color and opacity
+                  color:
+                      Colors.grey.withOpacity(0.5), // Adjust color and opacity
                   blurRadius: 5.0, // Adjust blur radius
                   spreadRadius: 2.0, // Adjust spread radius (optional)
                   offset: const Offset(2.0, 2.0), // Adjust offset (optional)
@@ -484,7 +779,23 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
     );
   }
 
+  bool timeCheck(TimeOfDay currentTime, TimeOfDay desiredTime) {
+    if (currentTime.hour < desiredTime.hour ||
+        (currentTime.hour == desiredTime.hour &&
+            currentTime.minute < desiredTime.minute)) {
+      return false;
+    } else {
+      // Current time is after or equal to the desired time
+      return true;
+    }
+  }
+
   Widget rowOfOrderNowCards(BuildContext context, HomeBloc homeBloc) {
+    TimeOfDay breakfastTime = TimeOfDay(hour: 7, minute: 30);
+    TimeOfDay lunchTime = TimeOfDay(hour: 11, minute: 30);
+    TimeOfDay dinnerTime = TimeOfDay(hour: 18, minute: 30);
+    TimeOfDay currentTime = TimeOfDay.now();
+
     return SizedBox(
       width: MediaQuery.sizeOf(context).width - 40,
       child: Row(
@@ -494,14 +805,20 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
               context,
               "assets/images/vectors/home_screen/Brunch.svg",
               "breakfast",
-              homeBloc),
-          orderNowButtons(context,
-              "assets/images/vectors/home_screen/Ramen.svg", "lunch", homeBloc),
+              homeBloc,
+              true),
+          orderNowButtons(
+              context,
+              "assets/images/vectors/home_screen/Ramen.svg",
+              "lunch",
+              homeBloc,
+              true),
           orderNowButtons(
               context,
               "assets/images/vectors/home_screen/Spaghetti.svg",
               "dinner",
-              homeBloc),
+              homeBloc,
+              timeCheck(currentTime, dinnerTime)),
         ],
       ),
     );
@@ -529,183 +846,367 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
               "assets/images/vectors/home_screen/Brunch.svg",
               enabledButtons["breakfast"] ?? true,
               "breakfast",
-              homeBloc),
+              homeBloc,
+              false),
           orderSubscriptionButtons(
               context,
               "assets/images/vectors/home_screen/Ramen.svg",
               enabledButtons["lunch"] ?? true,
               "lunch",
-              homeBloc),
+              homeBloc,
+              false),
           orderSubscriptionButtons(
               context,
               "assets/images/vectors/home_screen/Spaghetti.svg",
               enabledButtons["dinner"] ?? true,
               "dinner",
-              homeBloc),
+              homeBloc,
+              true),
         ],
       ),
     );
   }
 
   Widget orderNowButtons(BuildContext context, String imageAsset,
-      String menuTime, HomeBloc homeBloc) {
-    return SizedBox(
-      child: InkWell(
-        onTap: () async {
-          Map<String, Map<String, Map>> menu = cartBox.get('menu');
-          showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
-        },
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            Column(
-              children: [
-                Container(
-                  decoration: ShapeDecoration(
-                    color: const Color(0x00000000),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  height: 80,
-                  width: 86,
-                  child: Column(
+      String menuTime, HomeBloc homeBloc, bool active) {
+    return !active
+        ? SizedBox(
+            child: InkWell(
+              onTap: () async {
+                Map<String, Map<String, Map>> menu = cartBox.get('menu');
+                showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
+              },
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  Column(
                     children: [
-                      const SizedBox(height: 7),
-                      SizedBox(height: 41, child: SvgPicture.asset(imageAsset)),
-                      Text(
-                        toSentenceCase(menuTime),
-                        style: const TextStyle(
-                          color: Color(0xFF121212),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          height: 16 / 12,
-                          letterSpacing: 0.50,
+                      Container(
+                        decoration: ShapeDecoration(
+                          color: const Color(0x00000000),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
-                      )
+                        height: 80,
+                        width: 86,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 7),
+                            SizedBox(
+                                height: 41,
+                                child: SvgPicture.asset(imageAsset)),
+                            Text(
+                              toSentenceCase(menuTime),
+                              style: const TextStyle(
+                                color: Color(0xFF121212),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                height: 16 / 12,
+                                letterSpacing: 0.50,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 18),
                     ],
                   ),
-                ),
-                const SizedBox(height: 18),
-              ],
-            ),
-            Container(
-              width: 86,
-              height: 30,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              clipBehavior: Clip.antiAlias,
-              decoration: ShapeDecoration(
-                color: const Color(0xffcbffb3),
-                shape: RoundedRectangleBorder(
-                  side: const BorderSide(width: 1, color: Color(0xFF6AA64F)),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Add',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFF6AA64F),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      height: 16 / 12,
-                      letterSpacing: 0.50,
+                  Container(
+                    width: 86,
+                    height: 30,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    clipBehavior: Clip.antiAlias,
+                    decoration: ShapeDecoration(
+                      color: const Color(0xffcbffb3),
+                      shape: RoundedRectangleBorder(
+                        side: const BorderSide(
+                            width: 1, color: Color(0xFF6AA64F)),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                     ),
-                  ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Add',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFF6AA64F),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            height: 16 / 12,
+                            letterSpacing: 0.50,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
-            )
-          ],
-        ),
-      ),
-    );
+            ),
+          )
+        : SizedBox(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                AbsorbPointer(
+                  absorbing: active,
+                  child: InkWell(
+                    onTap: () async {
+                      Map<String, Map<String, Map>> menu = cartBox.get('menu');
+                      showOptionsOfMeal(
+                          menu[menuTime]!, menuTime, homeBloc, context);
+                    },
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        Column(
+                          children: [
+                            Container(
+                              decoration: ShapeDecoration(
+                                color: const Color(0x00000000),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              height: 80,
+                              width: 86,
+                              child: Column(
+                                children: [
+                                  const SizedBox(height: 7),
+                                  SizedBox(
+                                      height: 41,
+                                      child: SvgPicture.asset(imageAsset)),
+                                  Text(
+                                    toSentenceCase(menuTime),
+                                    style: const TextStyle(
+                                      color: Color(0xFF121212),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      height: 16 / 12,
+                                      letterSpacing: 0.50,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 18),
+                          ],
+                        ),
+                        Container(
+                          width: 86,
+                          height: 30,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          clipBehavior: Clip.antiAlias,
+                          decoration: ShapeDecoration(
+                            color: const Color(0xffFFDDDD),
+                            shape: RoundedRectangleBorder(
+                              side: const BorderSide(
+                                  width: 1, color: const Color(0xffF84545)),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Coming Soon',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: const Color(0xffF84545),
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w500,
+                                  height: 16 / 12,
+                                  letterSpacing: 0.50,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
   }
 
   Widget orderSubscriptionButtons(BuildContext context, String imageAsset,
-      bool isEnabled, String menuTime, HomeBloc homeBloc) {
-    return SizedBox(
-      child: InkWell(
-        onTap: () async {
-          Map<String, Map<String, Map>> menu = cartBox.get('menu');
-          showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
-        },
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            Column(
-              children: [
-                Container(
-                  decoration: ShapeDecoration(
-                    color: const Color(0x00000000),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  height: 80,
-                  width: 86,
-                  child: Column(
+      bool isEnabled, String menuTime, HomeBloc homeBloc, bool active) {
+    return active
+        ? SizedBox(
+            child: InkWell(
+              onTap: () async {
+                Map<String, Map<String, Map>> menu = cartBox.get('menu');
+                showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
+              },
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  Column(
                     children: [
-                      const SizedBox(height: 7),
-                      SizedBox(height: 41, child: SvgPicture.asset(imageAsset)),
-                      Text(
-                        toSentenceCase(menuTime),
-                        style: const TextStyle(
-                          color: Color(0xFF121212),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          height: 16 / 12,
-                          letterSpacing: 0.50,
+                      Container(
+                        decoration: ShapeDecoration(
+                          color: const Color(0x00000000),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
-                      )
+                        height: 80,
+                        width: 86,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 7),
+                            SizedBox(
+                                height: 41,
+                                child: SvgPicture.asset(imageAsset)),
+                            Text(
+                              toSentenceCase(menuTime),
+                              style: const TextStyle(
+                                color: Color(0xFF121212),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                height: 16 / 12,
+                                letterSpacing: 0.50,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 18),
                     ],
                   ),
-                ),
-                const SizedBox(height: 18),
-              ],
-            ),
-            Container(
-              width: 86,
-              height: 30,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              clipBehavior: Clip.antiAlias,
-              decoration: ShapeDecoration(
-                color: const Color(0xffcbffb3),
-                shape: RoundedRectangleBorder(
-                  side: const BorderSide(
-                    width: 1,
-                    color: Color(0xFF6AA64F),
-                  ),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Add',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFF6AA64F),
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      height: 16 / 12,
-                      letterSpacing: 0.50,
+                  Container(
+                    width: 86,
+                    height: 30,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    clipBehavior: Clip.antiAlias,
+                    decoration: ShapeDecoration(
+                      color: const Color(0xffcbffb3),
+                      shape: RoundedRectangleBorder(
+                        side: const BorderSide(
+                          width: 1,
+                          color: Color(0xFF6AA64F),
+                        ),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                     ),
-                  ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Add',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Color(0xFF6AA64F),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            height: 16 / 12,
+                            letterSpacing: 0.50,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
-            )
-          ],
-        ),
-      ),
-    );
+            ),
+          )
+        : SizedBox(
+            child: AbsorbPointer(
+              absorbing: true,
+              child: InkWell(
+                onTap: () async {
+                  Map<String, Map<String, Map>> menu = cartBox.get('menu');
+                  showOptionsOfMeal(menu[menuTime]!, menuTime, homeBloc, context);
+                },
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    Column(
+                      children: [
+                        Container(
+                          decoration: ShapeDecoration(
+                            color: const Color(0x00000000),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          height: 80,
+                          width: 86,
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 7),
+                              SizedBox(
+                                  height: 41,
+                                  child: SvgPicture.asset(imageAsset)),
+                              Text(
+                                toSentenceCase(menuTime),
+                                style: const TextStyle(
+                                  color: Color(0xFF121212),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  height: 16 / 12,
+                                  letterSpacing: 0.50,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+                      ],
+                    ),
+                    Container(
+                      width: 86,
+                      height: 30,
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      clipBehavior: Clip.antiAlias,
+                      decoration: ShapeDecoration(
+                        color: const Color(0xffFFDDDD),
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(
+                            width: 1,
+                            color: const Color(0xffF84545),
+                          ),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Coming Soon',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: const Color(0xffF84545),
+                              fontSize: 8,
+                              fontWeight: FontWeight.w500,
+                              height: 16 / 12,
+                              letterSpacing: 0.50,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          );
   }
 
   Future<dynamic> showOptionsOfMeal(
@@ -803,6 +1304,36 @@ class _MenuScreenHomePageState extends State<MenuScreenHomePage> {
         ],
       ),
     );
+  }
+
+  Widget upgradeToDeluxCard(Function upgradeCardOnTap) {
+    return Builder(builder: (context) {
+      return GestureDetector(
+        onTap: () {
+          upgradeCardOnTap();
+        },
+        child: SizedBox(
+            width: (MediaQuery.sizeOf(context).width - 40),
+            height: (MediaQuery.sizeOf(context).width - 40) * (154 / 372),
+            child: Column(
+              children: [
+                CarouselSlider(
+                    items: carouselItems,
+                    options: CarouselOptions(
+                      height:
+                          (MediaQuery.sizeOf(context).width - 40) * (154 / 372),
+                      enlargeCenterPage: true,
+                      autoPlay: true,
+                      aspectRatio: 16 / 9,
+                      autoPlayCurve: Curves.fastOutSlowIn,
+                      enableInfiniteScroll: true,
+                      autoPlayAnimationDuration: Duration(milliseconds: 500),
+                      viewportFraction: 0.8,
+                    ))
+              ],
+            )),
+      );
+    });
   }
 }
 
@@ -1127,7 +1658,9 @@ Text mealCardBoldText(String text) {
   );
 }
 
-Widget mealTimeTagCustom(String mealTime, ) {
+Widget mealTimeTagCustom(
+  String mealTime,
+) {
   // Returns the meal time string placed in the tag like container as mentioned in the
   // design.
   return Stack(
@@ -1225,34 +1758,4 @@ Widget dashedDivider(BuildContext context) {
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: listOfDivider,
   );
-}
-
-Widget upgradeToDeluxCard(Function upgradeCardOnTap) {
-  return Builder(builder: (context) {
-    return GestureDetector(
-      onTap: () {
-        upgradeCardOnTap();
-      },
-      child: SizedBox(
-        width: (MediaQuery.sizeOf(context).width - 40),
-        height: (MediaQuery.sizeOf(context).width - 40) * (154 / 372),
-        child: Stack(
-          children: [
-            SvgPicture.asset(
-              'assets/images/vectors/home_banner.svg',
-              semanticsLabel: 'vector image',
-            ),
-            SizedBox(
-              width: MediaQuery.sizeOf(context).width,
-              child: Image.asset(
-                'assets/images/vectors/thali1 1.png',
-                fit: BoxFit.contain,
-                alignment: Alignment.bottomRight,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  });
 }

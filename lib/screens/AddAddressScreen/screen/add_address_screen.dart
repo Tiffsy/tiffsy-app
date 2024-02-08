@@ -184,6 +184,12 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                         }
                       },
                     ),
+                    SizedBox(height: 20,),
+                    const Text("• All fields are mandatory",
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 16,
+                ),)
                   ],
                 ),
               ),

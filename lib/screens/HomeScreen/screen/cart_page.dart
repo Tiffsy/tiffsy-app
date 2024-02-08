@@ -22,6 +22,7 @@ class _CartScreenHomePageState extends State<CartScreenHomePage> {
   void onListEmpty() {
     setState(() {
       listOfCards = [];
+      print(listOfCards);
     });
   }
 
@@ -73,12 +74,14 @@ class _CartScreenHomePageState extends State<CartScreenHomePage> {
                               setState(() {});
                             },
                           )));
-                        } else if (cartBox.get("is_subscription")) {
+                        } else if (cartBox.get("is_subscription",
+                            defaultValue: false)) {
                           Navigator.push(
                               context,
                               SlideTransitionRouter.toNextPage(
                                   const CartScreen()));
-                        } else {
+                        } else if (!cartBox.get("is_subscription",
+                            defaultValue: true)) {
                           cartBox.put("subType", 1);
                           Navigator.push(
                               context,
@@ -366,7 +369,6 @@ class _CustomeCartCardState extends State<CustomeCartCard> {
                   style: const TextStyle(
                     color: Color(0xFF329C00),
                     fontSize: 16,
-
                     fontWeight: FontWeight.w500,
                     height: 20 / 16,
                     letterSpacing: 0.15,
@@ -488,7 +490,6 @@ Widget emptyCartMessageBox(BuildContext context, String message) {
         style: const TextStyle(
           color: Color(0xFF121212),
           fontSize: 12,
-
           fontWeight: FontWeight.w500,
           height: 0.11,
           letterSpacing: 0.50,

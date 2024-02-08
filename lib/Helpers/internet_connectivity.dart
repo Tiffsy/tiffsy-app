@@ -14,7 +14,7 @@ class NetworkController extends GetxController {
   void _updateConnectivityStatus(ConnectivityResult result) {
     if (result == ConnectivityResult.none) {
       Get.rawSnackbar(
-          backgroundColor: const Color(0xfffffcef),
+          backgroundColor: Colors.red,
           messageText: const Text("Please connect to the Internet"),
           isDismissible: false,
           duration: const Duration(days: 1),
